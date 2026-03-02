@@ -1,7 +1,7 @@
 export class ServizioSQL {
   SQL_INSERIMENTO_SERVIZIO = ` 
-    INSERT INTO servizio (nome, prezzo, note, in_uso) 
-    VALUES (?, ?, ?, ?); 
+    INSERT INTO servizio (nome, prezzo, tipo, note, in_uso) 
+    VALUES (?, ?, ?, ?, ?); 
   `;
   
   SQL_SELEZIONE_TUTTI_I_SERVIZI = `
@@ -9,15 +9,62 @@ export class ServizioSQL {
       id, 
       nome, 
       prezzo, 
+      tipo, 
       in_uso, 
       0 AS quantita 
     FROM 
       servizio; 
   `;
+
+  // CR: Selezione servizi/prodotti per il catalogo lato cliente (solo in_uso = 1)
+  SQL_SELEZIONE_CATALOGO = `
+    SELECT 
+      id, 
+      nome, 
+      prezzo, 
+      tipo, 
+      note 
+    FROM 
+      servizio 
+    WHERE 
+      in_uso = 1 
+    ORDER BY tipo ASC, nome ASC; 
+  `;
+
+  // CR: Selezione solo prodotti per il catalogo
+  SQL_SELEZIONE_CATALOGO_PRODOTTI = `
+    SELECT 
+      id, 
+      nome, 
+      prezzo, 
+      tipo, 
+      note 
+    FROM 
+      servizio 
+    WHERE 
+      in_uso = 1 AND tipo = 'prodotto' 
+    ORDER BY nome ASC; 
+  `;
+
+  // CR: Selezione solo servizi per il catalogo
+  SQL_SELEZIONE_CATALOGO_SERVIZI = `
+    SELECT 
+      id, 
+      nome, 
+      prezzo, 
+      tipo, 
+      note 
+    FROM 
+      servizio 
+    WHERE 
+      in_uso = 1 AND tipo = 'servizio' 
+    ORDER BY nome ASC; 
+  `;
   
   SQL_SELEZIONE_ENTRATE_SERVIZI = `
     SELECT 
       CONCAT(s.nome, " x ", s.prezzo) AS nome, 
+      s.tipo AS tipo,
       YEAR(l.giorno) AS anno, 
       SUM(CASE WHEN MONTH(l.giorno) = 1 THEN COALESCE(c.quantita, 0) ELSE 0 END) AS quantita_gennaio, 
       SUM(CASE WHEN MONTH(l.giorno) = 1 THEN COALESCE(c.quantita, 0) * s.prezzo ELSE 0 END) AS totale_gennaio, 
@@ -56,7 +103,7 @@ export class ServizioSQL {
     UPDATE 
       servizio 
     SET 
-      nome = ?, prezzo = ?, note = ?, in_uso = ?  
+      nome = ?, prezzo = ?, tipo = ?, note = ?, in_uso = ?  
     WHERE 
       id = ?; 
   `;
@@ -73,6 +120,8 @@ export class ServizioSQL {
         nome AS nome_attuale, 
         prezzo, 
         prezzo AS prezzo_attuale, 
+        tipo, 
+        tipo AS tipo_attuale, 
         note, 
         note AS note_attuale, 
         CASE 
@@ -91,6 +140,12 @@ export class ServizioSQL {
     `;
   
     sql += (!params.note) ? " AND (note LIKE ? OR note IS NULL) " : " AND note LIKE ? ";
+    
+    // CR: Filtro per tipo (servizio/prodotto)
+    if(params.tipo && params.tipo !== "" && params.tipo !== "tutti") {
+      sql += " AND tipo = '" + params.tipo + "' ";
+    }
+
     if(params.in_uso.toLowerCase() === "s" || params.in_uso.toLowerCase() === "si") {
       sql += " AND in_uso = 1; ";
     }
@@ -120,6 +175,7 @@ export class ServizioSQL {
     return [
       `${params.nome}`, 
       `${params.prezzo}`, 
+      `${params.tipo || 'servizio'}`,
       `${params.note}`, 
       params.in_uso 
     ];
@@ -129,10 +185,15 @@ export class ServizioSQL {
     return [];
   }
 
+  params_selezione_catalogo() {
+    return [];
+  }
+
   params_modifica_servizio(params) {
     return [
       `${params.nome}`, 
       `${params.prezzo}`, 
+      `${params.tipo || 'servizio'}`,
       `${params.note}`, 
       params.in_uso, 
       `${params.id}` 
@@ -160,12 +221,3 @@ export class ServizioSQL {
     ];
   }
 }
-
-
-
-
-
-
-
-
-

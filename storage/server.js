@@ -33,10 +33,10 @@ app.listen(3000, () => {
 /************************************************** Database **************************************************/
 
 const db = mysql.createConnection({
-  host: "host",
-  user: "user",
-  password: "password",
-  database: "activity_management"
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "activity_management"
 })
 
 db.connect(err => {
@@ -248,6 +248,40 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
     return res.status(500).json();
   }
 });
+
+/************************************************** CR: Catalogo **************************************************/
+
+// CR: Endpoint per ottenere il catalogo completo (servizi + prodotti in uso)
+app.post("/VISUALIZZA_CATALOGO", async(req, res) => {
+  const servizioSQL = new ServizioSQL();
+  let sql = "";
+  let params = [];
+
+  switch(req.body.filtro_tipo) {
+    case "prodotto":
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO_PRODOTTI;
+      break;
+    case "servizio":
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO_SERVIZI;
+      break;
+    default:
+      // tutti
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO;
+      break;
+  }
+  params = servizioSQL.params_selezione_catalogo();
+
+  try {
+    const result = await executeQuery(sql, params);
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+/*************************************************************************************************************/
 
 app.post("/VISUALIZZA_ENTRATE_ITEMS", async(req, res) => {
   const lavoroSQL = new LavoroSQL();
@@ -466,12 +500,3 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
     return res.status(500).json();
   }
 });
-
-
-
-
-
-
-
-
-
