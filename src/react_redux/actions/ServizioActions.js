@@ -36,14 +36,36 @@ export class ServizioActions {
     }
   };
 
+  // CR: Ottenere il catalogo (servizi e prodotti in uso) per la vista cliente
+  async getCatalogo(filtroTipo, lingua) {
+    const response = await fetch('/VISUALIZZA_CATALOGO', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ filtro_tipo: filtroTipo }),
+    });
+
+    if(response.status === 200) {
+      const result = await response.json();
+      this.dispatch(servizioSliceActions.aggiornaCatalogo({
+        catalogo: result.items, 
+      }));
+    }
+    else {
+      alert(lingua === "italiano" ? "Errore durante il caricamento del catalogo, riprova più tardi." : "Error while loading the catalog, please try again later.");
+    }
+  };
+
   async inserisciServizio(e, nuovoServizio, setNuovoServizio, lingua) {
     e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler salvare il servizio?" : "Are you sure you want to save the service?")) {
+    if (confirm(lingua === "italiano" ? "Sei sicuro di voler salvare il servizio/prodotto?" : "Are you sure you want to save the service/product?")) {
       if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) 
         return;
 
       nuovoServizio["nome_attuale"] = nuovoServizio["nome"];
       nuovoServizio["prezzo_attuale"] = nuovoServizio["prezzo"];
+      nuovoServizio["tipo_attuale"] = nuovoServizio["tipo"];  // CR
       nuovoServizio["note_attuale"] = nuovoServizio["note"];
       nuovoServizio["in_uso"] = true;
       nuovoServizio["in_uso_attuale"] = nuovoServizio["in_uso"];
@@ -65,13 +87,13 @@ export class ServizioActions {
           nuovoServizio: nuovoServizio
         }));
 
-        alert(lingua === "italiano" ? "L\'inserimento del servizio è andato a buon fine." : "Service entry was successful.");
+        alert(lingua === "italiano" ? "L\'inserimento del servizio/prodotto è andato a buon fine." : "Service/product entry was successful.");
       }
       else if(response.status === 400) {
-        alert(lingua === "italiano" ? "Errore: servizio gia\' presente." : "Error: service already present.")
+        alert(lingua === "italiano" ? "Errore: servizio/prodotto gia\' presente." : "Error: service/product already present.")
       }
       else {
-        alert(lingua === "italiano" ? "Errore durante il salvataggio del nuovo servizio, riprova più tardi." : "Error while saving the new service, please try again later.");
+        alert(lingua === "italiano" ? "Errore durante il salvataggio del nuovo servizio/prodotto, riprova più tardi." : "Error while saving the new service/product, please try again later.");
       }
     }
     else {
@@ -166,7 +188,7 @@ export class ServizioActions {
 
   async modificaServizi(e, servizi, selectedIdsModifica, setSelectedIdsModifica, lingua) {
     e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler modificare i servizi?" : "Are you sure you want to modify the services?")) {
+    if (confirm(lingua === "italiano" ? "Sei sicuro di voler modificare i servizi/prodotti?" : "Are you sure you want to modify the services/products?")) {
       let serviziDaModificare = servizi.filter(servizio => selectedIdsModifica.includes(servizio.id)); 
       
       let idServiziNonModificati = [];
@@ -185,7 +207,7 @@ export class ServizioActions {
           body: JSON.stringify(dati),
         });
         if(response.status === 200) {           
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": modifica avvenuta con successo.\n" : "Service number " + (i+1) + ": successful modification..\n";
+          esitoModifica += lingua === "italiano" ? "Servizio/Prodotto numero " + (i+1) + ": modifica avvenuta con successo.\n" : "Service/Product number " + (i+1) + ": successful modification.\n";
           if(serviziDaModificare[i].prezzo !== serviziDaModificare[i].prezzo_attuale) {
             const result = await response.json();
             let nuovoServizio = { ...serviziDaModificare[i] };
@@ -199,11 +221,11 @@ export class ServizioActions {
           idServiziModificati.push(serviziDaModificare[i].id);
         }
         else if(response.status === 400) {
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": errore durante la modifica: servizio gia\' presente.\n" : "Service number " + (i+1) + ": Error while editing: service already present.\n";
+          esitoModifica += lingua === "italiano" ? "Servizio/Prodotto numero " + (i+1) + ": errore durante la modifica: servizio/prodotto gia\' presente.\n" : "Service/Product number " + (i+1) + ": Error while editing: service/product already present.\n";
           idServiziNonModificati.push(serviziDaModificare[i].id);
         }
         else {
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": errore durante la modifica.\n" : "Service number " + (i+1) + ": error while editing.\n";
+          esitoModifica += lingua === "italiano" ? "Servizio/Prodotto numero " + (i+1) + ": errore durante la modifica.\n" : "Service/Product number " + (i+1) + ": error while editing.\n";
           idServiziNonModificati.push(serviziDaModificare[i].id);
         }
       }
@@ -252,7 +274,7 @@ export class ServizioActions {
 
   async eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizi, lingua) {
     e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i servizi? Tutti i lavori presenti attualmente nel database verranno modificati eliminando i servizi selezionati." : "Are you sure you want to delete the services? All jobs currently in the database will be modified by deleting the selected services.")) {
+    if (confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i servizi/prodotti? Tutti i lavori presenti attualmente nel database verranno modificati eliminando i servizi/prodotti selezionati." : "Are you sure you want to delete the services/products? All jobs currently in the database will be modified by deleting the selected services/products.")) {
       const dati = {
         tipo_item: "servizio", 
         ids: selectedIdsEliminazione
@@ -275,7 +297,7 @@ export class ServizioActions {
         alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
       }
       else {
-        alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei servizi, riprova più tardi." : "Error while deleting services, try again later.");
+        alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei servizi/prodotti, riprova più tardi." : "Error while deleting services/products, try again later.");
       }
     }
     else {
@@ -307,12 +329,3 @@ export class ServizioActions {
     }
   };
 }
-
-
-
-
-
-
-
-
-
