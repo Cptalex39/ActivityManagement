@@ -121,7 +121,7 @@ export class ServizioSQL {
       `${params.nome}`, 
       `${params.prezzo}`, 
       `${params.note}`, 
-      params.in_uso 
+      true,  
     ];
   }
 

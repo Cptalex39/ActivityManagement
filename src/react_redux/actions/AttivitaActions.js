@@ -2,27 +2,20 @@
 import { useDispatch } from "react-redux";
 // Reducers
 import { attivitaSliceActions } from "../store/reducers/AttivitaReducer";
+// Actions
+import { Actions } from "./Actions";
 
-export class AttivitaActions {
+export class AttivitaActions extends Actions {
   dispatch = useDispatch();
   
   constructor() {
-
-  }
-
-  async ricercaEntrateUsciteRicavi(e, datiRicerca) {
-    e.preventDefault();
+    super();
   }
 
   scegliWidgets(e, setPlusCliccato, plusCliccato) {
     e.preventDefault();
     setPlusCliccato(!plusCliccato);
-    if(plusCliccato === true) {
-      this.dispatch(attivitaSliceActions.widgetView())
-    }
-    else if(plusCliccato === false) {
-      this.dispatch(attivitaSliceActions.widgetSelected());
-    }
+    this.dispatch(plusCliccato ? attivitaSliceActions.widgetView() : attivitaSliceActions.widgetSelected());
   }
 
   modificaWidget(nomeWidget, tipoVisualizzazione) {

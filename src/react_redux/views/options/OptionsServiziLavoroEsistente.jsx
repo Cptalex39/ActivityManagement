@@ -6,6 +6,8 @@ import { Col } from "react-bootstrap";
 // Actions
 import { LavoroActions } from "../../actions/LavoroActions";
 import { ServizioActions } from "../../actions/ServizioActions";
+// View
+import { handleGetAllServizi } from "../operazioni/ServizioOperazioni";
 
 const optionStr = (servizio) => {
   return `${servizio.nome} - ${servizio.prezzo} €`;
@@ -72,7 +74,7 @@ const OptionsServiziLavoroEsistente = ({ item, sottoStringa, setServiziLavoro })
   const [servizi, setServizi] = useState([]);
 
   useEffect(() => {
-    servizioActions.getAllServizi(setServizi, attivitaState.lingua);
+    handleGetAllServizi(servizioActions, setServizi, attivitaState.lingua);
   }, []);
   
   return (

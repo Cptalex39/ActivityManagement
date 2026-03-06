@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/esm/Col';
 // Views
 import Header from "../components/Header";
 import { OperazioniForms } from '../forms/OperazioniForms';
+import { handleSearchEntrateLavori, handleSearchUsciteSpese, handleSearchEntrateServizi } from '../operazioni/AttivitaOperazioni';
 // Actions
 import { LavoroActions } from "../../actions/LavoroActions";
 import { SpesaActions } from "../../actions/SpesaActions";
@@ -14,6 +15,7 @@ import { ServizioActions } from "../../actions/ServizioActions";
 import { CardEntrateItems, CardEntrateItemsByName, CardUsciteItems, CardRicavi, CardEntrateUscite } from '../../../riutilizzabile/card_item/CardItem';
 import { FormEntrateUscite } from '../../../riutilizzabile/form_item/FormItem';
 import { RowEntrateUscite } from "../../../riutilizzabile/row_item/RowItem";
+
 
 const Attivita = () => {
   const stileState = useSelector((state) => state.stile.value);
@@ -34,18 +36,20 @@ const Attivita = () => {
     ultimo_anno: (new Date()).getFullYear()
   });
 
-  const eseguiRicerca = (e) => {
+  const getEntrateLavori = async (e) => {
     e.preventDefault();
+    
     setEntrateLavori([]);
     setEntrateServizi([]);
     setUsciteSpese([]);
-    lavoroActions.handleSearchEntrateLavori(setEntrateLavori, datiRicerca, attivitaState.lingua);
+
+    handleSearchEntrateLavori(lavoroActions, setEntrateLavori, datiRicerca, attivitaState.lingua);
   };
   
   useEffect(() => {
     if(entrateLavori.length > 0) {
-      spesaActions.handleSearchUsciteSpese(setUsciteSpese, datiRicerca);
-      servizioActions.handleSearchEntrateServizi(setEntrateServizi, datiRicerca, attivitaState.lingua); 
+      handleSearchUsciteSpese(spesaActions, setUsciteSpese, datiRicerca);
+      handleSearchEntrateServizi(servizioActions, setEntrateServizi, datiRicerca, attivitaState.lingua); 
     }
   }, [entrateLavori]);
 
@@ -60,7 +64,7 @@ const Attivita = () => {
           datiRicerca={datiRicerca}
           setDatiRicerca={setDatiRicerca}
           handleInputChange={operazioniForms.handleInputChange}
-          eseguiRicerca={eseguiRicerca} 
+          eseguiRicerca={(e) => getEntrateLavori(e, setEntrateLavori, datiRicerca, attivitaState.lingua)} 
           lingua={attivitaState.lingua}
         />
       )}
@@ -70,7 +74,7 @@ const Attivita = () => {
             datiRicerca={datiRicerca}
             setDatiRicerca={setDatiRicerca}
             handleInputChange={operazioniForms.handleInputChange}
-            eseguiRicerca={eseguiRicerca} 
+            eseguiRicerca={(e) => getEntrateLavori(e, setEntrateLavori, datiRicerca, attivitaState.lingua)} 
             lingua={attivitaState.lingua}
           />
         </center>
@@ -81,7 +85,7 @@ const Attivita = () => {
             datiRicerca={datiRicerca}
             setDatiRicerca={setDatiRicerca}
             handleInputChange={operazioniForms.handleInputChange}
-            eseguiRicerca={eseguiRicerca} 
+            eseguiRicerca={(e) => getEntrateLavori(e, setEntrateLavori, datiRicerca, attivitaState.lingua)} 
             lingua={attivitaState.lingua}
           />
         </center>

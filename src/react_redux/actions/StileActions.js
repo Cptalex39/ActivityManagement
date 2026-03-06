@@ -2,45 +2,39 @@
 import { useDispatch } from 'react-redux';
 // Reducers
 import { stileSliceActions } from '../store/reducers/StileReducer';
+// Actions
+import { Actions } from "./Actions";
 
-export class StileActions {
+export class StileActions extends Actions {
   dispatch = useDispatch();
 
   constructor() {
-    
+    super();
   }
 
-  cambioSfondo(tipoSfondo, sfondo, lingua) {
-    switch(tipoSfondo) {
-      case "img":
-        this.dispatch(stileSliceActions.cambioImmagineSfondo({
-          pathImg: sfondo
-        }));
-        break;
-      case "rgb": 
-        this.dispatch(stileSliceActions.cambioColoreSfondo({
-          coloreRGB: sfondo
-        }));
-        break;
-      default:
-        alert(lingua === "italiano" ? "Errore, tipo sfondo non valido." : "Error, invalid background type.");
-        break;
+  cambioSfondo(tipoSfondo, sfondo) {
+    if(tipoSfondo === "img") {
+      this.dispatch(stileSliceActions.cambioImmagineSfondo({
+        pathImg: sfondo
+      }));
+    }
+    else {
+      this.dispatch(stileSliceActions.cambioColoreSfondo({
+        coloreRGB: sfondo
+      }));
     }
   }
 
-  cambioVista(tipoElemento, tipoView, lingua) {
+  cambioVista(tipoElemento, tipoView) {
     if(tipoElemento === "item") {
       this.dispatch(stileSliceActions.cambioVistaItem({
         vistaItem: tipoView
       }));
     }
-    else if(tipoElemento === "form") {
+    else {
       this.dispatch(stileSliceActions.cambioVistaForm({
         vistaForm: tipoView
       }))
-    }
-    else {
-      alert(lingua === "italiano" ? "Errore, tipo elemento non valido." : "Error, invalid element type.");
     }
   }
 }

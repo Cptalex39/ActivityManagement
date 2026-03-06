@@ -5,6 +5,9 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header.jsx";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { LavoroForms } from "../forms/LavoroForms";
+import { handleInsert, handleSearch, handleEdit, handleDelete, handleSearchRangeFile, handleDeleteRangeFile } from "../operazioni/LavoroOperazioni.js";
+import { handleGetAllClienti } from "../operazioni/ClienteOperazioni.js";
+import { handleGetAllServizi } from "../operazioni/ServizioOperazioni.js";
 // Actions
 import { LavoroActions } from "../../actions/LavoroActions.js";
 import { ClienteActions } from "../../actions/ClienteActions.js";
@@ -116,11 +119,11 @@ const Lavori = () => {
   );
 
   useEffect(() => {
-    clienteActions.getAllClienti(setClienti, attivitaState.lingua);
+    handleGetAllClienti(clienteActions, setClienti, attivitaState.lingua);
   }, []);
 
   useEffect(() => {
-    servizioActions.getAllServizi(setServizi, attivitaState.lingua);
+    handleGetAllServizi(servizioActions, setServizi, attivitaState.lingua);
   }, []);
 
   return (
@@ -141,13 +144,13 @@ const Lavori = () => {
             lavoroActions: lavoroActions,
             // Handle operations 
             handleBlurItem: handleBlurItem, 
-            handleInsert: (e) => lavoroActions.inserimentoLavoro(e, servizi, clienti, nuovoLavoro, setNuovoLavoro, attivitaState.lingua), 
-            handleSearch: (e) => lavoroActions.ricercaLavori(e, datiRicerca, attivitaState.lingua), 
-            handleEdit: (e) => lavoroActions.modificaLavori(e, servizi, lavoroState.lavori, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
-            handleDelete: (e) => lavoroActions.eliminaLavori(e, selectedIdsEliminazione, setSelectedIdsEliminazione, lavoroState.lavori, attivitaState.lingua), 
-            handleSearchRangeFilePDF: (e) => lavoroActions.handleSearchLavoriRangeFile(e, "pdf", setTipoFile, datiRicerca, setLavori, attivitaState.lingua), 
-            handleSearchRangeFileExcel: (e) => lavoroActions.handleSearchLavoriRangeFile(e, "excel", setTipoFile, datiRicerca, setLavori, attivitaState.lingua), 
-            handleDeleteRangeFile: (e) => lavoroActions.handleDeleteLavoriRangeFile(e, datiRicerca, attivitaState.lingua), 
+            handleInsert: (e) => handleInsert(e, lavoroActions, servizi, clienti, nuovoLavoro, setNuovoLavoro, attivitaState.lingua), 
+            handleSearch: (e) => handleSearch(e, lavoroActions, datiRicerca, attivitaState.lingua), 
+            handleEdit: (e) => handleEdit(e, lavoroActions, servizi, lavoroState.lavori, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
+            handleDelete: (e) => handleDelete(e, lavoroActions, selectedIdsEliminazione, setSelectedIdsEliminazione, lavoroState.lavori, attivitaState.lingua), 
+            handleSearchRangeFilePDF: (e) => handleSearchRangeFile(e, lavoroActions, "pdf", setTipoFile, datiRicerca, setLavori, attivitaState.lingua), 
+            handleSearchRangeFileExcel: (e) => handleSearchRangeFile(e, lavoroActions, "excel", setTipoFile, datiRicerca, setLavori, attivitaState.lingua), 
+            handleDeleteRangeFile: (e) => handleDeleteRangeFile(e, lavoroActions, datiRicerca, attivitaState.lingua), 
             // Campi
             campiNuovoItem: campiNuovoLavoro,
             campiRicercaItems: campiRicercaLavori, 

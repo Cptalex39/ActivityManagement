@@ -49,6 +49,11 @@ export const NavbarApp = () => {
   const handleMouseLeave = (setDropdown) => {
     setDropdown(false);
   };  
+
+  const handleLogout = (e, navigate) => {
+    e.preventDefault();
+    autenticazioneActions.logout(navigate);
+  }
   
   const applicaStileBody = () => {
     if (stileState.pathImg !== null) {
@@ -132,22 +137,22 @@ export const NavbarApp = () => {
                     {(dropdownSfondo === true) && (
                       <>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", montagne, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", montagne)}
                         >
                           {attivitaState.lingua === "italiano" ? "Montagne" : "Mountains"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", mongolfiera, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", mongolfiera)}
                         >
                           {attivitaState.lingua === "italiano" ? "Mongolfiera" : "Hot Air Balloon"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", negozio, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", negozio)}
                         >
                           {attivitaState.lingua === "italiano" ? "Negozio" : "Store"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", salone, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", salone)}
                         >
                           {attivitaState.lingua === "italiano" ? "Salone" : "Salon"}
                         </StyledNavDropdownItem>
@@ -155,24 +160,24 @@ export const NavbarApp = () => {
                         
 
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", scrivania, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", scrivania)}
                         >
                           {attivitaState.lingua === "italiano" ? "Scrivania" : "Desk"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", legno, attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("img", legno)}
                         >
                           {attivitaState.lingua === "italiano" ? "Legno" : "Wood"}
                         </StyledNavDropdownItem>
 
 
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("rgb", "#111111", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("rgb", "#111111")}
                         >
                           {attivitaState.lingua === "italiano" ? "Sfondo scuro" : "Dark background"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("rgb", "#8F8F8F", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioSfondo("rgb", "#8F8F8F")}
                         >
                           {attivitaState.lingua === "italiano" ? "Sfondo chiaro" : "Light background"}
                         </StyledNavDropdownItem>
@@ -186,12 +191,12 @@ export const NavbarApp = () => {
                     {(dropdownItem === true) && (
                       <>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("item", "list", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioVista("item", "list")}
                         >
                           {attivitaState.lingua === "italiano" ? "Riga" : "Row"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("item", "card", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioVista("item", "card")}
                         >
                           {attivitaState.lingua === "italiano" ? "Carta" : "Card"}
                         </StyledNavDropdownItem>
@@ -205,17 +210,17 @@ export const NavbarApp = () => {
                     {(dropdownForm === true) && (
                       <>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "form", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioVista("form", "form")}
                         >
                           Form
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "row", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioVista("form", "row")}
                         >
                           {attivitaState.lingua === "italiano" ? "Riga" : "Row"}
                         </StyledNavDropdownItem>
                         <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "card", attivitaState.lingua)}
+                          onClick={() => stileActions.cambioVista("form", "card")}
                         >
                           {attivitaState.lingua === "italiano" ? "Carta" : "Card"}
                         </StyledNavDropdownItem>
@@ -234,7 +239,7 @@ export const NavbarApp = () => {
               <>
                 <StyledNavLink as={NavLink} to="/analisi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Analisi" : "Analyses"}</StyledNavLink>
                 <StyledNavLink as={NavLink} to="/profilo" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Profilo" : "Profile"}</StyledNavLink>
-                <StyledNavLink as={NavLink} to="/" onClick={(e) => autenticazioneActions.logout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
+                <StyledNavLink as={NavLink} to="/" onClick={(e) => handleLogout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
               </>
             )}
             <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>

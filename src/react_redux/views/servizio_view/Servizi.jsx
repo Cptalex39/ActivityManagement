@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header.jsx";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { ServizioForms } from "../forms/ServizioForms";
+import { handleInsert, handleSearch, handleEdit, handleDelete } from "../operazioni/ServizioOperazioni.js";
 // Actions
 import { ServizioActions } from "../../actions/ServizioActions";
 // Riutilizzabile
@@ -71,7 +72,7 @@ const Servizi = () => {
     (e) => operazioniForms.handleInputClick(e, setDatiRicerca), 
     (e) => operazioniForms.handleInputBlur(e, setDatiRicerca)
   );
-  
+
   return (
     <>
       <Header />
@@ -92,10 +93,10 @@ const Servizi = () => {
             lavoroActions: null, 
             // Handle operations
             handleBlurItem: handleBlurItem, 
-            handleInsert: (e) => servizioActions.inserisciServizio(e, nuovoServizio, setNuovoServizio, attivitaState.lingua), 
-            handleSearch: (e) => servizioActions.ricercaServizi(e, datiRicerca, attivitaState.lingua), 
-            handleEdit:   (e) => servizioActions.modificaServizi(e, servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
-            handleDelete: (e) => servizioActions.eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi, attivitaState.lingua), 
+            handleInsert: (e) => handleInsert(e, servizioActions, nuovoServizio, setNuovoServizio, attivitaState.lingua), 
+            handleSearch: (e) => handleSearch(e, servizioActions, datiRicerca, attivitaState.lingua), 
+            handleEdit:   (e) => handleEdit(e, servizioActions, servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
+            handleDelete: (e) => handleDelete(e, servizioActions, selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi, attivitaState.lingua), 
             // Campi
             campiNuovoItem: campiNuovoServizio, 
             campiRicercaItems: campiRicercaServizi,

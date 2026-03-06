@@ -203,6 +203,7 @@ export const controlloLavoro = (dati, settersErrori, lingua) => {
   // controllo sul cliente
   messaggioErrore = "";
   if (dati.id_cliente <= 0) {
+    console.log("A");
     numErrori += 1; 
     messaggioErrore = lingua === "italiano" ? "Selezionare un cliente." : "You select a client.";
   }
@@ -210,6 +211,8 @@ export const controlloLavoro = (dati, settersErrori, lingua) => {
 
   // controllo sui servizi
   if(parseFloat(dati.totale) <= 0) {
+    console.log("B");
+    console.log(dati.totale);
     numErrori += 1; 
     messaggioErrore = lingua === "italiano" ? "Selezionare almeno un\'unita\' di un servizio." : "You select at least one unit of a service.";
   }
@@ -218,6 +221,7 @@ export const controlloLavoro = (dati, settersErrori, lingua) => {
   // controllo sul giorno
   messaggioErrore = "";
   if (isEmpty(dati.giorno)) {
+    console.log("C");
     numErrori += 1; 
     messaggioErrore = lingua = "italiano" ? "Inserire il giorno." : "The day was not entered.";
   }
@@ -226,6 +230,7 @@ export const controlloLavoro = (dati, settersErrori, lingua) => {
   // controllo sulle note
   messaggioErrore = "";
   if(!isInRange(dati.note.length, 0, 200)) {
+    console.log("D");
     numErrori += 1;
     messaggioErrore = lingua === "italiano" ? "Lunghezza note non valida, deve avere un numero di caratteri tra 0 e 200 estremi inclusi." : "Invalid note length, must have a number of characters between 0 and 200 inclusive extremes.";
   }
@@ -243,10 +248,12 @@ export const controlloLogin = (dati, settersErrori, lingua) => {
   // controllo sullo username inserito
   messaggioErrore = "";
   if (isEmpty(dati.username)) {
+    console.log(1);
     numErrori += 1; 
     messaggioErrore = lingua === "italiano" ? "Inserire lo username." : "The username was not entered.";
   }
   else if(!isInRange(dati.username.length, 1, 10)) {
+    console.log(2);
     numErrori += 1; 
     messaggioErrore = lingua === "italiano" ? "Lunghezza username non valida, deve avere un numero di caratteri alfanumerici tra 1 e 10 estremi inclusi." : "Invalid username length, must have a number of alphanumeric characters between 1 and 10 inclusive extremes.";
   }
@@ -255,10 +262,12 @@ export const controlloLogin = (dati, settersErrori, lingua) => {
   // constrollo sulla password inserita
   messaggioErrore = "";
   if(isEmpty(dati.password)) {
+    console.log(3);
     numErrori += 1;
     messaggioErrore = lingua === "italiano" ? "Inserire la password." : "The password was not entered.";
   }
   else if(!matchRegex(dati.password, regexPassword)) {
+    console.log(4);
     numErrori += 1;
     messaggioErrore =  lingua === "italiano" ? "Password non valida. deve avere:<br>" : "Invalid password. Must have:<br>";
     messaggioErrore += lingua === "italiano" ? "- minimo 8 e massimo 128 caratteri alfanumerici.<br>" : "- minimum 8 and maximum 128 alphanumeric characters.<br>";
@@ -273,10 +282,12 @@ export const controlloLogin = (dati, settersErrori, lingua) => {
     // controllo sullo username e sulla password inserita
     messaggioErrore = "";
     if(dati.num_utenti !== 1) {
+      console.log(5);
       numErrori += 1;
       messaggioErrore = lingua === "italiano" ? "Username e/o password errati." : "Incorrect username and/or password.";
     }
     else if(!passwordIsCorrect(dati.password, dati.password_db, dati.salt_hex_db)) {
+      console.log(6);
       numErrori += 1;
       messaggioErrore = lingua === "italiano" ? "Username e/o password errati." : "Incorrect username and/or password.";
     }

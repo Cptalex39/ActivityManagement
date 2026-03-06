@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header.jsx";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { SpesaForms } from "../forms/SpesaForms";
+import { handleInsert, handleSearch, handleEdit, handleDelete, handleSearchRangeFile, handleDeleteRangeFile } from "../operazioni/SpesaOperazioni.js";
 // Actions
 import { SpesaActions } from "../../actions/SpesaActions";
 // Riutilizzabile
@@ -122,13 +123,13 @@ const Spese = () => {
             lavoroActions: null, 
             // Handle operations
             handleBlurItem: handleBlurItem, 
-            handleInsert: (e) => spesaActions.inserimentoSpesa(e, nuovaSpesa, setNuovaSpesa, attivitaState.lingua), 
-            handleSearch: (e) => spesaActions.ricercaSpese(e, datiRicerca, attivitaState.lingua), 
-            handleEdit:   (e) => spesaActions.modificaSpese(e, spesaState.spese, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua),  
-            handleDelete: (e) => spesaActions.eliminaSpese(e, selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese, attivitaState.lingua), 
-            handleSearchRangeFilePDF: (e) => spesaActions.handleSearchSpeseRangeFile(e, "pdf", setTipoFile, datiRicerca, spese, setSpese, attivitaState.lingua),
-            handleSearchRangeFileExcel: (e) => spesaActions.handleSearchSpeseRangeFile(e, "excel", setTipoFile, datiRicerca, spese, setSpese, attivitaState.lingua),
-            handleDeleteRangeFile: (e) => spesaActions.handleDeleteSpeseRangeFile(e, datiRicerca, attivitaState.lingua),
+            handleInsert: (e) => handleInsert(e, spesaActions, nuovaSpesa, setNuovaSpesa, attivitaState.lingua), 
+            handleSearch: (e) => handleSearch(e, spesaActions, datiRicerca, attivitaState.lingua), 
+            handleEdit:   (e) => handleEdit(e, spesaActions, spesaState.spese, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua),  
+            handleDelete: (e) => handleDelete(e, spesaActions, selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese, attivitaState.lingua), 
+            handleSearchRangeFilePDF: (e) => handleSearchRangeFile(e, spesaActions, "pdf", setTipoFile, datiRicerca, spese, setSpese, attivitaState.lingua),
+            handleSearchRangeFileExcel: (e) => handleSearchRangeFile(e, spesaActions, "excel", setTipoFile, datiRicerca, spese, setSpese, attivitaState.lingua),
+            handleDeleteRangeFile: (e) => handleDeleteRangeFile(e, spesaActions, datiRicerca, attivitaState.lingua),
             // Campi
             campiNuovoItem: campiNuovaSpesa, 
             campiRicercaItems: campiRicercaSpese,

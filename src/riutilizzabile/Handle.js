@@ -53,8 +53,8 @@ export const handleChange = (e, index, setLocalValues) => {
 
   // Aggiorna solo lo stato locale
   if(modificabile === true) {
-    setLocalValues((prevValues) => ({
-      ...prevValues,
+    setLocalValues((prevState) => ({
+      ...prevState,
       [index]: value,
     }));
   }

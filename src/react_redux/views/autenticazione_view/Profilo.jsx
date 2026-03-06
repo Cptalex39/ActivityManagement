@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import Header from "../components/Header";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { AutenticazioneForms } from "../forms/AutenticazioneForms";
+import { handleModificaProfilo } from "../operazioni/AutenticazioneOperazioni";
 // Actions
 import { AutenticazioneActions } from "../../actions/AutenticazioneActions"
 // Riutilizzabile
@@ -37,7 +38,7 @@ const Profilo = () => {
     (stileState.vistaForm === "card") ? CardProfilo : RowProfilo
   );
   const campiProfilo = autenticazioneForms.getCampiProfilo(datiProfilo, (e) => operazioniForms.handleInputChange(e, setDatiProfilo), null, null);
-
+  
   return (
     <>
       <Header />
@@ -47,10 +48,19 @@ const Profilo = () => {
       <ProfiloTag  
         campi={campiProfilo} 
         indici={[...Array(campiProfilo.label.length).keys()]} 
-        eseguiModificaProfilo={(e) => autenticazioneActions.modificaProfilo(e, autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, attivitaState.lingua)} 
+        eseguiModificaProfilo={(e) => handleModificaProfilo(e, autenticazioneActions, autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, attivitaState.lingua)} 
       />
     </>
   )
 }
 
 export default Profilo;
+
+
+
+
+
+
+
+
+
