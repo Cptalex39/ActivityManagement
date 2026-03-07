@@ -101,7 +101,10 @@ export const NavbarApp = () => {
             </>
           ) : (
             <>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              {/* CR: Link all'area cliente quando non loggato */}
+              <StyledNavLink as={NavLink} to="/catalogo" onContextMenu={handleContextMenu}>
+                {attivitaState.lingua === "italiano" ? "Area Cliente" : "Client Area"}
+              </StyledNavLink>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -250,12 +253,3 @@ export const NavbarApp = () => {
     </>
   );
 }
-
-
-
-
-
-
-
-
-
