@@ -1,13 +1,13 @@
 // React e Redux
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Row from 'react-bootstrap/esm/Row';
-import Col from 'react-bootstrap/esm/Col';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 // Views
-import Header from "../components/Header";
+import HeaderCliente from "../components/HeaderCliente";
 // Actions
 import { ServizioActions } from "../../actions/ServizioActions";
+import { CarrelloActions } from "../../actions/CarrelloActions";
 
 /*** Styled Components ***/
 
@@ -117,14 +117,7 @@ const QuantitaDisplay = styled.span`
   text-align: center;
 `;
 
-const AzioniContainer = styled.div`
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 15px;
-`;
-
-const ButtonPrenota = styled.button`
+const AggiungiButton = styled.button`
   border-radius: 40px;
   border: none;
   background-color: #0050EF;
@@ -132,8 +125,9 @@ const ButtonPrenota = styled.button`
   padding: 8px 20px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 15px;
   transition: 0.3s all ease-out;
+  margin-top: 10px;
   &:hover {
     background-color: #003BB5;
   }
@@ -143,149 +137,129 @@ const ButtonPrenota = styled.button`
   }
 `;
 
-const ButtonOrdina = styled.button`
-  border-radius: 40px;
+const CarrelloFloatingButton = styled.button`
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
   border: none;
-  background-color: #FF6B00;
+  background-color: #0050EF;
   color: #FFFFFF;
-  padding: 8px 20px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  transition: 0.3s all ease-out;
-  &:hover {
-    background-color: #CC5500;
-  }
-  &:disabled {
-    background-color: #333;
-    cursor: not-allowed;
-  }
-`;
-
-const RiepilogoContainer = styled.div`
-  background-color: rgba(0, 0, 0, 0.85);
-  border-radius: 20px;
-  padding: 25px;
-  color: #FFFFFF;
-  margin-top: 40px;
-  margin-bottom: 40px;
-  text-align: center;
-`;
-
-const TotaleText = styled.p`
   font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 80, 239, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s all ease-out;
+  z-index: 1000;
+  &:hover {
+    background-color: #003BB5;
+    transform: scale(1.1);
+  }
+`;
+
+const CarrelloBadge = styled.span`
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #FF4444;
+  color: #FFFFFF;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
   font-weight: bold;
-  color: #0050EF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const SuccessoMessaggio = styled.span`
+  color: #00CC66;
+  font-size: 14px;
+  font-weight: bold;
+  display: block;
+  margin-top: 5px;
 `;
 
 /*** Componente Catalogo ***/
 
 const Catalogo = () => {
   const servizioActions = new ServizioActions();
+  const carrelloActions = new CarrelloActions();
+  const navigate = useNavigate();
+
   const servizioState = useSelector((state) => state.servizio.value);
+  const carrelloState = useSelector((state) => state.carrello.value);
   const attivitaState = useSelector((state) => state.attivita.value);
   const lingua = attivitaState.lingua;
 
   const [filtroTipo, setFiltroTipo] = useState("tutti");
-  const [quantita, setQuantita] = useState({}); // { id_servizio: quantita }
+  const [quantita, setQuantita] = useState({});
+  const [aggiuntoFeedback, setAggiuntoFeedback] = useState({});
 
-  // Carica il catalogo al montaggio e quando cambia il filtro
   useEffect(() => {
     servizioActions.getCatalogo(filtroTipo, lingua);
   }, [filtroTipo]);
 
   const incrementa = (id) => {
-    setQuantita(prev => ({
-      ...prev,
-      [id]: (prev[id] || 0) + 1
-    }));
+    setQuantita(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
   };
 
   const decrementa = (id) => {
-    setQuantita(prev => ({
-      ...prev,
-      [id]: Math.max((prev[id] || 0) - 1, 0)
-    }));
+    setQuantita(prev => ({ ...prev, [id]: Math.max((prev[id] || 0) - 1, 0) }));
   };
 
-  const getItemsSelezionati = () => {
-    if (!servizioState.catalogo || servizioState.catalogo.length === 0) return [];
-    return servizioState.catalogo.filter(item => (quantita[item.id] || 0) > 0);
-  };
-
-  const getTotale = () => {
-    let totale = 0;
-    for (const item of getItemsSelezionati()) {
-      totale += item.prezzo * (quantita[item.id] || 0);
-    }
-    return totale;
-  };
-
-  const handlePrenota = (e) => {
-    e.preventDefault();
-    const selezionati = getItemsSelezionati();
-    if (selezionati.length === 0) {
-      alert(lingua === "italiano" ? "Seleziona almeno un servizio o prodotto." : "Select at least one service or product.");
+  const handleAggiungiAlCarrello = (item) => {
+    const qta = quantita[item.id] || 0;
+    if (qta <= 0) {
+      alert(lingua === "italiano" ? "Seleziona una quantità maggiore di 0." : "Select a quantity greater than 0.");
       return;
     }
-    // CR: Qui in futuro si aprirà la pagina di prenotazione con data/ora
-    alert(lingua === "italiano" 
-      ? "Funzionalità di prenotazione in fase di sviluppo.\nTotale: " + getTotale().toFixed(2) + " €" 
-      : "Booking functionality under development.\nTotal: " + getTotale().toFixed(2) + " €"
-    );
+    carrelloActions.aggiungiAlCarrello(item, qta);
+    setQuantita(prev => ({ ...prev, [item.id]: 0 }));
+    setAggiuntoFeedback(prev => ({ ...prev, [item.id]: true }));
+    setTimeout(() => {
+      setAggiuntoFeedback(prev => ({ ...prev, [item.id]: false }));
+    }, 2000);
   };
 
-  const handleOrdina = (e) => {
-    e.preventDefault();
-    const selezionati = getItemsSelezionati();
-    if (selezionati.length === 0) {
-      alert(lingua === "italiano" ? "Seleziona almeno un servizio o prodotto." : "Select at least one service or product.");
-      return;
+  const getNumeroItemsCarrello = () => {
+    let count = 0;
+    for (const item of carrelloState.items) {
+      count += item.quantita;
     }
-    // CR: Qui in futuro si aprirà la pagina di ordine con spedizione/ritiro e pagamento
-    alert(lingua === "italiano" 
-      ? "Funzionalità di ordine in fase di sviluppo.\nTotale: " + getTotale().toFixed(2) + " €" 
-      : "Order functionality under development.\nTotal: " + getTotale().toFixed(2) + " €"
-    );
+    return count;
   };
 
   return (
     <>
-      <Header />
+      <HeaderCliente />
 
       <div className="main-content" />
 
       <CatalogoContainer>
-        {/* Titolo */}
         <center>
           <h2 style={{ color: "#FFFFFF", marginBottom: "30px", fontSize: "32px" }}>
             {lingua === "italiano" ? "Catalogo Servizi e Prodotti" : "Services and Products Catalog"}
           </h2>
         </center>
 
-        {/* Filtri */}
         <FiltroContainer>
-          <FiltroButton 
-            $attivo={filtroTipo === "tutti"} 
-            onClick={() => setFiltroTipo("tutti")}
-          >
+          <FiltroButton $attivo={filtroTipo === "tutti"} onClick={() => setFiltroTipo("tutti")}>
             {lingua === "italiano" ? "Tutti" : "All"}
           </FiltroButton>
-          <FiltroButton 
-            $attivo={filtroTipo === "servizio"} 
-            onClick={() => setFiltroTipo("servizio")}
-          >
+          <FiltroButton $attivo={filtroTipo === "servizio"} onClick={() => setFiltroTipo("servizio")}>
             {lingua === "italiano" ? "Servizi" : "Services"}
           </FiltroButton>
-          <FiltroButton 
-            $attivo={filtroTipo === "prodotto"} 
-            onClick={() => setFiltroTipo("prodotto")}
-          >
+          <FiltroButton $attivo={filtroTipo === "prodotto"} onClick={() => setFiltroTipo("prodotto")}>
             {lingua === "italiano" ? "Prodotti" : "Products"}
           </FiltroButton>
         </FiltroContainer>
 
-        {/* Griglia catalogo */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", justifyContent: "center" }}>
           {servizioState.catalogo && servizioState.catalogo.length > 0 ? (
             servizioState.catalogo.map((item) => (
@@ -301,13 +275,8 @@ const Catalogo = () => {
                 {item.note && (
                   <p style={{ fontSize: "14px", color: "#AAA", marginBottom: "10px" }}>{item.note}</p>
                 )}
-
-                {/* Pulsanti incremento/decremento quantità */}
                 <QuantitaContainer>
-                  <QuantitaButton 
-                    onClick={() => decrementa(item.id)} 
-                    disabled={(quantita[item.id] || 0) === 0}
-                  >
+                  <QuantitaButton onClick={() => decrementa(item.id)} disabled={(quantita[item.id] || 0) === 0}>
                     −
                   </QuantitaButton>
                   <QuantitaDisplay>{quantita[item.id] || 0}</QuantitaDisplay>
@@ -315,6 +284,14 @@ const Catalogo = () => {
                     +
                   </QuantitaButton>
                 </QuantitaContainer>
+                <AggiungiButton onClick={() => handleAggiungiAlCarrello(item)} disabled={(quantita[item.id] || 0) === 0}>
+                  {lingua === "italiano" ? "Aggiungi al Carrello" : "Add to Cart"}
+                </AggiungiButton>
+                {aggiuntoFeedback[item.id] && (
+                  <SuccessoMessaggio>
+                    {lingua === "italiano" ? "Aggiunto!" : "Added!"}
+                  </SuccessoMessaggio>
+                )}
               </CardCatalogo>
             ))
           ) : (
@@ -323,32 +300,14 @@ const Catalogo = () => {
             </p>
           )}
         </div>
-
-        {/* Riepilogo e azioni */}
-        {getTotale() > 0 && (
-          <RiepilogoContainer>
-            <h3 style={{ marginBottom: "10px" }}>
-              {lingua === "italiano" ? "Riepilogo" : "Summary"}
-            </h3>
-            {getItemsSelezionati().map((item) => (
-              <p key={item.id} style={{ fontSize: "18px", margin: "5px 0" }}>
-                {item.nome} x {quantita[item.id]} = {(item.prezzo * quantita[item.id]).toFixed(2)} €
-              </p>
-            ))}
-            <TotaleText>
-              {lingua === "italiano" ? "Totale" : "Total"}: {getTotale().toFixed(2)} €
-            </TotaleText>
-            <AzioniContainer>
-              <ButtonPrenota onClick={handlePrenota}>
-                {lingua === "italiano" ? "Prenota" : "Book"}
-              </ButtonPrenota>
-              <ButtonOrdina onClick={handleOrdina}>
-                {lingua === "italiano" ? "Ordina" : "Order"}
-              </ButtonOrdina>
-            </AzioniContainer>
-          </RiepilogoContainer>
-        )}
       </CatalogoContainer>
+
+      {carrelloState.items.length > 0 && (
+        <CarrelloFloatingButton onClick={() => navigate('/carrello')}>
+          🛒
+          <CarrelloBadge>{getNumeroItemsCarrello()}</CarrelloBadge>
+        </CarrelloFloatingButton>
+      )}
 
       <br /><br /><br />
     </>
