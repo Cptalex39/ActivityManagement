@@ -5,6 +5,19 @@ export const handleInsert = async (e, actions, nuovoServizio, setNuovoServizio, 
     alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
     return;
   }
+
+  let nuovoServizioAggiornato = {
+    ...nuovoServizio, 
+  };
+
+  setNuovoServizio(prevState => ({
+    ...prevState, 
+    nome_attuale: nuovoServizio.nome,
+    prezzo_attuale: nuovoServizio.prezzo, 
+    note_attuale: nuovoServizio.note, 
+    in_uso: "Si", 
+    in_uso_attuale: "Si",
+  }))
   
   const result = await actions.inserisciServizio(nuovoServizio, setNuovoServizio, lingua);
 
@@ -83,7 +96,7 @@ export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelec
 }
 
 export const handleGetAllServizi = async (actions, setServizi, lingua) => {
-  const result = await actions.getAllServizi(setServizi);
+  const result = await actions.getAllItems(setServizi, "servizio");
 
   if(!result.isOK) {
     alert(lingua === "italiano" ? "Errore durante l\'ottenimento dei servizi per l\'inserimento di un nuovo lavoro, riprova più tardi." : "Error while obtaining services for new job entry, try again later.");

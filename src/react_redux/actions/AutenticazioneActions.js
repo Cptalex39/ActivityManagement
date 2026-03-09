@@ -90,6 +90,20 @@ export class AutenticazioneActions extends Actions {
       responseStatus: response.status, 
     }
   }
+
+  async eliminazioneProfilo(dati) {
+    const dati = {
+      ...dati, 
+      stato: "DELETION_REQUEST",
+    };
+
+    const response = await super.getResponse("/AGGIORNA_STATO_PROFILO", dati);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
+  }
 }
 
 

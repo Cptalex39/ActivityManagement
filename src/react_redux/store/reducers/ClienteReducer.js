@@ -56,13 +56,7 @@ const reducers = {
         }
       }
     }
-  },
-  inserimentoCliente: (state, action) => {
-    if(state.value.clienti === -1) {
-      state.value.clienti = [];
-    }
-    state.value.clienti.push(action.payload.nuovoCliente);
-  },
+  }
 };
 
 const clienteSlice = createSlice ({
@@ -77,7 +71,6 @@ export const clienteSliceActions = {
   aggiornaCliente: clienteSlice.actions.aggiornaCliente,
   getClientePrimaDellaModifica: clienteSlice.actions.getClientePrimaDellaModifica,
   getClienteDopoLaModifica: clienteSlice.actions.getClienteDopoLaModifica,
-  inserimentoCliente: clienteSlice.actions.inserimentoCliente,
 };
 
 export const clienteReducer = clienteSlice.reducer;

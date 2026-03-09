@@ -6,11 +6,7 @@ export const handleInsert = async (e, actions, servizi, clienti, nuovoLavoro, se
     return;
   }
 
-  const result = await actions.inserimentoLavoro(servizi, clienti, nuovoLavoro, setNuovoLavoro, lingua)
-  
-  if(result === null) {
-    return;
-  }
+  const result = await actions.inserimentoLavoro(nuovoLavoro, servizi)
 
   if(!result.isOK) {
     if(result.responseStatus === 400) {
@@ -44,7 +40,7 @@ export const handleEdit = async (e, actions, servizi, lavori, selectedIdsModific
     return;
   }
 
-  const result = await actions.modificaLavori(servizi, lavori, selectedIdsModifica, setSelectedIdsModifica)
+  const result = await actions.modificaLavori(lavori, selectedIdsModifica, setSelectedIdsModifica)
 
   let esitoModifica = lingua === "italiano" ? "Esito modifica:\n" : "Modification outcome:\n";
 

@@ -62,12 +62,6 @@ const reducers = {
       }
     }
   },
-  inserimentoLavoro: (state, action) => {
-    if(state.value.lavori === -1) {
-      state.value.lavori = [];
-    }
-    state.value.lavori.push(action.payload.nuovoLavoro);
-  },
   aggiornaEntrateLavori: (state, action) => {
     state.value.entrateLavori = action.payload.entrateLavori
   }
@@ -85,7 +79,6 @@ export const lavoroSliceActions = {
   aggiornaLavoro: lavoroSlice.actions.aggiornaLavoro,
   getLavoroPrimaDellaModifica: lavoroSlice.actions.getLavoroPrimaDellaModifica,
   getLavoroDopoLaModifica: lavoroSlice.actions.getLavoroDopoLaModifica,
-  inserimentoLavoro: lavoroSlice.actions.inserimentoLavoro, 
   aggiornaEntrateLavori: lavoroSlice.actions.aggiornaEntrateLavori, 
 };
 export const lavoroReducer = lavoroSlice.reducer;

@@ -12,6 +12,24 @@ export class Actions {
       body: JSON.stringify(data),
     }));
   }
+
+  async getAllItems(setItems, tipoItem) {
+    const dati = {
+      tipo_item: tipoItem
+    }
+
+    const response = await this.getResponse("/OTTIENI_TUTTI_GLI_ITEMS", dati);
+
+    if(response.ok) {
+      const result = await response.json();
+      setItems(result.items);
+    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
+  }
 }
 
 

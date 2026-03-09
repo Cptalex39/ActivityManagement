@@ -7,6 +7,7 @@ import { Actions } from "./Actions";
 // Utils
 import { controlloLavoro } from "../../utils/Controlli";
 import { generaFileLavoriPDF, generaFileLavoriExcel } from "../../utils/File";
+import { getGiornoOrarioAttuale } from '../../utils/Tempo';
 
 export class LavoroActions extends Actions {
   dispatch = useDispatch();
@@ -21,62 +22,29 @@ export class LavoroActions extends Actions {
     }));
   }
   
-  async inserimentoLavoro(servizi, clienti, nuovoLavoro, setNuovoLavoro, lingua) {
-    let totale = 0;
+  async inserimentoLavoro(nuovoLavoro, servizi) {
+    // dati: tipo, id_cliente, data_inizio, data_fine, metodo_pagamento, indirizzo_spedizione, note  
     
-    for(let servizio of servizi) {
-      if(parseInt(servizio.quantita) > 0) {
-        totale += parseFloat(servizio.prezzo) * parseInt(servizio.quantita);
+    let descrizione = "", totale = 0;
+    for(let i = 0; i < servizi.length; i++) {
+      if(parseInt(servizi[i].quantita) > 0) {
+        descrizione += (i+1) + ": " + servizi[i].nome + " X " + servizi[i].quantita + "\n";
+        totale += parseFloat(servizi[i].prezzo) * parseInt(servizi[i].quantita);
       }
     }
-        
-    let clienteInteressato = null
-    for(let cliente of clienti) {
-      if (parseInt(cliente.id) === parseInt(nuovoLavoro.id_cliente)) {
-        clienteInteressato = cliente.nome + " " + cliente.cognome 
-          + ((cliente.contatto && cliente.contatto !== "Contatto non inserito.") ? (" - " + cliente.contatto) : "") 
-          + ((cliente.email && cliente.email !== "Email non inserita.") ? (" - " + cliente.email) : "");
-        break;
-      }
-    }
-    
-    let nuovoLavoroAggiornato = {
+
+    nuovoLavoro = {
       ...nuovoLavoro, 
-      cliente: clienteInteressato, 
-      servizi: servizi,
-      totale: totale,
-    }
-    
-    if (controlloLavoro(nuovoLavoroAggiornato, setNuovoLavoro, lingua) > 0) {
-      return null;
-    } 
-    
-    nuovoLavoroAggiornato = {
-      ...nuovoLavoroAggiornato, 
-      giorno_attuale: nuovoLavoro.giorno,
-      totale_attuale: nuovoLavoro.totale,
-      note_attuale: nuovoLavoro.note,
-      servizi_attuale: nuovoLavoro.servizi,
-    }
+      codice: getGiornoOrarioAttuale() + "_" + nuovoLavoro.id_cliente, 
+      data_lavoro: new Date(), 
+      data_spedizione: null, 
+      data_consegna: null, 
+      stato: "CREATO",
+      descrizione: descrizione, 
+      totale: totale, 
+    };
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoLavoroAggiornato);
-    
-    if(response.ok) {
-      const result = await response.json();
-
-      nuovoLavoroAggiornato = {
-        ...nuovoLavoroAggiornato, 
-        id: result.id,
-        collegamenti: result.collegamenti,
-        collegamenti_attuale: result.collegamenti,
-      }
-
-      this.dispatch(lavoroSliceActions.inserimentoLavoro({
-        nuovoLavoro: nuovoLavoroAggiornato, 
-      }));
-
-      setNuovoLavoro(nuovoLavoroAggiornato);
-    }
 
     return {
       isOK: response.ok, 
@@ -206,7 +174,7 @@ export class LavoroActions extends Actions {
     }
   }
 
-  async modificaLavori(servizi, lavori, selectedIdsModifica, setSelectedIdsModifica) {
+  async modificaLavori(lavori, selectedIdsModifica, setSelectedIdsModifica) {
     let lavoriDaModificare = lavori.filter(lavoro => selectedIdsModifica.includes(lavoro.id));
     let idLavoriNonModificati = [];
     let idLavoriModificati = [];
@@ -215,7 +183,6 @@ export class LavoroActions extends Actions {
     for(let i = 0; i < lavoriDaModificare.length; i++) {
       const dati = {
         tipo_item: "lavoro", 
-        servizi: servizi, 
         item: lavoriDaModificare[i] 
       }
 

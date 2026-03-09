@@ -40,6 +40,30 @@ export const dizionarioOrari = () => {
   }
 };
 
+export const getGiornoOrarioAttuale = () => {
+  const oggi = new Date();
+
+  let giorno = oggi.getDate();
+  let mese = oggi.getMonth() + 1;
+  let anno = oggi.getFullYear();
+
+  let ora = oggi.getHours();
+  let minuti = oggi.getMinutes();
+  let secondi = oggi.getSeconds();
+  let millisecondi = oggi.getMilliseconds();
+
+  giorno = ("0" + giorno).slice(-2);
+  mese = ("0" + mese).slice(-2);
+  ora = ("0" + ora).slice(-2);
+  minuti = ("0" + minuti).slice(-2);
+  secondi = ("0" + secondi).slice(-2);
+  millisecondi = ("00" + millisecondi).slice(-3);
+
+  const giornoOrarioAttuale = giorno + "-" + mese + "-" + anno + "_" + ora + "-" + minuti + "-" + secondi + "-" + millisecondi;   
+
+  return giornoOrarioAttuale;
+}
+
 
 
 

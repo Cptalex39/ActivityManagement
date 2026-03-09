@@ -20,52 +20,20 @@ export class ClienteActions extends Actions {
     }));
   }
 
-  async getAllClienti(setClienti) {
-    const dati = {
-      tipo_item: "cliente"
-    }
-
-    const response = await super.getResponse("/OTTIENI_TUTTI_GLI_ITEMS", dati);
-
-    if(response.ok) {
-      const result = await response.json();
-      setClienti(result.items);
-    }
-
-    return {
-      isOK: response.ok, 
-      responseStatus: response.status, 
-    }
-  }
-  
-  async inserimentoCliente(nuovoCliente, setNuovoCliente, lingua) {
+  async registrazioneCliente(nuovoCliente, setNuovoCliente, lingua) {
     if (controlloCliente(nuovoCliente, setNuovoCliente, lingua) > 0) {
       return null;
     }
 
-    let nuovoClienteAggiornato = {
-      ...nuovoCliente, 
-      giorno_attuale: nuovoCliente.giorno,
-      contatto_attuale: nuovoCliente.contatto,
-      email_attuale: nuovoCliente.email,
-      note_attuale: nuovoCliente.note,
-    }
-             
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoCliente);
 
     if(response.ok) {
       const result = await response.json();
 
       nuovoClienteAggiornato = {
-        ...nuovoClienteAggiornato, 
+        ...nuovoCliente, 
         id: result.id,
       }
-
-      this.dispatch(clienteSliceActions.inserimentoCliente({
-        nuovoCliente: nuovoClienteAggiornato
-      }));
-
-      setNuovoCliente(nuovoClienteAggiornato);
     }
 
     return {
@@ -163,7 +131,7 @@ export class ClienteActions extends Actions {
     if(response.ok) {
       this.dispatch(clienteSliceActions.aggiornaClienti({
         clienti: itemsRestanti, 
-      }))
+      }));
 
       setSelectedIdsEliminazione([]);
     }

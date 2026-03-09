@@ -5,6 +5,14 @@ export const handleInsert = async (e, actions, nuovoCliente, setNuovoCliente, li
     alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
   }
 
+  setNuovoCliente(prevState => ({
+    ...prevState, 
+    giorno_attuale: nuovoCliente.giorno,
+    contatto_attuale: nuovoCliente.contatto,
+    email_attuale: nuovoCliente.email,
+    note_attuale: nuovoCliente.note,
+  }));
+
   const result = await actions.inserimentoCliente(nuovoCliente, setNuovoCliente, lingua);
 
   if(result === null) {
@@ -54,7 +62,7 @@ export const handleSearch = async (e, actions, datiRicerca, lingua) => {
 }
 
 export const handleGetAllClienti = async (actions, setClienti, lingua) => {
-  const result = await actions.getAllClienti(setClienti);
+  const result = await actions.getAllItems(setClienti, "cliente");
   
   if(!result.isOK) {
     alert(lingua === "italiano" ? "Errore durante l\'ottenimento dei clienti per l\'inserimento di un nuovo lavoro, riprova più tardi." : "Error while obtaining clients for new job entry, try again later.");

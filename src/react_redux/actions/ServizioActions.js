@@ -20,37 +20,10 @@ export class ServizioActions extends Actions {
     }));
   }
 
-  async getAllServizi(setServizi) {
-    const dati = {
-      tipo_item: "servizio"
-    }
-
-    const response = await super.getResponse("/OTTIENI_TUTTI_GLI_ITEMS", dati);
-
-    if(response.ok) {
-      const result = await response.json();
-      setServizi(result.items);
-    }
-
-    return {
-      isOK: response.ok, 
-      responseStatus: response.status, 
-    };
-  };
-
   async inserisciServizio(nuovoServizio, setNuovoServizio, lingua) {
     if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) {
       return null;
     }
-
-    let nuovoServizioAggiornato = {
-      ...nuovoServizio, 
-      nome_attuale: nuovoServizio.nome,
-      prezzo_attuale: nuovoServizio.prezzo, 
-      note_attuale: nuovoServizio.note, 
-      in_uso: true, 
-      in_uso_attuale: true,
-    };
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizioAggiornato);
 
@@ -58,10 +31,8 @@ export class ServizioActions extends Actions {
       const result = await response.json();
 
       nuovoServizioAggiornato = {
-        ...nuovoServizioAggiornato, 
+        ...nuovoServizio, 
         id: result.id, 
-        in_uso: "Si", 
-        in_uso_attuale: "Si",
       };
 
       this.dispatch(servizioSliceActions.inserimentoServizio({
