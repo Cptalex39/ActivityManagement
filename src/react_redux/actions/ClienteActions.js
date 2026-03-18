@@ -27,15 +27,6 @@ export class ClienteActions extends Actions {
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoCliente);
 
-    if(response.ok) {
-      const result = await response.json();
-
-      nuovoClienteAggiornato = {
-        ...nuovoCliente, 
-        id: result.id,
-      }
-    }
-
     return {
       isOK: response.ok, 
       responseStatus: response.status, 

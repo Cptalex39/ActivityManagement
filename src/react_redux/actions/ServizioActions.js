@@ -20,17 +20,37 @@ export class ServizioActions extends Actions {
     }));
   }
 
+  // CR: Ottenere il catalogo (servizi e prodotti in uso) per la vista cliente
+  async getCatalogo(filtroTipo) {
+    const dati = {
+      filtro_tipo: filtroTipo
+    }
+    const response = await super.getResponse("/VISUALIZZA_CATALOGO", dati);
+
+    if(response.ok) {
+      const result = await response.json();
+      this.dispatch(servizioSliceActions.aggiornaCatalogo({
+        catalogo: result.items, 
+      }));
+    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
+  };
+
   async inserisciServizio(nuovoServizio, setNuovoServizio, lingua) {
     if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) {
       return null;
     }
 
-    const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizioAggiornato);
+    const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizio);
 
     if(response.ok) {
       const result = await response.json();
 
-      nuovoServizioAggiornato = {
+      let nuovoServizioAggiornato = {
         ...nuovoServizio, 
         id: result.id, 
       };
