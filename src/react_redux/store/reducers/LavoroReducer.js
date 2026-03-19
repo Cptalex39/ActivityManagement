@@ -17,7 +17,7 @@ const reducers = {
   aggiornaTipoSelezione: (state, action) => {
     if(state.value.lavori && state.value.lavori !== -1) {
       for(let i = 0; i < state.value.lavori.length; i++) {
-        if(state.value.lavori[i].id === action.payload.id_lavoro) {
+        if(state.value.lavori[i].codice === action.payload.codice_lavoro) {
           state.value.lavori[i].tipo_selezione = action.payload.nuova_selezione;
           break;
         }
@@ -27,7 +27,7 @@ const reducers = {
   aggiornaLavoro: (state, action) => {
     if(state.value.lavori && state.value.lavori !== -1) {
       for(let i = 0; i < state.value.lavori.length; i++) {
-        if(state.value.lavori[i].id === action.payload.id_lavoro) {
+        if(state.value.lavori[i].codice === action.payload.codice_lavoro) {
           state.value.lavori[i][action.payload.nome_attributo] = action.payload.nuovo_valore;
           break;
         }
@@ -37,12 +37,18 @@ const reducers = {
   getLavoroPrimaDellaModifica: (state, action) => {
     if(state.value.lavori && state.value.lavori !== -1) {
       for(let i = 0; i < state.value.lavori.length; i++) {
-        if(state.value.lavori[i].id === action.payload.id_lavoro) {
-          state.value.lavori[i]["giorno"] = state.value.lavori[i]["giorno_attuale"]; 
-          state.value.lavori[i]["totale"] = state.value.lavori[i]["totale_attuale"]; 
-          state.value.lavori[i]["note"] = state.value.lavori[i]["note_attuale"]; 
-          state.value.lavori[i]["servizi"] = state.value.lavori[i]["servizi_attuale"];
-          state.value.lavori[i]["collegamenti"] = state.value.lavori[i]["collegamenti_attuale"];
+        if(state.value.lavori[i].codice === action.payload.codice_lavoro) {
+          state.value.lavori[i]["descrizione"] = state.value.lavori[i]["descrizione_attuale"];
+          state.value.lavori[i]["data_lavoro"] = state.value.lavori[i]["data_lavoro_attuale"];
+          state.value.lavori[i]["data_inizio"] = state.value.lavori[i]["data_inizio_attuale"];
+          state.value.lavori[i]["data_fine"] = state.value.lavori[i]["data_fine_attuale"];
+          state.value.lavori[i]["data_spedizione"] = state.value.lavori[i]["data_spedizione_attuale"];
+          state.value.lavori[i]["data_consegna"] = state.value.lavori[i]["data_consegna_attuale"];
+          state.value.lavori[i]["stato"] = state.value.lavori[i]["stato_attuale"];
+          state.value.lavori[i]["totale"] = state.value.lavori[i]["totale_attuale"];
+          state.value.lavori[i]["metodo_pagamento"] = state.value.lavori[i]["metodo_pagamento_attuale"];
+          state.value.lavori[i]["indirizzo_spedizione"] = state.value.lavori[i]["indirizzo_spedizione_attuale"];
+          state.value.lavori[i]["note"] = state.value.lavori[i]["note_attuale"];
           break;
         }
       }
@@ -51,12 +57,18 @@ const reducers = {
   getLavoroDopoLaModifica: (state, action) => {
     if(state.value.lavori && state.value.lavori !== -1) {
       for(let i = 0; i < state.value.lavori.length; i++) {
-        if(state.value.lavori[i].id === action.payload.id_lavoro) {
-          state.value.lavori[i]["giorno_attuale"] = state.value.lavori[i]["giorno"]; 
-          state.value.lavori[i]["totale_attuale"] = state.value.lavori[i]["totale"]; 
-          state.value.lavori[i]["note_attuale"] = state.value.lavori[i]["note"]; 
-          state.value.lavori[i]["servizi_attuale"] = state.value.lavori[i]["servizi"];
-          state.value.lavori[i]["collegamenti_attuale"] = state.value.lavori[i]["collegamenti"];
+        if(state.value.lavori[i].codice === action.payload.codice_lavoro) {
+          state.value.lavori[i]["descrizione_attuale"] = state.value.lavori[i]["descrizione"];
+          state.value.lavori[i]["data_lavoro_attuale"] = state.value.lavori[i]["data_lavoro"];
+          state.value.lavori[i]["data_inizio_attuale"] = state.value.lavori[i]["data_inizio"];
+          state.value.lavori[i]["data_fine_attuale"] = state.value.lavori[i]["data_fine"];
+          state.value.lavori[i]["data_spedizione_attuale"] = state.value.lavori[i]["data_spedizione"];
+          state.value.lavori[i]["data_consegna_attuale"] = state.value.lavori[i]["data_consegna"];
+          state.value.lavori[i]["stato_attuale"] = state.value.lavori[i]["stato"];
+          state.value.lavori[i]["totale_attuale"] = state.value.lavori[i]["totale"];
+          state.value.lavori[i]["metodo_pagamento_attuale"] = state.value.lavori[i]["metodo_pagamento"];
+          state.value.lavori[i]["indirizzo_spedizione_attuale"] = state.value.lavori[i]["indirizzo_spedizione"];
+          state.value.lavori[i]["note_attuale"] = state.value.lavori[i]["note"];
           break;
         }
       }

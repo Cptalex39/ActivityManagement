@@ -23,8 +23,6 @@ export class LavoroActions extends Actions {
   }
   
   async inserimentoLavoro(nuovoLavoro, servizi) {
-    // dati: tipo, id_cliente, data_inizio, data_fine, metodo_pagamento, indirizzo_spedizione, note  
-    
     let descrizione = "", totale = 0;
     for(let i = 0; i < servizi.length; i++) {
       if(parseInt(servizi[i].quantita) > 0) {
@@ -114,70 +112,67 @@ export class LavoroActions extends Actions {
   };
 
   selezioneOperazioneLavoro(
-    icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
+    icon, item, selectedCodiciModifica, setSelectedCodiciModifica, selectedCodiciEliminazione, setSelectedCodiciEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
   ) {
     if(icon === "trash") {
-      if(selectedIdsEliminazione.includes(item.id)) {
+      if(selectedCodiciEliminazione.includes(item.codice)) {
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 0
         }))
 
-        setSelectedIdsEliminazione(prevIds => prevIds.filter(itemId => itemId !== item.id));
+        setSelectedCodiciEliminazione(prevCodici => prevCodici.filter(itemCodice => itemCodice !== item.codice));
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-          id_lavoro: item.id,
+          codice_lavoro: item.codice,
         }));
 
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 2
         }));
 
-        setSelectedIdsEliminazione(prevIds => [...prevIds, item.id]);
+        setSelectedCodiciEliminazione(prevCodici => [...prevCodici, item.codice]);
         setSelectedTrashCount(prevCount => prevCount + 1);
-        setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
+        setSelectedCodiciModifica(prevCodiciModifica => prevCodiciModifica.filter(itemCodice => itemCodice !== item.codice));
         setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
       }
     }
     else if(icon === "pencil") {
-      if(selectedIdsModifica.includes(item.id)) {
-        
+      if(selectedCodiciModifica.includes(item.codice)) {
         this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-          id_lavoro: item.id,
+          codice_lavoro: item.codice,
         }));
 
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 0
         }));
 
-        setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
+        setSelectedCodiciModifica(prevCodiciModifica => prevCodiciModifica.filter(itemCodice => itemCodice !== item.codice));
         setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 1
         }))
 
-        setSelectedIdsModifica(prevIdsModifica => [...prevIdsModifica, item.id]);
+        setSelectedCodiciModifica(prevCodiciModifica => [...prevCodiciModifica, item.codice]);
         setSelectedPencilCount(prevCount => prevCount + 1);
-        setSelectedIdsEliminazione(prevIds => prevIds.filter(itemId => itemId !== item.id));
+        setSelectedCodiciEliminazione(prevCodici => prevCodici.filter(itemCodice => itemCodice !== item.codice));
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
     }
   }
 
-  async modificaLavori(lavori, selectedIdsModifica, setSelectedIdsModifica) {
-    let lavoriDaModificare = lavori.filter(lavoro => selectedIdsModifica.includes(lavoro.id));
-    let idLavoriNonModificati = [];
-    let idLavoriModificati = [];
+  async modificaLavori(lavori, selectedCodiciModifica, setSelectedCodiciModifica) {
+    let lavoriDaModificare = lavori.filter(lavoro => selectedCodiciModifica.includes(lavoro.codice));
+    let codiciLavoriNonModificati = [];
+    let codiciLavoriModificati = [];
     let esitiModifiche = [];
 
     for(let i = 0; i < lavoriDaModificare.length; i++) {
@@ -190,11 +185,11 @@ export class LavoroActions extends Actions {
 
       if(response.ok) {
         esitiModifiche[i] = [true, response.status];
-        idLavoriModificati.push(lavoriDaModificare[i].id);
+        codiciLavoriModificati.push(lavoriDaModificare[i].codice);
       }
       else {
         esitiModifiche[i] = [false, response.status];
-        idLavoriNonModificati.push(lavoriDaModificare[i].id);
+        codiciLavoriNonModificati.push(lavoriDaModificare[i].codice);
       }
     }
 
@@ -212,40 +207,40 @@ export class LavoroActions extends Actions {
       lavori: lavoriAggiornati,
     }));
 
-    for(let id of idLavoriNonModificati) {
+    for(let codice of codiciLavoriNonModificati) {
       this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-        id_lavoro: id
+        codice_lavoro: codice
       }));
     }
 
-    for(let id of idLavoriModificati) {
+    for(let codice of codiciLavoriModificati) {
       this.dispatch(lavoroSliceActions.getLavoroDopoLaModifica({
-        id_lavoro: id
+        codice_lavoro: codice
       }))
     }
 
-    setSelectedIdsModifica([]);
+    setSelectedCodiciModifica([]);
 
     return {
       esitiModifiche: esitiModifiche, 
     };
   }
 
-  aggiornaLavoro(id_lavoro, nome_attributo, nuovo_valore) {
+  aggiornaLavoro(codice_lavoro, nome_attributo, nuovo_valore) {
     this.dispatch(lavoroSliceActions.aggiornaLavoro({
-      id_lavoro: id_lavoro, 
+      codice_lavoro: codice_lavoro, 
       nome_attributo: nome_attributo, 
       nuovo_valore: nuovo_valore
     }))
   }
 
-  async eliminaLavori(selectedIdsEliminazione, setSelectedIdsEliminazione, lavori) {
+  async eliminaLavori(selectedCodiciEliminazione, setSelectedCodiciEliminazione, lavori) {
     const dati = {
       tipo_item: "lavoro", 
-      ids: selectedIdsEliminazione
+      codici: selectedCodiciEliminazione
     }
     
-    const itemsRestanti = (lavori && lavori !== -1) ? lavori.filter(lavoro => !dati.ids.includes(lavoro.id)) : -1;
+    const itemsRestanti = (lavori && lavori !== -1) ? lavori.filter(lavoro => !dati.codici.includes(lavoro.codice)) : -1;
     const response = await super.getResponse("/ELIMINA_ITEMS", dati);
     
     if(!response.ok) {
@@ -259,7 +254,7 @@ export class LavoroActions extends Actions {
       lavori: itemsRestanti
     }))
 
-    setSelectedIdsEliminazione([]);
+    setSelectedCodiciEliminazione([]);
     
     return {
       isOK: response.ok, 

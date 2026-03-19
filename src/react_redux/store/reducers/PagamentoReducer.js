@@ -17,7 +17,10 @@ const reducers = {
     if(state.value.pagamenti && state.value.pagamenti !== -1) {
       for(let i = 0; i < state.value.pagamenti.length; i++) {
         if(state.value.pagamenti[i].id === action.payload.id_pagamento) {
+          state.value.pagamenti[i]["data_pagamento"] = state.value.pagamenti[i]["data_pagamento_attuale"];
+          state.value.pagamenti[i]["data_registrazione"] = state.value.pagamenti[i]["data_registrazione_attuale"];
           state.value.pagamenti[i]["stato"] = state.value.pagamenti[i]["stato_attuale"];
+          state.value.pagamenti[i]["fattura"] = state.value.pagamenti[i]["fattura_attuale"];
           state.value.pagamenti[i]["note"] = state.value.pagamenti[i]["note_attuale"];
           break;
         }
@@ -28,7 +31,10 @@ const reducers = {
     if(state.value.pagamenti && state.value.pagamenti !== -1) {
       for(let i = 0; i < state.value.pagamenti.length; i++) {
         if(state.value.pagamenti[i].id === action.payload.id_pagamento) {
+          state.value.pagamenti[i]["data_pagamento_attuale"] = state.value.pagamenti[i]["data_pagamento"];
+          state.value.pagamenti[i]["data_registrazione_attuale"] = state.value.pagamenti[i]["data_registrazione"];
           state.value.pagamenti[i]["stato_attuale"] = state.value.pagamenti[i]["stato"];
+          state.value.pagamenti[i]["fattura_attuale"] = state.value.pagamenti[i]["fattura"];
           state.value.pagamenti[i]["note_attuale"] = state.value.pagamenti[i]["note"];
           break;
         }

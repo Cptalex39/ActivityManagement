@@ -64,9 +64,6 @@ export class ClienteActions extends Actions {
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        this.dispatch(clienteSliceActions.getClientePrimaDellaModifica({
-          id_cliente: item.id,
-        }))
         this.dispatch(clienteSliceActions.aggiornaTipoSelezione({
           id_cliente: item.id, 
           nuova_selezione: 2
@@ -75,29 +72,6 @@ export class ClienteActions extends Actions {
         setSelectedTrashCount(prevCount => prevCount + 1);
         setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
         setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
-      }
-    }
-    else if(icon === "pencil") {
-      if(selectedIdsModifica.includes(item.id)) {
-        this.dispatch(clienteSliceActions.getClientePrimaDellaModifica({
-          id_cliente: item.id,
-        }))
-        this.dispatch(clienteSliceActions.aggiornaTipoSelezione({
-          id_cliente: item.id, 
-          nuova_selezione: 0
-        }))
-        setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
-        setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
-      }
-      else {
-        this.dispatch(clienteSliceActions.aggiornaTipoSelezione({
-          id_cliente: item.id, 
-          nuova_selezione: 1
-        }))
-        setSelectedIdsModifica(prevIdsModifica => [...prevIdsModifica, item.id]);
-        setSelectedPencilCount(prevCount => prevCount + 1);
-        setSelectedIdsEliminazione(prevIds => prevIds.filter(itemId => itemId !== item.id));
-        setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
     }
   }
