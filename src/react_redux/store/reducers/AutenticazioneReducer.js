@@ -43,7 +43,7 @@ const reducers = {
   },
   logout: (state) => {
     state.value.username = null;
-    state.value.ruolo = "guest";
+    state.value.ruolo = null;
     state.value.note = null;
     state.value.isLogged = false;
     saveToLocalStorage(state);
@@ -62,7 +62,6 @@ export const autenticazioneSliceActions = {
 };
 
 export const autenticazioneReducer = autenticazioneSlice.reducer;
-
 
 
 

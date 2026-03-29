@@ -173,8 +173,61 @@
 }
 
 
+/* Questo trasforma tutti i pulsanti blu (btn-primary) */
+.btn-primary {
+  background-color: #0050EF !important; /* Il blu della tua casella */
+  border: 5px solid #000000 !important;   /* Il bordo nero spesso */
+  border-radius: 40px !important;        /* La forma arrotondata a pillola */
+  min-height: 60px !important;           /* Altezza minima */
+  padding: 10px 40px !important;         /* Spazio ai lati del testo */
+  font-size: 25px !important;            /* Testo grande come il resto del sito */
+  color: #FFFFFF !important;             /* Testo bianco */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;             /* Movimento fluido al click */
+}
+
+/* Effetto quando passi il mouse sopra */
+.btn-primary:hover {
+  background-color: #003dbb !important; /* Diventa un blu leggermente più scuro */
+  transform: scale(1.02);               /* Si ingrandisce appena appena */
+}
+
+/* TRASFORMA TUTTI I PULSANTI DEL SITO */
+button, .btn {
+  border-radius: 40px !important;      /* Forma a pillola */
+  border: 5px solid #000000 !important; /* Bordo nero spesso */
+  min-height: 60px !important;         /* Altezza minima */
+  padding: 10px 40px !important;       /* Spazio interno */
+  font-size: 25px !important;          /* Testo grande */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* Se vuoi che i pulsanti "primari" rimangano blu */
+.btn-primary {
+  background-color: #0050EF !important;
+  color: #FFFFFF !important;
+}
+
+/* Se hai pulsanti "success" (verdi) o altri, rimarranno del loro colore 
+   ma prenderanno la forma a pillola e il bordo nero */
 
 
+input {
+  border-radius: 40px;
+  border: 5px solid #000000;
+  padding: 10px 20px;
+  font-size: 25px;
+  margin-bottom: 10px;
+  width: 80%;
+  text-align: center;
+}
 
 
 

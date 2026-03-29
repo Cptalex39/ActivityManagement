@@ -95,6 +95,11 @@ export const NavbarApp = () => {
               <StyledNavLink as={NavLink} to="/clienti" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Clienti" : "Clients"}</StyledNavLink>
               <StyledNavLink as={NavLink} to="/servizi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Servizi" : "Services"}</StyledNavLink>
               <StyledNavLink as={NavLink} to="/lavori" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Lavori" : "Jobs"}</StyledNavLink>
+             
+              <StyledNavLink as={NavLink} to="/pagamenti" onContextMenu={handleContextMenu}>
+                {attivitaState.lingua === "italiano" ? "Pagamenti" : "Payments"}
+              </StyledNavLink>
+
               <StyledNavLink as={NavLink} to="/spese" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Spese" : "Expenses"}</StyledNavLink>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;
@@ -228,7 +233,23 @@ export const NavbarApp = () => {
 
                
             {(autenticazioneState.isLogged === false) && (
-              <StyledNavLink as={NavLink} to="/login" onContextMenu={handleContextMenu}>Login</StyledNavLink>
+              <>
+                <StyledNavLink 
+                  as={NavLink} 
+                  to="/login" 
+                  onContextMenu={handleContextMenu}
+                >
+                  Login
+                </StyledNavLink>
+
+                <StyledNavLink 
+                  as={NavLink} 
+                  to="/registrazione" 
+                  onContextMenu={handleContextMenu}
+                >
+                  Registrazione
+                </StyledNavLink>
+              </>
             )}
             {(autenticazioneState.isLogged === true) && (
               <>
@@ -250,7 +271,6 @@ export const NavbarApp = () => {
     </>
   );
 }
-
 
 
 
