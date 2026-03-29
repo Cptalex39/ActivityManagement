@@ -86,14 +86,14 @@ const attivitaState = useSelector((state) => state.attivita.value);
                 style={{
                   marginTop: "15px",
                   padding: "8px 15px",
-                  backgroundColor: "green",
+                  backgroundColor: "blue",
                   color: "white",
                   border: "none",
                   borderRadius: "5px",
                   cursor: "pointer",
                 }}
               >
-                //Vai al checkout
+                Vai al checkout
               </button>
             )}
           </>
