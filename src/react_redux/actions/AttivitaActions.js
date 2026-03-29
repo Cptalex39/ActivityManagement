@@ -37,12 +37,3 @@ export class AttivitaActions {
     this.dispatch(attivitaSliceActions.modificaLingua())
   }
 }
-
-
-
-
-
-
-
-
-
