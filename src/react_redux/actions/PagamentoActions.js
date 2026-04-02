@@ -127,6 +127,61 @@ export class PagamentoActions extends Actions {
       esitiModifiche: esitiModifiche, 
     };
   }
+
+  async handleSearchPagamenti(setPagamenti, datiRicerca) {
+    const dati = {
+      tipo_item: "pagamento", 
+      primo_anno: datiRicerca.primo_anno, 
+      ultimo_anno: datiRicerca.ultimo_anno
+    };
+    
+    const response = await super.getResponse("/VISUALIZZA_PAGAMENTI", dati);
+
+    if(response.ok) {
+      const result = await response.json();
+      setPagamenti(result.items);
+    }
+    
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
+  };
+
+  async ricercaPagamentiInsospeso() {
+    let datiRicerca = {
+      tipo_item: "pagamento", 
+      stato: "IN_SOSPESO",
+    };
+
+    const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
+
+    if(response.ok) {
+      const result = await response.json();
+      
+      this.dispatch(pagamentoSliceActions.aggiornaPagamenti({
+        pagamenti: result.items, 
+      }));
+    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
+  }
+
+  async confermaPagamentoInSospeso(idPagamento) {
+    const dati = {
+      id: idPagamento
+    }
+
+    const response = await super.getResponse("/CONFERMA_PAGAMENTO", dati);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
+  }
 }
 
 
