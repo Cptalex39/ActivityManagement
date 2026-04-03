@@ -6,12 +6,17 @@ const name = "Servizio";
 const initialState = {
   value: {
     servizi: [], 
+    catalogo: [],  // CR: catalogo per la vista cliente
   } 
 }
 
 const reducers = {
   aggiornaServizi: (state, action) => {
     state.value.servizi = action.payload.servizi
+  },
+  // CR: aggiorna catalogo per vista cliente
+  aggiornaCatalogo: (state, action) => {
+    state.value.catalogo = action.payload.catalogo
   },
   aggiornaTipoSelezione: (state, action) => {
     if(state.value.servizi && state.value.servizi !== -1) {
@@ -39,6 +44,7 @@ const reducers = {
         if(state.value.servizi[i].id === action.payload.id_servizio) {
           state.value.servizi[i]["nome"] = state.value.servizi[i]["nome_attuale"];
           state.value.servizi[i]["prezzo"] = state.value.servizi[i]["prezzo_attuale"]; 
+          state.value.servizi[i]["tipo"] = state.value.servizi[i]["tipo_attuale"];  // CR
           state.value.servizi[i]["note"] = state.value.servizi[i]["note_attuale"]; 
           state.value.servizi[i]["in_uso"] = state.value.servizi[i]["in_uso_attuale"]; 
           break;
@@ -52,6 +58,7 @@ const reducers = {
         if(state.value.servizi[i].id === action.payload.id_servizio) {
           state.value.servizi[i]["nome_attuale"] = state.value.servizi[i]["nome"];
           state.value.servizi[i]["prezzo_attuale"] = state.value.servizi[i]["prezzo"]; 
+          state.value.servizi[i]["tipo_attuale"] = state.value.servizi[i]["tipo"];  // CR
           state.value.servizi[i]["note_attuale"] = state.value.servizi[i]["note"]; 
           state.value.servizi[i]["in_uso_attuale"] = state.value.servizi[i]["in_uso"];
           break;
@@ -75,6 +82,7 @@ const servizioSlice = createSlice ({
 
 export const servizioSliceActions = {
   aggiornaServizi: servizioSlice.actions.aggiornaServizi,
+  aggiornaCatalogo: servizioSlice.actions.aggiornaCatalogo,
   aggiornaTipoSelezione: servizioSlice.actions.aggiornaTipoSelezione,
   aggiornaServizio: servizioSlice.actions.aggiornaServizio,
   getServizioPrimaDellaModifica: servizioSlice.actions.getServizioPrimaDellaModifica,
@@ -82,12 +90,3 @@ export const servizioSliceActions = {
   inserimentoServizio: servizioSlice.actions.inserimentoServizio
 };
 export const servizioReducer = servizioSlice.reducer;
-
-
-
-
-
-
-
-
-
