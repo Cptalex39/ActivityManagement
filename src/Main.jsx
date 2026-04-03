@@ -14,6 +14,10 @@ import Clienti from "./react_redux/views/cliente_view/Clienti.jsx";
 import Servizi from "./react_redux/views/servizio_view/Servizi.jsx";
 import Spese from "./react_redux/views/spesa_view/Spese.jsx";
 import Lavori from "./react_redux/views/lavoro_view/Lavori.jsx";
+// CR: Area Cliente
+import Catalogo from "./react_redux/views/catalogo_view/Catalogo.jsx";
+import Carrello from "./react_redux/views/carrello_view/Carrello.jsx";
+import Checkout from "./react_redux/views/carrello_view/Checkout.jsx";
 
 const Root = () => {
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
@@ -22,6 +26,12 @@ const Root = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+
+        {/* CR: Route Area Cliente (pubbliche, sempre accessibili) */}
+        <Route path="/catalogo" element={<Catalogo />} />
+        <Route path="/carrello" element={<Carrello />} />
+        <Route path="/checkout/:tipoLavoro" element={<Checkout />} />
+
         {(autenticazioneState.isLogged === false) && (
           <Route path="/login" element={<Login />} />
         )}
