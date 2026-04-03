@@ -12,6 +12,15 @@ export class CartaActions extends Actions {
     super();
   }
 
+  /**
+   * Azione per inserire una nuova carta.
+   * 
+   * @param {Object} nuovaCarta - dati della nuova carta. 
+   * @param {Function} setNuovaCarta - setter dei dati della nuova carta.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async inserimentoCarta(nuovaCarta, setNuovaCarta, lingua) {
     if (controlloCarta(nuovaCarta, setNuovaCarta, lingua) > 0) { 
       return null;
@@ -36,6 +45,13 @@ export class CartaActions extends Actions {
     };
   };
 
+  /**
+   * Azione per ottenere le carte di un cliente.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ottenimentoCarteCliente(datiRicerca) {
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -53,6 +69,14 @@ export class CartaActions extends Actions {
     };
   }
 
+  /**
+   * Azione per eliminare le carte selezionate.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id delle carte selezionate.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id delle carte selezionate.
+   * @param {Array<Object>} carte - elenco delle carte di un cliente.
+   * @returns risultato response operazione.
+   */
   async eliminazioneCarte(selectedIdsEliminazione, setSelectedIdsEliminazione, carte) {
     const dati = {
       tipo_item: "carta", 

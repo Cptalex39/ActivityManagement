@@ -12,6 +12,12 @@ export class StileActions extends Actions {
     super();
   }
 
+  /**
+   * Azione per il cambio dello sfondo.
+   * 
+   * @param {String} tipoSfondo - il tipo dello sfondo. 
+   * @param {String} sfondo - il nuovo sfondo.
+   */
   cambioSfondo(tipoSfondo, sfondo) {
     if(tipoSfondo === "img") {
       this.dispatch(stileSliceActions.cambioImmagineSfondo({
@@ -25,6 +31,12 @@ export class StileActions extends Actions {
     }
   }
 
+  /**
+   * Azione per il cambio della vista degli item o dei form.
+   * 
+   * @param {String} tipoElemento - il tipo di elemento. 
+   * @param {String} tipoView - il tipo della vista.
+   */
   cambioVista(tipoElemento, tipoView) {
     if(tipoElemento === "item") {
       this.dispatch(stileSliceActions.cambioVistaItem({

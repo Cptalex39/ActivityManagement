@@ -12,6 +12,14 @@ export class PagamentoActions extends Actions {
     super();
   }
 
+  /**
+   * Azione per inserire un nuovo pagamento nel sistema.
+   * 
+   * @param {Object} nuovoPagamento - dati del nuovo pagamento.
+   * @param {Function} setNuovoPagamento - setter dei dati del nuovo pagamento.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async inserimentoPagamento(nuovoPagamento, setNuovoPagamento) {
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoPagamento);
 
@@ -32,6 +40,13 @@ export class PagamentoActions extends Actions {
     };
   };
 
+  /**
+   * Azione per eseguire la ricerca dei pagamenti.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ricercaPagamenti(datiRicerca) {
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -49,6 +64,15 @@ export class PagamentoActions extends Actions {
     };
   }
 
+  /**
+   * Azione per eseguire l'eliminazione dei pagamenti selezionati.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id selezionati per l'eliminazione.
+   * @param {Array<Object>} pagamenti - collezione dei pagamenti.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminazionePagamenti(selectedIdsEliminazione, setSelectedIdsEliminazione, pagamenti) {
     const dati = {
       tipo_item: "pagamento", 
@@ -71,6 +95,15 @@ export class PagamentoActions extends Actions {
     };
   }
 
+  /**
+   * Azione per eseguire la modifica dei pagamenti.
+   * 
+   * @param {Array<Object} pagamenti - collezione dei pagamenti.
+   * @param {Array<number>} selectedIdsModifica - id dei pagamenti selezionati per la modifica
+   * @param {Function} setSelectedIdsModifica - setter degli id dei pagamenti selezionati per la modifica.
+   * 
+   * @returns {Object} esiti delle modifiche (modifiche riuscite o fallite).
+   */
   async modificaPagamenti(pagamenti, selectedIdsModifica, setSelectedIdsModifica) {
     let pagamentiDaModificare = pagamenti.filter(pagamento => selectedIdsModifica.includes(pagamento.id)); 
     let idPagamentiNonModificati = [];
@@ -128,6 +161,14 @@ export class PagamentoActions extends Actions {
     };
   }
 
+  /**
+   * Azione per ottenere una collezione dei pagamenti in un range di 2 date incluse.
+   * 
+   * @param {Function} setPagamenti - setter dei pagamenti.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchPagamenti(setPagamenti, datiRicerca) {
     const dati = {
       tipo_item: "pagamento", 
@@ -148,6 +189,11 @@ export class PagamentoActions extends Actions {
     };
   };
 
+  /**
+   * Azione per eseguire la ricerca dei pagamenti in sospeso.
+   * 
+   * @returns {Object} risultato response operazione. 
+   */
   async ricercaPagamentiInsospeso() {
     let datiRicerca = {
       tipo_item: "pagamento", 
@@ -170,6 +216,12 @@ export class PagamentoActions extends Actions {
     };
   }
 
+  /**
+   * Azione per confermare un pagamento in sospeso.
+   * 
+   * @param {number} idPagamento - id del pagamento in sospeso.
+   * @returns {Object} risultato response operazione.
+   */
   async confermaPagamentoInSospeso(idPagamento) {
     const dati = {
       id: idPagamento

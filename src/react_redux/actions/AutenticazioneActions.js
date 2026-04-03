@@ -13,7 +13,16 @@ export class AutenticazioneActions extends Actions {
   constructor() {
     super();
   }
-    
+  
+  /**
+   * Azione per eseguire il login
+   * 
+   * @param {Object} datiLogin - dati del login.
+   * @param {Function} setDatiLogin - setter dei dati del login.
+   * @param {String} lingua - lingua del sistema attuale.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async login(datiLogin, setDatiLogin, lingua) {
     const response = await super.getResponse("/LOGIN", datiLogin);
 
@@ -46,11 +55,24 @@ export class AutenticazioneActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eeguire il logout
+   * 
+   * @param {Function} navigate - routing dell'applicazione
+   */
   logout(navigate) {
     this.dispatch(autenticazioneSliceActions.logout());
     navigate("/");
   }
 
+  /**
+   * Azione per eseguire il login.
+   * 
+   * @param {String} username - username login.
+   * @param {String} password - password login.
+   * 
+   * @returns {Object} (risultato response operazione) AND (password e salt_hex (se presente nel DB)).
+   */
   async eseguiLogin(username, password) {
     const datiLogin = {
       username: username,
@@ -68,6 +90,16 @@ export class AutenticazioneActions extends Actions {
     }
   }
 
+  /**
+   * Azione per modificare il profilo.
+   * 
+   * @param {String} ruolo - ruolo profilo.
+   * @param {Object} datiProfilo - dati del profilo aggiornati.
+   * @param {Function} setDatiProfilo - setter dei dati del profilo.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async modificaProfilo(ruolo, datiProfilo, setDatiProfilo, lingua) {
     if(controlloProfilo(datiProfilo, setDatiProfilo, lingua) > 0) {
       return null;
@@ -91,6 +123,13 @@ export class AutenticazioneActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eseguire l'eliminazione del profilo.
+   * 
+   * @param {Object} dati - dati del profilo.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminazioneProfilo(dati) {
     const dati = {
       ...dati, 

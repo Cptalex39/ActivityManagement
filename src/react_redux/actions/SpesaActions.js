@@ -15,12 +15,24 @@ export class SpesaActions extends Actions {
     super();
   }
 
+  /**
+   * Azione che azzera la lista delle spese.
+   */
   azzeraLista() {
     this.dispatch(spesaSliceActions.aggiornaSpese({
       spese: -1,
     }));
   }
 
+  /**
+   * Azione per inserire una nuova spesa nel sistema.
+   * 
+   * @param {Object} nuovaSpesa - dati della nuova spesa.
+   * @param {Function} setNuovaSpesa - setter dei dati della nuova spesa.
+   * @param {String} lingua - lingua attuale del sistema. 
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async inserimentoSpesa(nuovaSpesa, setNuovaSpesa, lingua) {
     if (controlloSpesa(nuovaSpesa, setNuovaSpesa, lingua) > 0) 
       return null;
@@ -57,6 +69,13 @@ export class SpesaActions extends Actions {
     };
   };
 
+  /**
+   * Azione per eseguire la ricerca delle spese.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ricercaSpese(datiRicerca) {        
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -74,6 +93,17 @@ export class SpesaActions extends Actions {
     };
   }
   
+  /**
+   * Azione per ottenere un file con le spese.
+   * 
+   * @param {String} tipoFile - tipo del file (.pdf o .xlsx).
+   * @param {Function} setTipoFile - setter del tipo di file.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @param {Function} setSpese - setter delle spese.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese, lingua) {
     setTipoFile(tipoFile);
 
@@ -98,6 +128,14 @@ export class SpesaActions extends Actions {
     };
   }
 
+  /**
+   * Azione per ottenere le uscite delle spese.
+   * 
+   * @param {Function} setUsciteSpese - setter delle uscite delle spese.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchUsciteSpese(setUsciteSpese, datiRicerca) {
     const dati = {
       tipo_item: "spesa", 
@@ -118,6 +156,18 @@ export class SpesaActions extends Actions {
     };
   };
 
+  /**
+   * Azione per selezionare un'operazione sulla spesa.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata. 
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedIdsModifica - id delle spese selezionate per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id delle spese selezionate per la modifica.
+   * @param {Array<number>} selectedIdsEliminazione - id delle spese selezionate per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id delle spese selezionate per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero delle spese selezionate per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero delle spese selezionate per l'eliminazione.
+   */
   selezioneOperazioneSpesa(
     icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
@@ -178,6 +228,15 @@ export class SpesaActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eseguire la modifica delle spese selezionate.
+   * 
+   * @param {Array<Object>} spese - collezione delle spese.
+   * @param {Array<number>} selectedIdsModifica - id delle spese selezionate per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id selezionati per la modifica.
+   * 
+   * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
+   */
   async modificaSpese(spese, selectedIdsModifica, setSelectedIdsModifica) {
     let speseDaModificare = spese.filter(spesa => selectedIdsModifica.includes(spesa.id)); 
     let idSpeseNonModificate = [];
@@ -235,6 +294,13 @@ export class SpesaActions extends Actions {
     };
   };
 
+  /**
+   * Azione per eseguire l'aggiornamento di un attributo di una spesa.
+   * 
+   * @param {number} id_spesa - id della spesa da aggiornare.
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - nuovo valore dell'attributo da aggiornare.
+   */
   aggiornaSpesa(id_spesa, nome_attributo, nuovo_valore) {
     this.dispatch(spesaSliceActions.aggiornaSpesa({
       id_spesa: id_spesa,
@@ -243,6 +309,15 @@ export class SpesaActions extends Actions {
     }))
   }
 
+  /**
+   * Azione per eseguire l'eliminazione delle spese selezionate.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id delle spese selezionate per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id selezionati per l'eliminazione.
+   * @param {Array<Object>} spese - collezione delle spese.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spese) {
     const dati = {
       tipo_item: "spesa", 
@@ -265,7 +340,14 @@ export class SpesaActions extends Actions {
       responseStatus: response.status, 
     };
   }
-
+  
+  /**
+   * Azione per eseguire l'eliminazione delle spese presenti in un range di due date incluse.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleDeleteSpeseRangeFile(datiRicerca) {
     const dati = {
       tipo_item: "spesa", 

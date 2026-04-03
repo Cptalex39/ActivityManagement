@@ -14,13 +14,22 @@ export class ServizioActions extends Actions {
     super();
   }
 
+  /**
+   * Azione che azzera la lista sei servizi.
+   */
   azzeraLista() {
     this.dispatch(servizioSliceActions.aggiornaServizi({
       servizi: -1, 
     }));
   }
 
-  // CR: Ottenere il catalogo (servizi e prodotti in uso) per la vista cliente
+  /**
+   * Azione per ottenere il catalogo (servizi e prodotti in uso) per la vista cliente.
+   * 
+   * @param {*} filtroTipo - filtro del tipo (servizi/prodotti).
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async getCatalogo(filtroTipo) {
     const dati = {
       filtro_tipo: filtroTipo
@@ -40,6 +49,15 @@ export class ServizioActions extends Actions {
     };
   };
 
+  /**
+   * Azione per inserire un nuovo servizio nel sistema.
+   * 
+   * @param {Object} nuovoServizio - dati del nuovo servizio.
+   * @param {Function} setNuovoServizio - setter dei dati del nuovo servizio.
+   * @param {String} lingua - lingua del sistema attuale.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async inserisciServizio(nuovoServizio, setNuovoServizio, lingua) {
     if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) {
       return null;
@@ -68,6 +86,13 @@ export class ServizioActions extends Actions {
     };
   };
 
+  /**
+   * Azione per eseguire la ricerca dei servizi.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ricercaServizi(datiRicerca) {
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -84,7 +109,19 @@ export class ServizioActions extends Actions {
       responseStatus: response.status, 
     };
   }
-
+  
+  /**
+   * Azione per selezionare un'operazione sul servizio.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata.
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedIdsModifica - id dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id dei servizi selezionati per la modifica.
+   * @param {Array<number>} selectedIdsEliminazione - id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero dei servizi selezionati per l'eliminazione.
+   */
   selezioneOperazioneServizio(
     icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
@@ -146,6 +183,15 @@ export class ServizioActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eseguire la modifica dei servizi selezionati.
+   * 
+   * @param {Array<Object>} servizi - collezione dei servizi. 
+   * @param {Array<number>} selectedIdsModifica - id dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id selezionati per la modifica.
+   * 
+   * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
+   */
   async modificaServizi(servizi, selectedIdsModifica, setSelectedIdsModifica) {
     let serviziDaModificare = servizi.filter(servizio => selectedIdsModifica.includes(servizio.id)); 
     let idServiziNonModificati = [];
@@ -214,6 +260,13 @@ export class ServizioActions extends Actions {
     };
   }
 
+  /**
+   * Azione per aggiornare un attributo di un servizio.
+   * 
+   * @param {number} id_servizio - id del servizio da aggiornare.
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - nuovo valore dell'attributo.
+   */
   aggiornaServizio(id_servizio, nome_attributo, nuovo_valore) {
     this.dispatch(servizioSliceActions.aggiornaServizio({
       id_servizio: id_servizio,
@@ -222,6 +275,15 @@ export class ServizioActions extends Actions {
     }));
   }
 
+  /**
+   * Azione per eliminare i servizi selezionati.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id dei servizi selezionati per l'eliminazione.
+   * @param {Array<Object>} servizi - collezione dei servizi.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminaServizi(selectedIdsEliminazione, setSelectedIdsEliminazione, servizi) {
     const dati = {
       tipo_item: "servizio", 
@@ -244,6 +306,14 @@ export class ServizioActions extends Actions {
     };
   }
 
+  /**
+   * Azione per ottenere le entrate dei servizi presenti in un range di 2 date incluse.
+   * 
+   * @param {Function} setEntrateServizi - setter delle entrate dei servizi.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchEntrateServizi(setEntrateServizi, datiRicerca) {
     const dati = {
       tipo_item: "servizio", 

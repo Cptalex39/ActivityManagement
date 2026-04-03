@@ -16,12 +16,23 @@ export class LavoroActions extends Actions {
     super();
   }
 
+  /**
+   * Azione che azzera la lista dei lavori.
+   */
   azzeraLista() {
     this.dispatch(lavoroSliceActions.aggiornaLavori({
       lavori: -1,
     }));
   }
   
+  /**
+   * Azione per l'inserimento di un nuovo lavoro nel sistema.
+   * 
+   * @param {Object} nuovoLavoro - dati del nuovo lavoro.
+   * @param {Array<Object>} servizi - servizi con la loro quantità.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async inserimentoLavoro(nuovoLavoro, servizi) {
     let descrizione = "", totale = 0;
     for(let i = 0; i < servizi.length; i++) {
@@ -50,6 +61,13 @@ export class LavoroActions extends Actions {
     };
   }
 
+  /**
+   * Azione per eseguire la ricerca dei lavori.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca. 
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ricercaLavori(datiRicerca) {    
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -67,6 +85,17 @@ export class LavoroActions extends Actions {
     };
   }
   
+  /**
+   * Azione per ottenere un file con i lavori.
+   * 
+   * @param {String} tipoFile - tipo del file (.pdf o .xlsx)
+   * @param {Function} setTipoFile - setter del tipo di file.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @param {Function} setLavori - setter dei lavori.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchLavoriRangeFile(tipoFile, setTipoFile, datiRicerca, setLavori, lingua) {
     setTipoFile(tipoFile);
 
@@ -91,6 +120,13 @@ export class LavoroActions extends Actions {
     };
   }
 
+  /**
+   * Azione per la ricerca delle entrate dei lavori.
+   * 
+   * @param {Function} setEntrateLavori - setter delle entrate dei lavori.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @returns {Object} risultato response operazione.
+   */
   async handleSearchEntrateLavori(setEntrateLavori, datiRicerca) {
     const dati = {
       tipo_item: "lavoro", 
@@ -111,6 +147,18 @@ export class LavoroActions extends Actions {
     };
   };
 
+  /**
+   * Azione per selezionare un'operazione sul lavoro.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata.
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedCodiciModifica - codici dei lavori selezionati per la modifica.
+   * @param {Function} setSelectedCodiciModifica - setter dei codici dei lavori selezionati per la modifica.
+   * @param {Array<number>} selectedCodiciEliminazione - codici dei lavori selezionati per l'eliminazione.
+   * @param {Function} setSelectedCodiciEliminazione - setter dei codici dei lavori selezionati per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero di lavori selezionati per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero di lavori selezionati per l'eliminazione.
+   */
   selezioneOperazioneLavoro(
     icon, item, selectedCodiciModifica, setSelectedCodiciModifica, selectedCodiciEliminazione, setSelectedCodiciEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
@@ -169,6 +217,15 @@ export class LavoroActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eseguire la modifica dei lavori.
+   * 
+   * @param {Array<Object>} lavori - collezione dei lavori.
+   * @param {Array<String>} selectedCodiciModifica - codici dei lavori selezionati per la modifica.
+   * @param {Array<String>} setSelectedCodiciModifica - setter dei codici dei lavori selezionati per la modifica.
+   * 
+   * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
+   */
   async modificaLavori(lavori, selectedCodiciModifica, setSelectedCodiciModifica) {
     let lavoriDaModificare = lavori.filter(lavoro => selectedCodiciModifica.includes(lavoro.codice));
     let codiciLavoriNonModificati = [];
@@ -226,6 +283,13 @@ export class LavoroActions extends Actions {
     };
   }
 
+  /**
+   * Azione per aggiornare un attributo di un lavoro.
+   * 
+   * @param {String} codice_lavoro - codice del lavoro da aggiornare. 
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - nuovo valore dell'attributo da aggiornare.
+   */
   aggiornaLavoro(codice_lavoro, nome_attributo, nuovo_valore) {
     this.dispatch(lavoroSliceActions.aggiornaLavoro({
       codice_lavoro: codice_lavoro, 
@@ -234,6 +298,15 @@ export class LavoroActions extends Actions {
     }))
   }
 
+  /**
+   * Azione per eseguire l'eliminazione dei lavori selezionati.
+   * 
+   * @param {Array<String} selectedCodiciEliminazione - codici dei lavori selezionati per la modifica.
+   * @param {Function} setSelectedCodiciEliminazione - setter dei lavori selezionati per la modifica.
+   * @param {Array<Object>} lavori - ollezione dei lavori.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminaLavori(selectedCodiciEliminazione, setSelectedCodiciEliminazione, lavori) {
     const dati = {
       tipo_item: "lavoro", 
@@ -262,6 +335,12 @@ export class LavoroActions extends Actions {
     };
   }
 
+  /**
+   * Azione per eliminare i lavori compreso in un range di due date estremi inclusi.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @returns {Object} risultato response operazione.
+   */
   async handleDeleteLavoriRangeFile(datiRicerca) {
     const dati = {
       tipo_item: "lavoro", 

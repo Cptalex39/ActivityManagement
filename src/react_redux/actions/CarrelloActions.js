@@ -12,7 +12,14 @@ export class CarrelloActions extends Actions {
     super();
   }
 
-  // Aggiunge item(s) selezionati dal catalogo al carrello
+  /**
+   * Azione che aggiunge un item selezionati dal catalogo al carrello.
+   * 
+   * @param {Object} item - item da aggiungere.
+   * @param {number} quantita - quantità dell'item aggiunto.
+   * 
+   * @returns {void} se quantità <= 0
+   */
   aggiungiAlCarrello(item, quantita) {
     if (quantita <= 0) return;
     this.dispatch(carrelloSliceActions.aggiungiAlCarrello({
@@ -21,7 +28,12 @@ export class CarrelloActions extends Actions {
     }));
   }
 
-  // Aggiunge più items dal catalogo al carrello (usato dal riepilogo del Catalogo)
+  /**
+   * Azione che aggiunge più items dal catalogo al carrello (usato dal riepilogo del Catalogo).
+   * 
+   * @param {*} itemsSelezionati - collezione di items selezionati. 
+   * @param {*} quantitaMap - quantità per ciascun articolo.
+   */
   aggiungiMultipliAlCarrello(itemsSelezionati, quantitaMap) {
     for (const item of itemsSelezionati) {
       const qta = quantitaMap[item.id] || 0;
@@ -34,32 +46,67 @@ export class CarrelloActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eliminare un item dal carrello tramite il suo id
+   * 
+   * @param {number} id - id dell'item.
+   */
   rimuoviDalCarrello(id) {
     this.dispatch(carrelloSliceActions.rimuoviDalCarrello({ id }));
   }
 
+  /**
+   * Azione per aggiornare la quantità di un item del carrello tramite il suo id.
+   * 
+   * @param {number} id - id dell'item.
+   * @param {number} quantita - nuova quantità dell'item.
+   */
   aggiornaQuantita(id, quantita) {
     this.dispatch(carrelloSliceActions.aggiornaQuantita({ id, quantita }));
   }
 
+  /**
+   * Azione per incrementare la quantità di un item del carrello tramite il suo id.
+   * 
+   * @param {number} id - id dell'item. 
+   */
   incrementaQuantita(id) {
     this.dispatch(carrelloSliceActions.incrementaQuantita({ id }));
   }
 
+  /**
+   * Azione per decrementare la quantità di un item del carrello tramite il suo id.
+   * 
+   * @param {number} id - id dell'item.
+   */
   decrementaQuantita(id) {
     this.dispatch(carrelloSliceActions.decrementaQuantita({ id }));
   }
 
+  /**
+   * Azione per impostare il tipo del lavoro (ordine o prenotazione) nel carrello.
+   * 
+   * @param {String} tipoLavoro - tipo del lavoro del carrello.
+   */
   impostaTipoLavoro(tipoLavoro) {
     this.dispatch(carrelloSliceActions.impostaTipoLavoro({ tipoLavoro }));
   }
 
+  /**
+   * Azione per svuotare il carrello.
+   */
   svuotaCarrello() {
     this.dispatch(carrelloSliceActions.svuotaCarrello());
   }
 
-  // Checkout: crea il lavoro (ordine o prenotazione) sul backend
-  async checkout(datiCheckout, lingua) {
+  /**
+   * Azione che crea il lavoro (ordine o prenotazione) sul backend.
+   * 
+   * @param {Object} datiCheckout - dati del checkout.
+   *  
+   * @returns {Object} risultato operazione.
+   */
+  async checkout(datiCheckout) {
     const body = {
       tipo_item: "lavoro",
       cliente: datiCheckout.cliente,

@@ -3,6 +3,14 @@ export class Actions {
     
   }
 
+  /**
+   * Esecuzione operazione di tipo POST.
+   * 
+   * @param {String}  operation - operazione POST da eseguire.
+   * @param {Object} data - dati passati all'operazione.
+   * 
+   * @returns {Promise<Response>} risposta dell'operazione POST come Promise.
+   */
   async getResponse(operation, data) {
     return (fetch(operation, {
       method: 'POST',
@@ -13,6 +21,14 @@ export class Actions {
     }));
   }
 
+  /**
+   * azione per ottenere una collezione di items.
+   * 
+   * @param {Function} setItems - setter di items. 
+   * @param {String} tipoItem - tipo degli item.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async getAllItems(setItems, tipoItem) {
     const dati = {
       tipo_item: tipoItem

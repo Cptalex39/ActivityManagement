@@ -14,12 +14,24 @@ export class ClienteActions extends Actions {
     super();
   }
 
+  /**
+   * Azione che azzera la lista dei clienti.
+   */
   azzeraLista() {
     this.dispatch(clienteSliceActions.aggiornaClienti({
       clienti: -1, 
     }));
   }
 
+  /**
+   * Azione che registra un nuovo cliente nel sistema.
+   * 
+   * @param {Object} nuovoCliente - dati del nuovo cliente.
+   * @param {Function} setNuovoCliente - setter dei dati del nuovo cliente.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async registrazioneCliente(nuovoCliente, setNuovoCliente, lingua) {
     if (controlloCliente(nuovoCliente, setNuovoCliente, lingua) > 0) {
       return null;
@@ -33,6 +45,13 @@ export class ClienteActions extends Actions {
     }
   }
 
+  /**
+   * Azione per eseguire la ricerca dei clienti.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async ricercaClienti(datiRicerca) {    
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -50,6 +69,18 @@ export class ClienteActions extends Actions {
     }
   }
 
+  /**
+   * Azione per selezionare un operazione sul cliente.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata.
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedIdsModifica - id dei clienti selezionati per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id selezionati per la modifica.
+   * @param {Array<number>} selectedIdsEliminazione - id dei clienti selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id selezionati per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero di clienti selezionati per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero di clienti selezionati per l'eliminazione.
+   */
   selezioneOperazioneCliente(
     icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, 
     setSelectedIdsEliminazione, setSelectedPencilCount, setSelectedTrashCount
@@ -76,6 +107,13 @@ export class ClienteActions extends Actions {
     }
   }
 
+  /**
+   * Azione per aggiornare un attributo di un cliente.
+   * 
+   * @param {number} id_cliente - id del cliente da aggiornare. 
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - valore dell'attributo aggiornato.
+   */
   aggiornaCliente(id_cliente, nome_attributo, nuovo_valore) {
     this.dispatch(clienteSliceActions.aggiornaCliente({
       id_cliente: id_cliente,
@@ -84,6 +122,15 @@ export class ClienteActions extends Actions {
     }))
   }
 
+  /**
+   * Azione per eliminare i clienti selezionati.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id dei clienti selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id dei clienti selezionati per l'eliminazione.
+   * @param {Array<Object>} clienti - lista dei clienti.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
   async eliminaClienti(selectedIdsEliminazione, setSelectedIdsEliminazione, clienti) {
     const dati = {
       tipo_item: "cliente", 
