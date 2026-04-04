@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { NavbarApp } from "../components/navbar/NavbarApp";
+import { ClienteActions } from "../../actions/ClienteActions";
 
-const RegistrazioneCliente = ({ chiudi }) => {
+const RegistrazioneCliente = ({ /*chiudi*/ }) => {
+  const clienteActions = new ClienteActions();
+
   const [dati, setDati] = useState({
+    nome: "Mario", 
+    cognome: "Rossi", 
     username: "",
     password: "",
+    conferma_password: "Password10!!", 
+    contatto: "3333333333", 
     email: "",
+    indirizzo_spedizione: "", 
+    note: "", 
   });
 
   const registra = () => {
@@ -14,9 +23,11 @@ const RegistrazioneCliente = ({ chiudi }) => {
       return;
     }
 
+    clienteActions.registrazioneCliente(dati, setDati, "italiano");
+
     alert(`Registrazione completata con successo per ${dati.username}:
 Esegui il login per accedere`);
-    chiudi();
+    //chiudi();
   };
 
   return (

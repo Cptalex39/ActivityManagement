@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CartaActions } from "../../actions/CartaActions"; 
 
 // componente che rappresenta la pagina profilo cliente
 // riceve:
@@ -6,6 +7,7 @@ import { useState } from "react";
 // - carte salvate
 // - funzione per salvare nuove carte
 const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate }) => {
+  const cartaActions = new CartaActions();
 
   // dati mock del cliente (in un'app reale arriverebbero dal backend)
   const clienteMock = {
@@ -17,6 +19,14 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate }) => {
 
   // stato per inserire una nuova carta
   const [nuovaCarta, setNuovaCarta] = useState("");
+  const [datiNuovaCarta, setDatiNuovaCarta] = useState({
+    numero: "1111111111111111", 
+    data_scadenza: "01/02/2030", 
+    cvv_cvs: "246", 
+    nome_titolare: clienteMock.cognome + " " + clienteMock.nome, 
+    circuito: "Visa", 
+    stato: true, 
+  });
 
   // funzione per salvare una carta nel profilo cliente
   const salvaCarta = () => {
@@ -26,9 +36,11 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate }) => {
 
     // controllo lunghezza
     if (nuovaCarta.length < 16) {
-    alert("Il numero della carta deve contenere almeno 16 cifre.");
-    return;
-  }
+      alert("Il numero della carta deve contenere almeno 16 cifre.");
+      return;
+    }
+
+    cartaActions.inserimentoCarta(datiNuovaCarta, setDatiNuovaCarta, "italiano");
 
 
     // aggiunge la carta all'array delle carte salvate

@@ -1,5 +1,6 @@
 // Importa useState da React per gestire gli stati del componente
 import { useState } from "react";
+import { LavoroActions } from "../../actions/LavoroActions";
 
 // Componente CheckoutView
 // Riceve tramite props:
@@ -9,6 +10,7 @@ import { useState } from "react";
 // setOrdini → per salvare lo storico ordini
 // carteSalvate → lista delle carte salvate nel profilo cliente
 const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvate }) => {
+  const lavoroActions = new LavoroActions();
 
   // Stato per il nome cliente
   const [nome, setNome] = useState("");
@@ -108,6 +110,12 @@ const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvat
     spedizione: pagamento === "Spedizione" ? { indirizzo, carta: numeroCarta } : null,
     corriere: pagamento === "Corriere" ? { indirizzo } : null
   };
+
+    /*
+    nome, email, indirizzo, pagamento, dataPrenotazione, oraPrenotazione, numeroCarta, ordineConfermato, totale
+    */
+
+    lavoroActions.inserimentoLavoro(nuovoOrdine, null)
 
   setOrdini(prev => [...prev, nuovoOrdine]);
   setOrdineConfermato(true);

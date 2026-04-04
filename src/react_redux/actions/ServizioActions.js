@@ -2,107 +2,126 @@
 import { useDispatch } from 'react-redux';
 // Reducers
 import { servizioSliceActions } from '../store/reducers/ServizioReducer';
+// Actions
+import { Actions } from "./Actions";
 // Utils
 import { controlloServizio } from "../../utils/Controlli";
 
-export class ServizioActions {
+export class ServizioActions extends Actions {
   dispatch = useDispatch();
 
   constructor() {
-    
+    super();
   }
 
+  /**
+   * Azione che azzera la lista sei servizi.
+   */
   azzeraLista() {
     this.dispatch(servizioSliceActions.aggiornaServizi({
       servizi: -1, 
     }));
   }
 
-  async getAllServizi(setServizi, lingua) {
-    const response = await fetch('/OTTIENI_TUTTI_GLI_ITEMS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({tipo_item: "servizio"}),
-    });
+  /**
+   * Azione per ottenere il catalogo (servizi e prodotti in uso) per la vista cliente.
+   * 
+   * @param {*} filtroTipo - filtro del tipo (servizi/prodotti).
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async getCatalogo(filtroTipo) {
+    const dati = {
+      filtro_tipo: filtroTipo
+    }
+    const response = await super.getResponse("/VISUALIZZA_CATALOGO", dati);
 
-    if(response.status === 200) {
+    if(response.ok) {
       const result = await response.json();
-      setServizi(result.items);
+      this.dispatch(servizioSliceActions.aggiornaCatalogo({
+        catalogo: result.items, 
+      }));
     }
-    else {
-      alert(lingua === "italiano" ? "Errore durante l\'ottenimento dei clienti per l\'inserimento di un nuovo lavoro, riprova più tardi." : "Error while obtaining clients for new job entry, try again later.");
-    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   };
 
-  async inserisciServizio(e, nuovoServizio, setNuovoServizio, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler salvare il servizio?" : "Are you sure you want to save the service?")) {
-      if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) 
-        return;
+  /**
+   * Azione per inserire un nuovo servizio nel sistema.
+   * 
+   * @param {Object} nuovoServizio - dati del nuovo servizio.
+   * @param {Function} setNuovoServizio - setter dei dati del nuovo servizio.
+   * @param {String} lingua - lingua del sistema attuale.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async inserisciServizio(nuovoServizio, setNuovoServizio, lingua) {
+    if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) {
+      return null;
+    }
 
-      nuovoServizio["nome_attuale"] = nuovoServizio["nome"];
-      nuovoServizio["prezzo_attuale"] = nuovoServizio["prezzo"];
-      nuovoServizio["note_attuale"] = nuovoServizio["note"];
-      nuovoServizio["in_uso"] = true;
-      nuovoServizio["in_uso_attuale"] = nuovoServizio["in_uso"];
+    const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizio);
+
+    if(response.ok) {
+      const result = await response.json();
+
+      let nuovoServizioAggiornato = {
+        ...nuovoServizio, 
+        id: result.id, 
+      };
+
+      this.dispatch(servizioSliceActions.inserimentoServizio({
+        nuovoServizio: nuovoServizioAggiornato, 
+      }));
       
-      const response = await fetch('/INSERISCI_ITEM', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nuovoServizio),
-      });
-      if(response.status === 200) {
-        const result = await response.json();
-        nuovoServizio.id = result.id;
-        nuovoServizio["in_uso"] = "Si";
-        nuovoServizio["in_uso_attuale"] = "Si";
-
-        this.dispatch(servizioSliceActions.inserimentoServizio({
-          nuovoServizio: nuovoServizio
-        }));
-
-        alert(lingua === "italiano" ? "L\'inserimento del servizio è andato a buon fine." : "Service entry was successful.");
-      }
-      else if(response.status === 400) {
-        alert(lingua === "italiano" ? "Errore: servizio gia\' presente." : "Error: service already present.")
-      }
-      else {
-        alert(lingua === "italiano" ? "Errore durante il salvataggio del nuovo servizio, riprova più tardi." : "Error while saving the new service, please try again later.");
-      }
+      setNuovoServizio(nuovoServizioAggiornato);
     }
-    else {
-      alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
-    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   };
 
-  async ricercaServizi(e, datiRicerca, lingua) {
-    e.preventDefault();
-        
-    const response = await fetch('/VISUALIZZA_ITEMS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(datiRicerca),
-    });
+  /**
+   * Azione per eseguire la ricerca dei servizi.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async ricercaServizi(datiRicerca) {
+    const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
-    if(response.status === 200) {
+    if(response.ok) {
       const result = await response.json();
       
       this.dispatch(servizioSliceActions.aggiornaServizi({
         servizi: result.items, 
       }));
+    }
 
-    }
-    else {
-      alert(lingua === "italiano" ? "Errore durante la ricerca dei servizi, riprova più tardi." : "Error while searching for services, please try again later.");
-    }
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
-
+  
+  /**
+   * Azione per selezionare un'operazione sul servizio.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata.
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedIdsModifica - id dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id dei servizi selezionati per la modifica.
+   * @param {Array<number>} selectedIdsEliminazione - id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero dei servizi selezionati per l'eliminazione.
+   */
   selezioneOperazioneServizio(
     icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
@@ -164,84 +183,90 @@ export class ServizioActions {
     }
   }
 
-  async modificaServizi(e, servizi, selectedIdsModifica, setSelectedIdsModifica, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler modificare i servizi?" : "Are you sure you want to modify the services?")) {
-      let serviziDaModificare = servizi.filter(servizio => selectedIdsModifica.includes(servizio.id)); 
-      
-      let idServiziNonModificati = [];
-      let idServiziModificati = [];
-      let esitoModifica = lingua === "italiano" ? "Esito modifica:\n" : "Modification outcome:\n";
-      for(let i = 0; i < serviziDaModificare.length; i++) {
-        const dati = {
-          tipo_item: "servizio", 
-          item: serviziDaModificare[i] 
-        }
-        const response = await fetch('/MODIFICA_ITEM', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dati),
-        });
-        if(response.status === 200) {           
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": modifica avvenuta con successo.\n" : "Service number " + (i+1) + ": successful modification..\n";
-          if(serviziDaModificare[i].prezzo !== serviziDaModificare[i].prezzo_attuale) {
-            const result = await response.json();
-            let nuovoServizio = { ...serviziDaModificare[i] };
-            nuovoServizio["id"] = result.id;
-            
-            this.dispatch(servizioSliceActions.inserimentoServizio({
-              nuovoServizio: nuovoServizio
-            }))
-
-          }
-          idServiziModificati.push(serviziDaModificare[i].id);
-        }
-        else if(response.status === 400) {
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": errore durante la modifica: servizio gia\' presente.\n" : "Service number " + (i+1) + ": Error while editing: service already present.\n";
-          idServiziNonModificati.push(serviziDaModificare[i].id);
-        }
-        else {
-          esitoModifica += lingua === "italiano" ? "Servizio numero " + (i+1) + ": errore durante la modifica.\n" : "Service number " + (i+1) + ": error while editing.\n";
-          idServiziNonModificati.push(serviziDaModificare[i].id);
-        }
+  /**
+   * Azione per eseguire la modifica dei servizi selezionati.
+   * 
+   * @param {Array<Object>} servizi - collezione dei servizi. 
+   * @param {Array<number>} selectedIdsModifica - id dei servizi selezionati per la modifica.
+   * @param {Function} setSelectedIdsModifica - setter degli id selezionati per la modifica.
+   * 
+   * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
+   */
+  async modificaServizi(servizi, selectedIdsModifica, setSelectedIdsModifica) {
+    let serviziDaModificare = servizi.filter(servizio => selectedIdsModifica.includes(servizio.id)); 
+    let idServiziNonModificati = [];
+    let idServiziModificati = [];
+    let esitiModifiche = [];
+        
+    for(let i = 0; i < serviziDaModificare.length; i++) {
+      const dati = {
+        tipo_item: "servizio", 
+        item: serviziDaModificare[i] 
       }
 
-      let serviziAggiornati = [];
-      for (let i = 0; i < servizi.length; i++) {
-        let servizioAggiornato = { ...servizi[i] };
-        if(servizioAggiornato.tipo_selezione === 1) {
-          servizioAggiornato.tipo_selezione = 0;
+      const response = await super.getResponse("/MODIFICA_ITEM", dati);
+
+      if(response.ok) {
+        esitiModifiche[i] = [true, response.status];
+
+        if(serviziDaModificare[i].prezzo !== serviziDaModificare[i].prezzo_attuale) {
+          const result = await response.json();
+          let nuovoServizio = { ...serviziDaModificare[i] };
+          nuovoServizio["id"] = result.id;
+          
+          this.dispatch(servizioSliceActions.inserimentoServizio({
+            nuovoServizio: nuovoServizio
+          }))
         }
-        serviziAggiornati.push(servizioAggiornato);
+
+        idServiziModificati.push(serviziDaModificare[i].id);
       }
-      
-      this.dispatch(servizioSliceActions.aggiornaServizi({
-        servizi: serviziAggiornati, 
+      else {
+        esitiModifiche[i] = [false, response.status];
+        idServiziNonModificati.push(serviziDaModificare[i].id);
+      }
+    }
+    
+    let serviziAggiornati = [];
+
+    for (let i = 0; i < servizi.length; i++) {
+      let servizioAggiornato = { ...servizi[i] };
+      if(servizioAggiornato.tipo_selezione === 1) {
+        servizioAggiornato.tipo_selezione = 0;
+      }
+      serviziAggiornati.push(servizioAggiornato);
+    }
+    
+    this.dispatch(servizioSliceActions.aggiornaServizi({
+      servizi: serviziAggiornati, 
+    }))
+
+    for(let id of idServiziNonModificati) {
+      this.dispatch(servizioSliceActions.getServizioPrimaDellaModifica({
+        id_servizio: id
       }))
-
-      for(let id of idServiziNonModificati) {
-        this.dispatch(servizioSliceActions.getServizioPrimaDellaModifica({
-          id_servizio: id
-        }))
-      }
-
-      for(let id of idServiziModificati) {
-        this.dispatch(servizioSliceActions.getServizioDopoLaModifica({
-          id_servizio: id
-        }))
-      }
-      
-      setSelectedIdsModifica([]);
-
-      alert(esitoModifica);
     }
-    else {
-      alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
+
+    for(let id of idServiziModificati) {
+      this.dispatch(servizioSliceActions.getServizioDopoLaModifica({
+        id_servizio: id
+      }))
     }
+    
+    setSelectedIdsModifica([]);
+
+    return {
+      esitiModifiche: esitiModifiche, 
+    };
   }
 
+  /**
+   * Azione per aggiornare un attributo di un servizio.
+   * 
+   * @param {number} id_servizio - id del servizio da aggiornare.
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - nuovo valore dell'attributo.
+   */
   aggiornaServizio(id_servizio, nome_attributo, nuovo_valore) {
     this.dispatch(servizioSliceActions.aggiornaServizio({
       id_servizio: id_servizio,
@@ -250,61 +275,61 @@ export class ServizioActions {
     }));
   }
 
-  async eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizi, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i servizi? Tutti i lavori presenti attualmente nel database verranno modificati eliminando i servizi selezionati." : "Are you sure you want to delete the services? All jobs currently in the database will be modified by deleting the selected services.")) {
-      const dati = {
-        tipo_item: "servizio", 
-        ids: selectedIdsEliminazione
-      }
-      
-      const itemsRestanti = (servizi && servizi !== -1) ? servizi.filter(servizio => !dati.ids.includes(servizio.id)) : -1;
-      
-      const response = await fetch('/ELIMINA_ITEMS', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dati),
-      });
-      if(response.status === 200) {          
-        this.dispatch(servizioSliceActions.aggiornaServizi({
-          servizi: itemsRestanti, 
-        }));
-        setSelectedIdsEliminazione([]);
-        alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
-      }
-      else {
-        alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei servizi, riprova più tardi." : "Error while deleting services, try again later.");
-      }
+  /**
+   * Azione per eliminare i servizi selezionati.
+   * 
+   * @param {Array<number>} selectedIdsEliminazione - id dei servizi selezionati per l'eliminazione.
+   * @param {Function} setSelectedIdsEliminazione - setter degli id dei servizi selezionati per l'eliminazione.
+   * @param {Array<Object>} servizi - collezione dei servizi.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async eliminaServizi(selectedIdsEliminazione, setSelectedIdsEliminazione, servizi) {
+    const dati = {
+      tipo_item: "servizio", 
+      ids: selectedIdsEliminazione
     }
-    else {
-      alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
+    
+    const itemsRestanti = (servizi && servizi !== -1) ? servizi.filter(servizio => !dati.ids.includes(servizio.id)) : -1;
+    const response = await super.getResponse("/ELIMINA_ITEMS", dati);
+
+    if(response.ok) {
+      this.dispatch(servizioSliceActions.aggiornaServizi({
+        servizi: itemsRestanti, 
+      }));
+      setSelectedIdsEliminazione([]);
     }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
 
-  async handleSearchEntrateServizi(setEntrateServizi, datiRicerca, lingua) {
+  /**
+   * Azione per ottenere le entrate dei servizi presenti in un range di 2 date incluse.
+   * 
+   * @param {Function} setEntrateServizi - setter delle entrate dei servizi.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async handleSearchEntrateServizi(setEntrateServizi, datiRicerca) {
     const dati = {
       tipo_item: "servizio", 
       primo_anno: datiRicerca.primo_anno, 
       ultimo_anno: datiRicerca.ultimo_anno
     };
     
-    const response = await fetch('/VISUALIZZA_ENTRATE_ITEMS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dati), 
-    });
+    const response = await super.getResponse("/VISUALIZZA_ENTRATE_ITEMS", dati);
     
-    if(response.status === 200) {
-      const result = await response.json();
-      setEntrateServizi(result.items);
-    }
-    else {
-      alert(lingua === "italiano" ? "Errore durante la ricerca delle entrate dei servizi, riprova più tardi." : "Error while searching for service entries, please try again later.");
-    }
+    const result = await response.json();
+    setEntrateServizi(result.items);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   };
 }
 

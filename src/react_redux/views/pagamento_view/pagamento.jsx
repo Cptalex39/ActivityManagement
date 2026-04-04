@@ -1,8 +1,11 @@
 // React e Redux
 import { useState } from "react";
 import Header from "../components/Header.jsx";
+import { PagamentoActions } from "../../actions/PagamentoActions";
 
 const Pagamenti = () => {
+  const pagamentoActions = new PagamentoActions();
+
   const [pagamenti, setPagamenti] = useState([
     {
       id: 1,
@@ -45,13 +48,16 @@ const Pagamenti = () => {
   const [tabAttiva, setTabAttiva] = useState("tutti"); // "tutti", "completati", "sospesi"
 
   const segnaComeCompletato = (id) => {
+    pagamentoActions.confermaPagamentoInSospeso(id);
+
     setPagamenti(prev =>
-      prev.map(p => (p.id === id ? { ...p, stato: "completato" } : p))
+      prev.map(p => (p.id === id ? { ...p, stato: "COMPLETATO" } : p))
     );
   };
 
   const annullaPagamento = (id) => {
     if (window.confirm("Sei sicuro di voler annullare questo pagamento?")) {
+      pagamentoActions.annullaPagamentoInSospeso(id);
       setPagamenti(prev => prev.filter(p => p.id !== id));
     }
   };

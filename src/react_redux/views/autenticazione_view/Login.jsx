@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import Header from "../components/Header";
 import { OperazioniForms } from '../forms/OperazioniForms';
 import { AutenticazioneForms } from '../forms/AutenticazioneForms';
+import { handleLogin } from '../operazioni/AutenticazioneOperazioni';
 // Actions
 import { AutenticazioneActions } from "../../actions/AutenticazioneActions";
 // Riutilizzabile
@@ -40,7 +41,7 @@ const Login = () => {
       <LoginTag 
         campi={campiLogin}
         indici={[...Array(campiLogin.label.length).keys()]}
-        eseguiLogin={(e) => autenticazioneActions.login(e, datiLogin, setDatiLogin, navigate, attivitaState.lingua)} 
+        eseguiLogin={(e) => handleLogin(e, autenticazioneActions, datiLogin, setDatiLogin, navigate, attivitaState.lingua)} 
       />
     </>
   );

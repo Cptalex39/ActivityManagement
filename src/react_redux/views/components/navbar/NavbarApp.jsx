@@ -48,7 +48,12 @@ export const NavbarApp = () => {
   
   const handleMouseLeave = (setDropdown) => {
     setDropdown(false);
-  };  
+  };
+
+  const handleLogout = (e, navigate) => {
+    e.preventDefault();
+    autenticazioneActions.logout(navigate);
+  }
   
   const applicaStileBody = () => {
     if (stileState.pathImg !== null) {
@@ -255,7 +260,7 @@ export const NavbarApp = () => {
               <>
                 <StyledNavLink as={NavLink} to="/analisi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Analisi" : "Analyses"}</StyledNavLink>
                 <StyledNavLink as={NavLink} to="/profilo" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Profilo" : "Profile"}</StyledNavLink>
-                <StyledNavLink as={NavLink} to="/" onClick={(e) => autenticazioneActions.logout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
+                <StyledNavLink as={NavLink} to="/" onClick={(e) => handleLogout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
               </>
             )}
             <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>
