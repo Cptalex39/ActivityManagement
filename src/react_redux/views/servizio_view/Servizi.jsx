@@ -1,13 +1,9 @@
-// React e Redux
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-// View
 import Header from "../components/Header.jsx";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { ServizioForms } from "../forms/ServizioForms";
-// Actions
 import { ServizioActions } from "../../actions/ServizioActions";
-// Riutilizzabile
 import PaginaWeb from "../../../riutilizzabile/pagine_web/PaginaWeb.jsx";
 
 const Servizi = () => {
@@ -27,9 +23,11 @@ const Servizi = () => {
     tipo_item: "servizio", 
     tipo_selezione: 0,
     nome: "",
+    tipologia_servizio: "", 
     prezzo: "",
     note: "", 
     errore_nome: "", 
+    errore_tipologia_servizio: "", 
     errore_prezzo: "", 
     errore_note: ""
   });
@@ -37,6 +35,7 @@ const Servizi = () => {
   const [datiRicerca, setDatiRicerca] = useState({
     tipo_item: "servizio", 
     nome: "", 
+    tipologia_servizio: "", 
     prezzo_min: "",
     prezzo_max: "",  
     note: "", 
@@ -65,6 +64,7 @@ const Servizi = () => {
     (e) => operazioniForms.handleInputClick(e, setNuovoServizio), 
     (e) => operazioniForms.handleInputBlur(e, setNuovoServizio)
   );
+  
   const campiRicercaServizi = servizioForms.getCampiRicercaServizi(
     datiRicerca, 
     (e) => operazioniForms.handleInputChange(e, setDatiRicerca), 
@@ -75,40 +75,29 @@ const Servizi = () => {
   return (
     <>
       <Header />
-
       <div className="main-content" />
-      
       <PaginaWeb 
-        componenti={ 
-          {
-            // Items
-            tipoItem: "servizio", 
-            items: servizioState.servizi, 
-            setItems: null, 
-            servizi: null, 
-            // Stati
-            stileState: stileState, 
-            // Actions
-            lavoroActions: null, 
-            // Handle operations
-            handleBlurItem: handleBlurItem, 
-            handleInsert: (e) => servizioActions.inserisciServizio(e, nuovoServizio, setNuovoServizio, attivitaState.lingua), 
-            handleSearch: (e) => servizioActions.ricercaServizi(e, datiRicerca, attivitaState.lingua), 
-            handleEdit:   (e) => servizioActions.modificaServizi(e, servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
-            handleDelete: (e) => servizioActions.eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi, attivitaState.lingua), 
-            // Campi
-            campiNuovoItem: campiNuovoServizio, 
-            campiRicercaItems: campiRicercaServizi,
-            campiItemEsistente: servizioForms.getCampiServizioEsistente, 
-            // Indici
-            indiciNuovoItem: [...Array(campiNuovoServizio.label.length).keys()], 
-            indiciRicercaItems: [...Array(campiRicercaServizi.label.length).keys()], 
-            // Selects
-            selectOperation: selectOperation, 
-            selectedIdsModifica: selectedIdsModifica, 
-            selectedIdsEliminazione: selectedIdsEliminazione, 
-          }
-        }
+        componenti={{
+          tipoItem: "servizio", 
+          items: servizioState.servizi, 
+          setItems: null, 
+          servizi: null, 
+          stileState: stileState, 
+          lavoroActions: null, 
+          handleBlurItem: handleBlurItem, 
+          handleInsert: (e) => servizioActions.inserisciServizio(e, nuovoServizio, setNuovoServizio, attivitaState.lingua), 
+          handleSearch: (e) => servizioActions.ricercaServizi(e, datiRicerca, attivitaState.lingua), 
+          handleEdit:   (e) => servizioActions.modificaServizi(e, servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
+          handleDelete: (e) => servizioActions.eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi, attivitaState.lingua), 
+          campiNuovoItem: campiNuovoServizio, 
+          campiRicercaItems: campiRicercaServizi,
+          campiItemEsistente: servizioForms.getCampiServizioEsistente, 
+          indiciNuovoItem: [...Array(campiNuovoServizio.label.length).keys()], 
+          indiciRicercaItems: [...Array(campiRicercaServizi.label.length).keys()], 
+          selectOperation: selectOperation, 
+          selectedIdsModifica: selectedIdsModifica, 
+          selectedIdsEliminazione: selectedIdsEliminazione, 
+        }}
         elementi={["search", "insert"]}
         vistaItem={stileState.vistaItem} 
         vistaForm={stileState.vistaForm}

@@ -1,316 +1,261 @@
-// Importa useState da React per gestire gli stati del componente
 import { useState } from "react";
 
-// Componente CheckoutView
-// Riceve tramite props:
-// carrello → prodotti nel carrello
-// setCarrello → funzione per svuotare/modificare il carrello
-// setPagina → per cambiare pagina
-// setOrdini → per salvare lo storico ordini
-// carteSalvate → lista delle carte salvate nel profilo cliente
+// Componente CheckoutView - VERSIONE FULL XXL
 const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvate }) => {
-
-  // Stato per il nome cliente
+  // Stati per la gestione del form
   const [nome, setNome] = useState("");
-
-  // Stato per email cliente
   const [email, setEmail] = useState("");
-
-  // Stato per indirizzo di spedizione
   const [indirizzo, setIndirizzo] = useState("");
-
-  // Stato per metodo di pagamento selezionato
   const [pagamento, setPagamento] = useState("");
-
-  // Stato per data prenotazione servizio in struttura
   const [dataPrenotazione, setDataPrenotazione] = useState("");
-
-  // Stato per ora prenotazione servizio
   const [oraPrenotazione, setOraPrenotazione] = useState("");
-
-  // Stato per numero carta di pagamento
   const [numeroCarta, setNumeroCarta] = useState("");
-
-  // Stato che indica se l'ordine è stato confermato
+  const [dataScadenzaCarta, setDataScadenzaCarta] = useState("");
+  const [cvvCarta, setCvvCarta] = useState("");
+  const [cartaSelezionata, setCartaSelezionata] = useState("");
   const [ordineConfermato, setOrdineConfermato] = useState(false);
 
-  // Calcolo del totale del carrello
-  // Somma prezzo * quantità per ogni prodotto
-  const totale = carrello.reduce(
-    (sum, item) => sum + item.prezzo * item.quantita,
-    0
-  );
+  // Calcolo del totale
+  const totale = carrello.reduce((sum, item) => sum + item.prezzo * item.quantita, 0);
 
-  // Controlla se nel carrello esistono prodotti spedibili
-  const contieneProdottiSpedibili = carrello.some(
-    (item) => item.tipo === "product"
-  );
-
-  // Controlla se nel carrello esistono servizi in struttura
-  const contieneLavori = carrello.some(
-    (item) => item.tipo === "service"
-  );
-
-  // Funzione chiamata quando l'utente conferma l'ordine
+  // Funzione di conferma ordine con validazioni
   const confermaOrdine = () => {
+    if (!pagamento) {
+      alert("Seleziona un metodo di pagamento!");
+      return;
+    }
 
-  // Controllo metodo pagamento
-  if (!pagamento) {
-    alert("Seleziona un metodo di pagamento!");
-    return;
-  }
+    if (pagamento === "Struttura") {
+      if (!dataPrenotazione || !oraPrenotazione) {
+        alert("Seleziona data e orario per la prenotazione.");
+        return;
+      }
+    }
 
-  // Controlli specifici per ogni tipo
-  if (pagamento === "Struttura") {
-    if (!dataPrenotazione) {
-      alert("Seleziona una data per la prenotazione in struttura.");
-      return;
+    if (pagamento === "Spedizione") {
+      if (!indirizzo) {
+        alert("Inserisci l'indirizzo per la spedizione.");
+        return;
+      }
+      if (!cartaSelezionata && (!numeroCarta || !dataScadenzaCarta || !cvvCarta)) {
+        alert("Inserisci tutti i dati della carta.");
+        return;
+      }
     }
-    if (!oraPrenotazione) {
-      alert("Seleziona un orario per la prenotazione in struttura.");
-      return;
-    }
-    if (dataPrenotazione && !oraPrenotazione){
-      alert("Selezione un'orario per la prenotazione in struttura")
-    }
-  }
 
-  if (pagamento === "Spedizione") {
-    if (!indirizzo) {
-      alert("Inserisci l'indirizzo per la spedizione.");
+    if (pagamento === "Corriere" && !indirizzo) {
+      alert("Inserisci l'indirizzo per la consegna.");
       return;
     }
-    if (!numeroCarta) {
-      alert("Inserisci il numero della carta per la spedizione.");
-      return;
-    }
-    if (numeroCarta.length < 16) {
-      alert("Il numero della carta deve essere almeno di 16 cifre.");
-      return;
-    }
-  }
 
-  if (pagamento === "Corriere") {
-    if (!indirizzo) {
-      alert("Inserisci l'indirizzo per la consegna tramite corriere.");
-      return;
-    }
-  }
+    const nuovoOrdine = {
+      id: Date.now(),
+      data: new Date().toLocaleString(),
+      prodotti: carrello.map(item => ({ ...item })),
+      totale,
+      metodo: pagamento,
+      prenotazione: pagamento === "Struttura" ? { data: dataPrenotazione, ora: oraPrenotazione } : null,
+      spedizione: pagamento === "Spedizione" ? { indirizzo, carta: cartaSelezionata || numeroCarta } : null,
+      corriere: pagamento === "Corriere" ? { indirizzo } : null
+    };
 
-  // Se tutti i controlli sono passati, creo l'ordine
-  const nuovoOrdine = {
-    id: Date.now(),
-    data: new Date().toLocaleString(),
-    prodotti: carrello.map(item => ({ ...item })),
-    totale,
-    metodo: pagamento,
-    prenotazione: pagamento === "Struttura" ? { data: dataPrenotazione, ora: oraPrenotazione } : null,
-    spedizione: pagamento === "Spedizione" ? { indirizzo, carta: numeroCarta } : null,
-    corriere: pagamento === "Corriere" ? { indirizzo } : null
+    setOrdini(prev => [...prev, nuovoOrdine]);
+    setOrdineConfermato(true);
+    setCarrello([]);
   };
 
-  setOrdini(prev => [...prev, nuovoOrdine]);
-  setOrdineConfermato(true);
-  setCarrello([]);
-};
-  // Se l'ordine è stato confermato
-  // mostra il messaggio di conferma
+  // --- STILI XXL ---
+  const labelStyle = {
+    display: "block",
+    fontSize: "28px",
+    fontWeight: "900",
+    marginBottom: "15px",
+    color: "white",
+    textTransform: "uppercase"
+  };
+
+  const inputStyle = {
+    width: "100%",
+    maxWidth: "750px",
+    padding: "25px",
+    fontSize: "26px",
+    borderRadius: "15px",
+    border: "3px solid #ccc",
+    marginBottom: "35px",
+    boxSizing: "border-box",
+    color: "black",
+    fontWeight: "bold"
+  };
+
+  const sectionStyle = {
+    background: "rgba(255,255,255,0.08)",
+    padding: "45px",
+    borderRadius: "25px",
+    marginBottom: "40px",
+    maxWidth: "850px",
+    border: "1px solid rgba(255,255,255,0.2)"
+  };
+
+  // Schermata di conferma post-ordine
   if (ordineConfermato) {
     return (
-      <div style={{ color: "white" }}>
-        <h3>Ordine confermato! 🎉</h3>
-        <p>Grazie {nome}, il tuo ordine è stato ricevuto.</p>
+      <div style={{ color: "white", textAlign: "center", marginTop: "120px", padding: "40px" }}>
+        <h3 style={{ fontSize: "72px", fontWeight: "900" }}>Ordine confermato! 🎉</h3>
+        <p style={{ fontSize: "36px", opacity: 0.9 }}>Il tuo ordine è in fase di elaborazione.</p>
+        <button 
+          onClick={() => setPagina("prodotti")} 
+          style={{ 
+            marginTop: "50px", 
+            padding: "30px 60px", 
+            fontSize: "32px", 
+            fontWeight: "bold", 
+            borderRadius: "20px", 
+            cursor: "pointer",
+            backgroundColor: "white",
+            color: "black",
+            border: "none"
+          }}
+        >
+          Torna allo Shop
+        </button>
       </div>
     );
   }
 
-  // Render principale della pagina checkout
   return (
-    <div style={{ color: "white" }}>
+    <div style={{ color: "white", marginTop: "50px", paddingBottom: "120px", fontFamily: "sans-serif" }}>
+      <h3 style={{ fontSize: "64px", fontWeight: "900", marginBottom: "50px", textTransform: "uppercase" }}>
+        Checkout
+      </h3>
 
-      <h3>Checkout</h3>
+      {/* RIEPILOGO ARTICOLI XXL */}
+      <div style={{ ...sectionStyle, background: "white", color: "black" }}>
+        <h4 style={{ fontSize: "42px", marginTop: 0, borderBottom: "4px solid #eee", paddingBottom: "20px" }}>
+          Riepilogo Articoli
+        </h4>
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          {carrello.map((item, idx) => (
+            <li key={idx} style={{ padding: "25px 0", borderBottom: "2px solid #f0f0f0" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <strong style={{ fontSize: "36px" }}>{item.nome}</strong>
+                <span style={{ fontSize: "36px", color: "blue", fontWeight: "900" }}>
+                  €{(item.prezzo * item.quantita).toFixed(2)}
+                </span>
+              </div>
+              <div style={{ fontSize: "26px", color: "#666", marginTop: "10px" }}>
+                Qtà: <strong>{item.quantita}</strong> | Unitario: €{item.prezzo.toFixed(2)}
+              </div>
+              <small style={{ fontSize: "20px", color: "#999", textTransform: "uppercase", fontWeight: "bold" }}>
+                {item.tipo === "service" ? "Servizio in Struttura" : "Prodotto Spedibile"}
+              </small>
+            </li>
+          ))}
+        </ul>
 
-      {/* Lista dei prodotti presenti nel carrello */}
-      <ul style={{color:"black",backgroundColor:"white", marginRight:"1750px"}}>
-        {carrello.map((item, idx) => (
-          <li key={idx}>
-            <strong> {item.nome}</strong> x {item.quantita} — €
-            {(item.prezzo * item.quantita).toFixed(2)}
-            <br />
+        {/* TOTALE GIGANTE */}
+        <div style={{ marginTop: "35px", textAlign: "right", padding: "30px", background: "#f8f9fa", borderRadius: "20px", border: "2px solid #eee" }}>
+          <span style={{ fontSize: "32px", color: "#555", fontWeight: "bold" }}>TOTALE DA PAGARE:</span>
+          <div style={{ fontSize: "85px", color: "#28a745", fontWeight: "900", lineHeight: "1" }}>
+            €{totale.toFixed(2)}
+          </div>
+        </div>
+      </div>
 
-            {/* Tipo di prodotto */}
-            <small >
-              Tipo: {item.tipo === "service"
-                ? "Servizio in struttura"
-                : "Prodotto spedibile"}
-            </small>
-          </li>
-        ))}
-      </ul>
+      {/* SEZIONE INPUT E PAGAMENTO */}
+      <div style={{ maxWidth: "850px" }}>
+        <p style={{ fontSize: "28px", marginBottom: "50px", color: "#4ade80", fontWeight: "bold" }}>
+          🏪 I Servizi verranno eseguiti presso la nostra struttura.
+        </p>
 
-      {/* Totale ordine */}
-      <h4>Totale: €{totale.toFixed(2)}</h4>
+        <label style={labelStyle}>Metodo di Pagamento</label>
+        <select value={pagamento} onChange={(e) => setPagamento(e.target.value)} style={inputStyle}>
+          <option value="">-- Scegli come pagare --</option>
+          <option value="Struttura">Pagamento in Struttura</option>
+          <option value="Spedizione">Pagamento Online + Spedizione</option>
+          <option value="Corriere">Pagamento alla Consegna (Corriere)</option>
+        </select>
 
-      <div style={{ marginTop: "20px" }}>
-
-        {/* Informazione per i servizi */}
-        <p>🏪 I Servizi verranno eseguiti presso la struttura.</p>
-
-        {/* Selezione metodo pagamento */}
-        <label>
-          Metodo di pagamento
-          <br />
-
-          <select
-            value={pagamento}
-            onChange={(e) => setPagamento(e.target.value)}
-          >
-            <option value="">Seleziona</option>
-            <option value="Struttura">Struttura</option>
-            <option value="Spedizione">Spedizione</option>
-            <option value="Corriere">Corriere</option>
-          </select>
-
-        </label>
-
-        <br /><br />
-
-        {/* SEZIONE PRENOTAZIONE IN STRUTTURA */}
-
+        {/* LOGICA SEZIONI DINAMICHE */}
         {pagamento === "Struttura" && (
-
-          <>
-            <h4>Prenota appuntamento</h4>
-
-            {/* Selezione data */}
-            <label>
-              Data
-              <br />
-              <input
-                type="date"
-                value={dataPrenotazione}
-                onChange={(e) => setDataPrenotazione(e.target.value)}
-              />
-            </label>
-
-            <br /><br />
-
-            {/* Selezione ora */}
-            <label>
-              Ora
-              <br />
-              <input
-                type="time"
-                value={oraPrenotazione}
-                onChange={(e) => setOraPrenotazione(e.target.value)}
-              />
-            </label>
-
-            <br /><br />
-          </>
+          <div style={sectionStyle}>
+            <h4 style={{ fontSize: "36px", marginTop: 0, color: "#007bff" }}>Appuntamento</h4>
+            <label style={labelStyle}>Data</label>
+            <input type="date" value={dataPrenotazione} onChange={(e) => setDataPrenotazione(e.target.value)} style={inputStyle} />
+            <label style={labelStyle}>Orario</label>
+            <input type="time" value={oraPrenotazione} onChange={(e) => setOraPrenotazione(e.target.value)} style={inputStyle} />
+          </div>
         )}
-
-        {/* SEZIONE SPEDIZIONE */}
 
         {pagamento === "Spedizione" && (
+          <div style={sectionStyle}>
+            <h4 style={{ fontSize: "36px", marginTop: 0, color: "#28a745" }}>Spedizione & Carta</h4>
+            <label style={labelStyle}>Indirizzo di Consegna</label>
+            <input type="text" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} style={inputStyle} placeholder="Via, n°, Città, CAP" />
 
-          <>
-            {/* Inserimento indirizzo */}
-            <label>
-              Indirizzo
-              <br />
-              <input
-                type="text"
-                value={indirizzo}
-                onChange={(e) => setIndirizzo(e.target.value)}
-              />
-            </label>
-
-            <br /><br />
-
-            {/* Se esistono carte salvate */}
-            {carteSalvate && carteSalvate.length > 0 && (
-              <>
-                {/* Scelta carta salvata */}
-                <label>
-                  Scegli carta salvata
-                  <br />
-                  <select
-                    onChange={(e) => setNumeroCarta(e.target.value)}
-                  >
-                    <option value="">Seleziona carta</option>
-
-                    {carteSalvate.map((carta, i) => (
-                      <option key={i} value={carta}>
-                        **** **** **** {carta.slice(-4)}
-                      </option>
-                    ))}
-
-                  </select>
-                </label>
-
-                <br /><br />
-
-                {/* Possibilità di inserire carta nuova */}
-                <p>Oppure inserisci una nuova carta</p>
-              </>
+            {carteSalvate?.length > 0 && (
+              <div style={{ marginBottom: "30px", padding: "20px", border: "2px dashed #666", borderRadius: "15px" }}>
+                <label style={{ ...labelStyle, fontSize: "22px" }}>Usa una carta salvata</label>
+                <select value={cartaSelezionata} onChange={(e) => { setCartaSelezionata(e.target.value); setNumeroCarta(e.target.value); }} style={inputStyle}>
+                  <option value="">Seleziona...</option>
+                  {carteSalvate.map((carta, i) => (
+                    <option key={i} value={carta.numero}>
+                      **** {carta.numero.slice(-4)} | Scad: {carta.scadenza}
+                    </option>
+                  ))}
+                </select>
+              </div>
             )}
 
-            {/* Inserimento manuale numero carta */}
-            <label>
-              Numero carta
-              <br />
-              <input
-                type="text"
-                value={numeroCarta}
-                onChange={(e) => setNumeroCarta(e.target.value)}
-              />
-            </label>
-
-            <br /><br />
-          </>
+            {!cartaSelezionata && (
+              <>
+                <label style={labelStyle}>Numero Carta (16 cifre)</label>
+                <input type="text" value={numeroCarta} maxLength="16" onChange={(e) => setNumeroCarta(e.target.value)} style={inputStyle} />
+                <div style={{ display: "flex", gap: "25px" }}>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>Scadenza</label>
+                    <input type="text" placeholder="MM/AA" value={dataScadenzaCarta} maxLength="5" onChange={(e) => setDataScadenzaCarta(e.target.value)} style={inputStyle} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={labelStyle}>CVV</label>
+                    <input type="text" value={cvvCarta} maxLength="3" onChange={(e) => setCvvCarta(e.target.value)} style={inputStyle} />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         )}
-
-        {/* SEZIONE CORRIERE */}
 
         {pagamento === "Corriere" && (
-
-          <>
-            {/* Inserimento indirizzo consegna */}
-            <label>
-              Indirizzo
-              <br />
-              <input
-                type="text"
-                value={indirizzo}
-                onChange={(e) => setIndirizzo(e.target.value)}
-              />
-            </label>
-
-            <br /><br />
-          </>
+          <div style={sectionStyle}>
+            <h4 style={{ fontSize: "36px", marginTop: 0, color: "#ffc107" }}>Indirizzo Corriere</h4>
+            <label style={labelStyle}>Indirizzo di Consegna</label>
+            <input type="text" value={indirizzo} onChange={(e) => setIndirizzo(e.target.value)} style={inputStyle} placeholder="Via, n°, Città, CAP" />
+          </div>
         )}
 
-        {/* Pulsante conferma ordine */}
+        {/* BOTTONE CONFERMA FINALE XXL */}
         <button
           onClick={confermaOrdine}
-
-         
-
           style={{
-            padding: "8px 15px",
+            width: "100%",
+            maxWidth: "750px",
+            padding: "35px",
             backgroundColor: "blue",
             color: "white",
             border: "none",
-            borderRadius: "5px",
+            borderRadius: "20px",
+            fontSize: "42px",
+            fontWeight: "900",
             cursor: "pointer",
+            textTransform: "uppercase",
+            boxShadow: "0 15px 40px rgba(0,0,255,0.4)",
+            marginTop: "30px",
+            transition: "transform 0.1s active"
           }}
         >
-          Conferma ordine
+          Conferma e Concludi
         </button>
-
       </div>
-
     </div>
   );
 };

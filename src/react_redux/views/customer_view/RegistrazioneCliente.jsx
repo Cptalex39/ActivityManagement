@@ -3,13 +3,17 @@ import { NavbarApp } from "../components/navbar/NavbarApp";
 
 const RegistrazioneCliente = ({ chiudi }) => {
   const [dati, setDati] = useState({
+    nome: "",
+    cognome: "",
     username: "",
     password: "",
+    conferma_passworld: "",
     email: "",
+    telefono: "",
   });
 
   const registra = () => {
-    if (!dati.username || !dati.password || !dati.email) {
+    if (!dati.telefono || !dati.conferma_passworld ||!dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
       alert("Compila tutti i campi");
       return;
     }
@@ -26,24 +30,38 @@ Esegui il login per accedere`);
       <div className="main-content">
 
         <div className="contenitore-1">
+           <br /><br />
 
           <h2>Registrazione Cliente</h2>
+           <br /><br />
 
           <div className="center">
 
             <input
               type="text"
-              placeholder="Username"
-              value={dati.username}
+              placeholder="Nome"
+              value={dati.nome}
               onChange={(e) =>
-                setDati({ ...dati, username: e.target.value })
+                setDati({ ...dati, nome: e.target.value })
               }
             />
 
             <br /><br />
 
+             <input
+              type="text"
+              placeholder="Cognome"
+              value={dati.cognome}
+              onChange={(e) =>
+                setDati({ ...dati, cognome: e.target.value })
+              }
+            />
+
+            <br /><br />
+
+
             <input
-              type="email"
+              type="text"
               placeholder="Email"
               value={dati.email}
               onChange={(e) =>
@@ -54,20 +72,41 @@ Esegui il login per accedere`);
             <br /><br />
 
             <input
-              type="password"
+              type="text"
               placeholder="Password"
               value={dati.password}
               onChange={(e) =>
                 setDati({ ...dati, password: e.target.value })
               }
             />
+            <br /><br />
+
+            <input
+              type="text"
+              placeholder="Conferma Password"
+              value={dati.conferma_passworld}
+              onChange={(e) =>
+                setDati({ ...dati, conferma_passworld: e.target.value })
+              }
+            />
+            <br /><br />
+
+             <input
+              type="text"
+              placeholder="Telefono"
+              value={dati.telefono}
+              onChange={(e) =>
+                setDati({ ...dati, telefono: e.target.value })
+              }
+            />
+
 
             <br /><br />
 
             <button className="btn-primary" onClick={registra}>
-              Registrati
+              <h2>Registati</h2>
             </button>
-
+               <br /><br />
             <br /><br />
 
           </div>
