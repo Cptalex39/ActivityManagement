@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavbarApp } from "../components/navbar/NavbarApp";
-
+//registazioe
 const RegistrazioneCliente = ({ chiudi }) => {
   const [dati, setDati] = useState({
     nome: "",

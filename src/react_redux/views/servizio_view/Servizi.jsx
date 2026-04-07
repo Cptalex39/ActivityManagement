@@ -5,7 +5,7 @@ import { OperazioniForms } from "../forms/OperazioniForms";
 import { ServizioForms } from "../forms/ServizioForms";
 import { ServizioActions } from "../../actions/ServizioActions";
 import PaginaWeb from "../../../riutilizzabile/pagine_web/PaginaWeb.jsx";
-
+// servizi
 const Servizi = () => {
   const servizioActions = new ServizioActions();
   const servizioForms = new ServizioForms();

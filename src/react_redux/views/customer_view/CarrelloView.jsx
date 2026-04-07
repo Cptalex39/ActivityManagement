@@ -82,7 +82,7 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
       {carrello.map((item, index) => (
         <div key={index} style={itemBoxStyle}>
           
-          {/* Nome e Prezzo */}
+          {/* Nome e Prezzoo */}
           <div style={{ marginBottom: "15px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
             <strong style={{ fontSize: "42px" }}>{item.nome}</strong>
             <span style={{ fontSize: "38px", color: "black", fontWeight: "900" }}>

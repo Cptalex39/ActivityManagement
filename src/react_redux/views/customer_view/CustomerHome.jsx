@@ -94,7 +94,7 @@ const attivitaState = useSelector((state) => state.attivita.value);
                   fontSize: "86px",           // Scritta gigante
                   fontWeight: "900",          // Super grassetto
                   width: "100%",              // Prende tutta la larghezza del box
-                  maxWidth: "700px",          // Ma si ferma alla larghezza dei box prodotti
+                  maxWidth: "700px",          // Maa si ferma alla larghezza dei box prodotti
                   textTransform: "uppercase", // Tutto maiuscolo per massima visibilità
                   boxShadow: "0 10px 20px rgba(0, 0, 255, 0.3)", // Ombra blu coerente
                   display: "block"            // Per centrarlo correttamente

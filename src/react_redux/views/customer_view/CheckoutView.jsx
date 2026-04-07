@@ -233,7 +233,7 @@ const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvat
           </div>
         )}
 
-        {/* BOTTONE CONFERMA FINALE XXL */}
+        {/* BOTTONE CONFERMA FINALEe XXL */}
         <button
           onClick={confermaOrdine}
           style={{

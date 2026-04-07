@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { controlloServizio } from "../../../utils/Controlli";
-
+// servizio form
 export class ServizioForms {
   attivitaState = useSelector((state) => state.attivita.value);
   lingua = this.attivitaState.lingua;

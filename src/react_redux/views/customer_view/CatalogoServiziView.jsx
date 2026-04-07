@@ -33,7 +33,7 @@ const CatalogoServiziView = ({ servizi, aggiungiAlCarrello, setPagina }) => {
             {/* Nome del servizio o prodotto */}
             <Card.Title>  {servizio.nome}</Card.Title>
 
-            {/* Prezzo del servizio */}
+            {/* Prezzo del servizioo */}
             <Card.Text>Prezzo: €{servizio.prezzo}</Card.Text>
 
             {/* Tipo del servizio */}

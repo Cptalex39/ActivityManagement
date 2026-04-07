@@ -253,7 +253,7 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
                   <p><strong>Metodo Utilizzato:</strong> {ordine.metodo}</p>
                 </div>
 
-                {/* DETTAGLI SPECIFICI */}
+                {/* DETTAGLIi SPECIFICI */}
                 {ordine.metodo === "Struttura" && ordine.prenotazione && (
                   <div style={{ marginTop: "25px", padding: "25px", background: "#f1f8ff", borderRadius: "12px", borderLeft: "8px solid #007bff" }}>
                     <strong style={{ fontSize: "22px" }}>Dettagli Appuntamento:</strong>

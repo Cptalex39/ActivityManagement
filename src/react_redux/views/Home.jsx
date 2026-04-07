@@ -15,7 +15,7 @@ const Home = () => {
       ) : clienteLogged ? (
         <CustomerHome setClienteLogged={setClienteLogged} />
       ) : (
-        <NavbarApp /> // Guest
+        <NavbarApp /> // Guestt
       )}
 
       {/* Pulsante "Entra come cliente" */}
