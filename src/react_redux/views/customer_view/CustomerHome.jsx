@@ -81,16 +81,23 @@ const attivitaState = useSelector((state) => state.attivita.value);
             <CarrelloView carrello={carrello} setCarrello={setCarrello} />
 
             {carrello.length > 0 && (
-              <button
+             <button
                 onClick={() => setPagina("checkout")}
                 style={{
-                  marginTop: "15px",
-                  padding: "8px 15px",
-                  backgroundColor: "blue",
+                          
+                  padding: "25px 50px",       // Padding molto più grande
+                  backgroundColor: "blue",    // Mantenuto il tuo colore blu
                   color: "white",
                   border: "none",
-                  borderRadius: "5px",
+                  borderRadius: "15px",       // Arrotondamento più marcato per box grandi
                   cursor: "pointer",
+                  fontSize: "86px",           // Scritta gigante
+                  fontWeight: "900",          // Super grassetto
+                  width: "100%",              // Prende tutta la larghezza del box
+                  maxWidth: "700px",          // Maa si ferma alla larghezza dei box prodotti
+                  textTransform: "uppercase", // Tutto maiuscolo per massima visibilità
+                  boxShadow: "0 10px 20px rgba(0, 0, 255, 0.3)", // Ombra blu coerente
+                  display: "block"            // Per centrarlo correttamente
                 }}
               >
                 Vai al checkout
@@ -115,6 +122,7 @@ const attivitaState = useSelector((state) => state.attivita.value);
           <CustomerProfiloView ordini={ordini} 
            carteSalvate={carteSalvate}
            setCarteSalvate={setCarteSalvate}
+           setClienteLogged={setClienteLogged}
           />
         )}
 

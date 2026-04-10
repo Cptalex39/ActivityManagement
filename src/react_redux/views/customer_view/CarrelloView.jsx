@@ -1,4 +1,4 @@
-// Componente CarrelloView
+// Componente CarrelloView - VERSIONE FONT XXL / BOX COMPATTI
 // Riceve come props:
 // - carrello → lista dei prodotti/servizi presenti nel carrello
 // - setCarrello → funzione per aggiornare il carrello
@@ -6,122 +6,135 @@
 
 const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
 
-  // Funzione per rimuovere completamente un elemento dal carrello
-  // Riceve l'indice dell'elemento nella lista
   const rimuovi = (index) => {
-
-    // Crea una copia dell'array carrello (per non modificare lo stato direttamente)
     const nuovo = [...carrello];
-
-    // Rimuove l'elemento alla posizione index
     nuovo.splice(index, 1);
-
-    // Aggiorna lo stato del carrello
     setCarrello(nuovo);
   };
 
-  // Funzione per aumentare la quantità di un prodotto
-  // Riceve l'id del prodotto
   const aumenta = (id) => {
-
-    // map scorre tutti gli elementi del carrello
     setCarrello(
       carrello.map(i =>
-        // Se l'id corrisponde al prodotto cliccato
-        i.id === id
-          // crea una copia dell'oggetto aumentando la quantità
-          ? { ...i, quantita: i.quantita + 1 }
-          // altrimenti lascia l'elemento invariato
-          : i
+        i.id === id ? { ...i, quantita: i.quantita + 1 } : i
       )
     );
   };
 
-  // Funzione per diminuire la quantità di un prodotto
   const diminuisci = (id) => {
-
     setCarrello(
-
-      // map riduce la quantità del prodotto
       carrello
         .map(i =>
-          i.id === id
-            ? { ...i, quantita: i.quantita - 1 }
-            : i
+          i.id === id ? { ...i, quantita: i.quantita - 1 } : i
         )
-
-        // filter rimuove automaticamente i prodotti con quantità 0
         .filter(i => i.quantita > 0)
     );
   };
 
-  // Calcolo del totale del carrello
-  // reduce scorre tutti gli elementi e somma prezzo * quantità
   const totale = carrello.reduce((sum, item) => sum + item.prezzo * item.quantita, 0);
 
+  // --- STILI OTTIMIZZATI ---
+  const titleStyle = {
+    color: "white",
+    fontSize: "56px", 
+    marginBottom: "40px",
+    fontWeight: "900"
+  };
+
+  const itemBoxStyle = {
+    background: "white",
+    color: "black",
+    padding: "30px", // Ridotto padding per box più piccoli
+    marginBottom: "25px",
+    maxWidth: "700px", // Box più stretto e centrato
+    borderRadius: "20px",
+    boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+  };
+
+  const buttonStyle = {
+    padding: "15px 30px", 
+    fontSize: "32px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    borderRadius: "12px",
+    border: "2px solid #ccc",
+    backgroundColor: "#f0f0f0",
+    marginRight: "15px",
+  };
+
+  const removeButtonStyle = {
+    ...buttonStyle,
+    backgroundColor: "#ff0000",
+    color: "white",
+    border: "none",
+    marginLeft: "30px",
+    fontSize: "20px"
+  };
+
   return (
+    <div style={{ marginTop: "40px", paddingBottom: "100px", fontFamily: "sans-serif" }}>
 
-    // Contenitore principale del carrello
-    <div style={{ marginTop: "30px" }}>
+      <h1 style={titleStyle}>CARRELLO</h1>
 
-      {/* Titolo del carrello */}
-      <h3 style={{ color: "white" }}>Carrello</h3>
+      {carrello.length === 0 && (
+        <p style={{ color: "white", fontSize: "32px" }}>Il carrello è vuoto</p>
+      )}
 
-      {/* Se il carrello è vuoto mostra il messaggio */}
-      {carrello.length === 0 && <p style={{ color: "white" }}>Carrello vuoto</p>}
-
-      {/* Ciclo sugli elementi del carrello */}
       {carrello.map((item, index) => (
+        <div key={index} style={itemBoxStyle}>
+          
+          {/* Nome e Prezzoo */}
+          <div style={{ marginBottom: "15px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+            <strong style={{ fontSize: "42px" }}>{item.nome}</strong>
+            <span style={{ fontSize: "38px", color: "black", fontWeight: "900" }}>
+              €{(item.prezzo * item.quantita).toFixed(2)}
+            </span>
+          </div>
 
-        // Box per ogni prodotto
-        <div
-          key={index}
-          style={{
-            background: "white",
-            padding: "10px",
-            marginBottom: "10px",
-            marginRight:" 1500px",
-            borderRadius: "8px",
-          }}
-        >
+          {/* Info e Categoria */}
+          <div style={{ marginBottom: "25px", borderBottom: "2px solid #eee", paddingBottom: "15px" }}>
+            <p style={{ fontSize: "24px", margin: "5px 0", color: "#110909" }}>
+              Prezzo: €{item.prezzo.toFixed(2)} | Qtà: <strong s>{item.quantita}</strong>
+            </p>
+            <div style={{ 
+                fontSize: "22px", 
+                fontWeight: "bold", 
+                color: "#666", 
+                marginTop: "10px",
+                background: "#f1f1f1",
+                padding: "8px 15px",
+                borderRadius: "8px",
+                display: "inline-block"
+            }}>
+              {item.tipo === "service" ? "SERVIZIO IN STRUTTURA" : "PRODOTTO SPEDIBILE"}
+            </div>
+          </div>
 
-          {/* Nome prodotto, prezzo e quantità */}
-          {<strong> {item.nome}</strong>} — €{item.prezzo} x {item.quantita}
-
-          <br />
-
-          {/* Tipo di prodotto */}
-          <small>
-          Tipo: {item.tipo === "service" ? "Servizio in struttura" : "Prodotto spedibile"}
-          </small>
-
-          {/* Pulsante per aumentare la quantità */}
-          <button
-            style={{ marginLeft: "10px" }}
-            onClick={() => aumenta(item.id)}
-          >
-            +
-          </button>
-
-          {/* Pulsante per diminuire la quantità */}
-          <button
-            onClick={() => diminuisci(item.id)}
-          >
-            -
-          </button>
-
-          {/* Pulsante per rimuovere completamente il prodotto */}
-          <button style={{ marginLeft: "20px" }} onClick={() => rimuovi(index)}>
-            Rimuovi
-          </button>
+          {/* Azioni */}
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <button style={buttonStyle} onClick={() => aumenta(item.id)}>+</button>
+            <button style={buttonStyle} onClick={() => diminuisci(item.id)}>−</button>
+            <button style={removeButtonStyle} onClick={() => rimuovi(index)}>RIMUOVI</button>
+          </div>
 
         </div>
       ))}
 
-      {/* Mostra il totale del carrello */}
-      <h4 style={{ color: "white" }}>Totale: €{totale.toFixed(2)}</h4>
-
-     
+      {/* Totale finale compatto ma visibile */}
+      <div style={{ 
+        marginTop: "60px", 
+        padding: "30px", 
+        background: "rgba(255,255,255,0.1)",
+        border: "4px solid white", 
+        maxWidth: "700px",
+        borderRadius: "20px",
+        textAlign: "center"
+      }}>
+        <h4 style={{ color: "white", fontSize: "32px", margin: "0 0 10px 0" }}>TOTALE DA PAGARE</h4>
+        <span style={{ color: "white", fontSize: "80px", fontWeight: "900" }}>
+          €{totale.toFixed(2)}
+        </span>
+      </div>
+      
     </div>
   );
 };
