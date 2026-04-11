@@ -1,7 +1,11 @@
 import { useState } from "react";
 import Header from "../components/Header.jsx";
+import { PagamentoActions } from "../../actions/PagamentoActions"
+
 //prova
 const Pagamenti = () => {
+  const pagamentoActions = new PagamentoActions();
+
   const [pagamenti, setPagamenti] = useState([
     {
       id: 1,
@@ -83,11 +87,15 @@ const Pagamenti = () => {
 
   const segnaComeCompletato = (id) => {
     setPagamenti(prev => prev.map(p => (p.id === id ? { ...p, stato: "completato" } : p)));
+
+    pagamentoActions.confermaPagamentoInSospeso(id);
   };
 
   const annullaPagamento = (id) => {
     if (window.confirm("Sei sicuro di voler annullare questo pagamento?")) {
       setPagamenti(prev => prev.filter(p => p.id !== id));
+
+      pagamentoActions.annullaPagamentoInSospeso(id);
     }
   };
 

@@ -81,7 +81,8 @@ export class CartaActions extends Actions {
    * @param {Array<Object>} carte - elenco delle carte di un cliente.
    * @returns risultato response operazione.
    */
-  async eliminazioneCarte(selectedIdsEliminazione, setSelectedIdsEliminazione, carte) {
+  async eliminazioneCarta(codiceCarta, usernameCliente) {
+    /*
     const dati = {
       tipo_item: "carta", 
       ids: selectedIdsEliminazione
@@ -101,6 +102,9 @@ export class CartaActions extends Actions {
       isOK: response.ok, 
       responseStatus: response.status, 
     };
+    */
+    console.log("USERNAME CLIENTE: " + usernameCliente);
+    console.log("CODICE CARTA: " + codiceCarta);
   }
 }
 

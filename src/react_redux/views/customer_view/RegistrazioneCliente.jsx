@@ -1,26 +1,30 @@
 import { useState } from "react";
 import { NavbarApp } from "../components/navbar/NavbarApp";
+import { ClienteActions } from "../../actions/ClienteActions";
+
 //registazioe
 const RegistrazioneCliente = ({ chiudi }) => {
+  const clienteActions = new ClienteActions();
+
   const [dati, setDati] = useState({
     nome: "",
     cognome: "",
-    username: "",
+    username: "mr_user",
     password: "",
-    conferma_passworld: "",
+    conferma_password: "",
     email: "",
     telefono: "",
   });
 
   const registra = () => {
-    if (!dati.telefono || !dati.conferma_passworld ||!dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
+    if (!dati.telefono || !dati.conferma_password || !dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
       alert("Compila tutti i campi");
       return;
     }
 
-    alert(`Registrazione completata con successo per ${dati.username}:
-Esegui il login per accedere`);
-    chiudi();
+    clienteActions.registrazioneCliente(dati, setDati, "italiano");
+
+    alert(`Registrazione completata con successo per ${dati.username}: Esegui il login per accedere`);
   };
 
   return (
@@ -84,9 +88,9 @@ Esegui il login per accedere`);
             <input
               type="text"
               placeholder="Conferma Password"
-              value={dati.conferma_passworld}
+              value={dati.conferma_password}
               onChange={(e) =>
-                setDati({ ...dati, conferma_passworld: e.target.value })
+                setDati({ ...dati, conferma_password: e.target.value })
               }
             />
             <br /><br />

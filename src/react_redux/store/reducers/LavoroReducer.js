@@ -94,3 +94,12 @@ export const lavoroSliceActions = {
   aggiornaEntrateLavori: lavoroSlice.actions.aggiornaEntrateLavori, 
 };
 export const lavoroReducer = lavoroSlice.reducer;
+
+
+
+
+
+
+
+
+

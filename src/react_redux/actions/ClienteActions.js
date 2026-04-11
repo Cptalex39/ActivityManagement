@@ -157,6 +157,11 @@ export class ClienteActions extends Actions {
       responseStatus: response.status, 
     }
   }
+
+  async richiestaEliminazioneProfilo(username) {
+    console.log("Cliente che ha rischiesto l'eliminazione del profilo:");
+    console.log(username);
+  }
 }
 
 
