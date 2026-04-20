@@ -62,6 +62,16 @@ Esegui il login per accedere`);
 
             <input
               type="text"
+              placeholder="Username"
+              value={dati.username}
+              onChange={(e) =>
+                setDati({ ...dati, username: e.target.value })
+              }
+            />
+            <br /><br />
+
+            <input
+              type="text"
               placeholder="Email"
               value={dati.email}
               onChange={(e) =>

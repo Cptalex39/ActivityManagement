@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Header from "../components/Header.jsx";
-//prova
-const Pagamenti = () => {
-  const [pagamenti, setPagamenti] = useState([
+
+const Ordini = () => {
+  const [ordini, setOrdini] = useState([
     {
       id: 1,
       cliente: "Mario Rossi",
@@ -70,7 +70,8 @@ const Pagamenti = () => {
     termine: "",
     metodo: "",
     dataMin: "",
-    dataMax: ""
+    dataMax: "",
+    stato: ""
   });
 
   const [filtriFile, setFiltriFile] = useState({
@@ -78,22 +79,23 @@ const Pagamenti = () => {
     dataFine: "",
     email: "",
     username: "",
-    formato: "pdf"
+    formato: "pdf",
+    stato: "tutti"
   });
 
   const segnaComeCompletato = (id) => {
-    setPagamenti(prev => prev.map(p => (p.id === id ? { ...p, stato: "completato" } : p)));
+    setOrdini(prev => prev.map(o => (o.id === id ? { ...o, stato: "completato" } : o)));
   };
 
-  const annullaPagamento = (id) => {
-    if (window.confirm("Sei sicuro di voler annullare questo pagamento?")) {
-      setPagamenti(prev => prev.filter(p => p.id !== id));
+  const annullaOrdine = (id) => {
+    if (window.confirm("Sei sicuro di voler annullare questo ordine?")) {
+      setOrdini(prev => prev.filter(o => o.id !== id));
     }
   };
 
   const handleDownloadFile = (e) => {
     e.preventDefault();
-    const contenuto = `Report Pagamenti\nData: ${filtriFile.dataInizio} - ${filtriFile.dataFine}`;
+    const contenuto = `Report Ordini\nData: ${filtriFile.dataInizio} - ${filtriFile.dataFine}\nStato: ${filtriFile.stato}`;
     const blob = new Blob([contenuto], { type: "text/plain" });
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -112,17 +114,18 @@ const Pagamenti = () => {
     setFiltriRicerca(prev => ({ ...prev, [name]: value }));
   };
 
-  const pagamentiFiltrati = pagamenti.filter(p => {
+  const ordiniFiltrati = ordini.filter(o => {
     const termine = filtriRicerca.termine.toLowerCase();
-    const matchTesto = p.cliente.toLowerCase().includes(termine) || p.data.includes(termine) || p.dettagli?.prenotazione?.ora?.includes(termine);
-    const matchMetodo = filtriRicerca.metodo === "" || p.metodo === filtriRicerca.metodo;
-    const matchDataMin = filtriRicerca.dataMin === "" || p.data >= filtriRicerca.dataMin;
-    const matchDataMax = filtriRicerca.dataMax === "" || p.data <= filtriRicerca.dataMax;
-    return matchTesto && matchMetodo && matchDataMin && matchDataMax;
+    const matchTesto = o.cliente.toLowerCase().includes(termine) || o.data.includes(termine) || o.dettagli?.prenotazione?.ora?.includes(termine);
+    const matchMetodo = filtriRicerca.metodo === "" || o.metodo === filtriRicerca.metodo;
+    const matchDataMin = filtriRicerca.dataMin === "" || o.data >= filtriRicerca.dataMin;
+    const matchDataMax = filtriRicerca.dataMax === "" || o.data <= filtriRicerca.dataMax;
+    const matchStato = filtriRicerca.stato === "" || o.stato === filtriRicerca.stato;
+    return matchTesto && matchMetodo && matchDataMin && matchDataMax && matchStato;
   });
 
-  const pagamentiCompletati = pagamentiFiltrati.filter(p => p.stato === "completato");
-  const pagamentiInSospeso = pagamentiFiltrati.filter(p => p.stato === "in_sospeso");
+  const ordiniCompletati = ordiniFiltrati.filter(o => o.stato === "completato");
+  const ordiniInSospeso = ordiniFiltrati.filter(o => o.stato === "in_sospeso");
 
   const sezioneTitoloStyle = { marginTop: 0, marginBottom: "15px", fontSize: "18px", fontWeight: "bold" };
   const flexColumnStyle = { display: "flex", flexDirection: "column", flex: "1 1 0px", minWidth: "140px" };
@@ -152,16 +155,23 @@ const Pagamenti = () => {
       <Header />
       <div className="main-content">
         <div className="contenitore-1">
-          <h2 style={{ marginBottom: "25px" }}>Pagamenti</h2>
+          <h2 style={{ marginBottom: "25px" }}>Ordini</h2>
 
           {/* BOX ESPORTAZIONE */}
           <div style={{ marginBottom: "25px", padding: "20px", border: "1px solid #ccc", borderRadius: "8px", backgroundColor: "#f8f9fa", color: "black" }}>
-            <h3 style={sezioneTitoloStyle}>Esporta</h3>
+            <h3 style={sezioneTitoloStyle}>Ottieni file ordini</h3>
             <form onSubmit={handleDownloadFile} style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
               <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Primo giorno</label><input type="date" name="dataInizio" value={filtriFile.dataInizio} onChange={handleChangeFiltriFile} style={inputStyle} /></div>
               <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Ultimo giorno</label><input type="date" name="dataFine" value={filtriFile.dataFine} onChange={handleChangeFiltriFile} style={inputStyle} /></div>
               <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Email</label><input type="email" name="email" value={filtriFile.email} onChange={handleChangeFiltriFile} placeholder="Email..." style={inputStyle} /></div>
               <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Username</label><input type="text" name="username" value={filtriFile.username} onChange={handleChangeFiltriFile} placeholder="Username..." style={inputStyle} /></div>
+              <div style={{...flexColumnStyle, flex: "0 0 100px"}}><label style={{fontSize:"13px", marginBottom:"5px"}}>Stato</label>
+                <select name="stato" value={filtriFile.stato} onChange={handleChangeFiltriFile} style={inputStyle}>
+                  <option value="tutti">Tutti</option>
+                  <option value="completati">Completati</option>
+                  <option value="in_sospeso">In sospeso</option>
+                </select>
+              </div>
               <div style={{...flexColumnStyle, flex: "0 0 100px"}}><label style={{fontSize:"13px", marginBottom:"5px"}}>Formato</label>
                 <select name="formato" value={filtriFile.formato} onChange={handleChangeFiltriFile} style={inputStyle}><option value="pdf">.PDF</option><option value="xlsx">.XLSX</option></select>
               </div>
@@ -171,7 +181,7 @@ const Pagamenti = () => {
 
           {/* BOX FILTRA RISULTATI */}
           <div style={{ marginBottom: "25px", padding: "20px", border: "1px solid #007bff", borderRadius: "8px", backgroundColor: "#e9f2fd", color: "black" }}>
-            <h3 style={{ ...sezioneTitoloStyle, color: "#0056b3" }}>Filtra Risultati</h3>
+            <h3 style={{ ...sezioneTitoloStyle, color: "#0056b3" }}>Ricerca ordini</h3>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
               <div style={{...flexColumnStyle, flex: "1.5 1 0px"}}>
                 <label style={{ fontSize: "13px", marginBottom: "5px" }}>Nome o Data</label>
@@ -194,42 +204,50 @@ const Pagamenti = () => {
                 <label style={{ fontSize: "13px", marginBottom: "5px" }}>Al giorno</label>
                 <input type="date" name="dataMax" value={filtriRicerca.dataMax} onChange={handleChangeFiltriRicerca} style={inputStyle} />
               </div>
-              <button onClick={() => setFiltriRicerca({termine:"", metodo:"", dataMin:"", dataMax:""})} style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}>Pulisci</button>
+              <div style={flexColumnStyle}>
+                <label style={{ fontSize: "13px", marginBottom: "5px" }}>Stato</label>
+                <select name="stato" value={filtriRicerca.stato} onChange={handleChangeFiltriRicerca} style={inputStyle}>
+                  <option value="">Tutti</option>
+                  <option value="completato">Completato</option>
+                  <option value="in_sospeso">In sospeso</option>
+                </select>
+              </div>
+              <button onClick={() => setFiltriRicerca({termine:"", metodo:"", dataMin:"", dataMax:"", stato:""})} style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}>Pulisci</button>
             </div>
           </div>
 
           {/* TABS */}
           <div style={{ marginBottom: "20px", display: "flex", gap: "10px" }}>
             {["tutti", "completati", "sospesi"].map(t => (
-              <button key={t} onClick={() => setTabAttiva(t)} style={{ padding: "10px 20px", backgroundColor: tabAttiva === t ? "#007bff" : "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", textTransform: "capitalize" }}>{t === "tutti" ? "Tutti i Pagamenti" : t}</button>
+              <button key={t} onClick={() => setTabAttiva(t)} style={{ padding: "10px 20px", backgroundColor: tabAttiva === t ? "#007bff" : "#6c757d", color: "white", border: "none", borderRadius: "5px", cursor: "pointer", textTransform: "capitalize" }}>{t === "tutti" ? "Tutti gli Ordini" : t}</button>
             ))}
           </div>
 
-          {/* LISTE PAGAMENTI */}
+          {/* LISTE ORDINI */}
           {(tabAttiva === "tutti" || tabAttiva === "completati") && (
             <div style={{ marginBottom: "30px" }}>
-              <h3 style={{ color: "blue" }}>Pagamenti Completati</h3>
-              {pagamentiCompletati.map(p => (
-                <div key={p.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "15px", marginBottom: "15px", backgroundColor: "#2469ae", color: "white" }}>
+              <h3 style={{ color: "blue" }}>Ordini Completati</h3>
+              {ordiniCompletati.map(o => (
+                <div key={o.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "15px", marginBottom: "15px", backgroundColor: "#2469ae", color: "white" }}>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <div><h4>{p.cliente}</h4><p>Data ordine: {p.data} | Totale: €{p.totale.toFixed(2)} | Metodo: {p.metodo}</p></div>
+                    <div><h4>{o.cliente}</h4><p>Data ordine: {o.data} | Totale: €{o.totale.toFixed(2)} | Metodo: {o.metodo}</p></div>
                     <span style={{ padding: "5px 10px", borderRadius: "15px", backgroundColor: "green", height: "fit-content" }}>Completato</span>
                   </div>
                   <div style={{ marginTop: "10px", padding: "10px", backgroundColor: "#1b5289", borderRadius: "5px", fontSize: "14px" }}>
-                    {p.metodo === "Struttura" && p.dettagli.prenotazione && (
+                    {o.metodo === "Struttura" && o.dettagli.prenotazione && (
                         <>
                             <p><strong>Dettagli Prenotazione:</strong></p>
-                            <p>Data: {p.dettagli.prenotazione.data} | Ora: {p.dettagli.prenotazione.ora}</p>
+                            <p>Data: {o.dettagli.prenotazione.data} | Ora: {o.dettagli.prenotazione.ora}</p>
                         </>
                     )}
-                    {p.metodo === "Spedizione" && p.dettagli.spedizione && (
+                    {o.metodo === "Spedizione" && o.dettagli.spedizione && (
                         <>
                             <p><strong>Dettagli Spedizione:</strong></p>
-                            <p>Indirizzo: {p.dettagli.spedizione.indirizzo}</p>
-                            <p>Carta: {maskCarta(p.dettagli.spedizione.carta)} | Scadenza: {p.dettagli.spedizione.scadenza}</p>
+                            <p>Indirizzo: {o.dettagli.spedizione.indirizzo}</p>
+                            <p>Carta: {maskCarta(o.dettagli.spedizione.carta)} | Scadenza: {o.dettagli.spedizione.scadenza}</p>
                         </>
                     )}
-                    {p.metodo === "Corriere" && p.dettagli.corriere && (<><p><strong>Dettagli Corriere:</strong></p><p>Indirizzo: {p.dettagli.corriere.indirizzo}</p></>)}
+                    {o.metodo === "Corriere" && o.dettagli.corriere && (<><p><strong>Dettagli Corriere:</strong></p><p>Indirizzo: {o.dettagli.corriere.indirizzo}</p></>)}
                   </div>
                 </div>
               ))}
@@ -238,32 +256,32 @@ const Pagamenti = () => {
 
           {(tabAttiva === "tutti" || tabAttiva === "sospesi") && (
             <div>
-              <h3 style={{ color: "orange" }}>Pagamenti In Sospeso</h3>
-              {pagamentiInSospeso.map(p => (
-                <div key={p.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "15px", marginBottom: "15px", backgroundColor: "#fff3cd", color: "black" }}>
+              <h3 style={{ color: "orange" }}>Ordini In Sospeso</h3>
+              {ordiniInSospeso.map(o => (
+                <div key={o.id} style={{ border: "1px solid #ddd", borderRadius: "8px", padding: "15px", marginBottom: "15px", backgroundColor: "#fff3cd", color: "black" }}>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <div><h4>{p.cliente}</h4><p>Data ordine: {p.data} | Totale: €{p.totale.toFixed(2)} | Metodo: {p.metodo}</p></div>
+                    <div><h4>{o.cliente}</h4><p>Data ordine: {o.data} | Totale: €{o.totale.toFixed(2)} | Metodo: {o.metodo}</p></div>
                     <span style={{ padding: "5px 10px", borderRadius: "15px", backgroundColor: "orange", color: "white", height: "fit-content" }}>In Sospeso</span>
                   </div>
                   <div style={{ marginTop: "10px", padding: "10px", backgroundColor: "#fdf0c2", borderRadius: "5px", fontSize: "14px", border: "1px solid #ffeeba" }}>
-                    {p.metodo === "Struttura" && p.dettagli.prenotazione && (
+                    {o.metodo === "Struttura" && o.dettagli.prenotazione && (
                         <>
                             <p><strong>Dettagli Prenotazione:</strong></p>
-                            <p>Data: {p.dettagli.prenotazione.data} | Ora: {p.dettagli.prenotazione.ora}</p>
+                            <p>Data: {o.dettagli.prenotazione.data} | Ora: {o.dettagli.prenotazione.ora}</p>
                         </>
                     )}
-                    {p.metodo === "Spedizione" && p.dettagli.spedizione && (
+                    {o.metodo === "Spedizione" && o.dettagli.spedizione && (
                         <>
                             <p><strong>Dettagli Spedizione:</strong></p>
-                            <p>Indirizzo: {p.dettagli.spedizione.indirizzo}</p>
-                            <p>Carta: {maskCarta(p.dettagli.spedizione.carta)} | Scadenza: {p.dettagli.spedizione.scadenza}</p>
+                            <p>Indirizzo: {o.dettagli.spedizione.indirizzo}</p>
+                            <p>Carta: {maskCarta(o.dettagli.spedizione.carta)} | Scadenza: {o.dettagli.spedizione.scadenza}</p>
                         </>
                     )}
-                    {p.metodo === "Corriere" && p.dettagli.corriere && (<><p><strong>Dettagli Corriere:</strong></p><p>Indirizzo: {p.dettagli.corriere.indirizzo}</p></>)}
+                    {o.metodo === "Corriere" && o.dettagli.corriere && (<><p><strong>Dettagli Corriere:</strong></p><p>Indirizzo: {o.dettagli.corriere.indirizzo}</p></>)}
                   </div>
                   <div style={{ marginTop: "10px", textAlign: "right" }}>
-                    <button onClick={() => segnaComeCompletato(p.id)} style={{ padding: "5px 10px", backgroundColor: "green", color: "white", border: "none", borderRadius: "3px", cursor: "pointer", marginRight: "10px" }}>Completa</button>
-                    <button onClick={() => annullaPagamento(p.id)} style={{ padding: "5px 10px", backgroundColor: "red", color: "white", border: "none", borderRadius: "3px", cursor: "pointer" }}>Annulla</button>
+                    <button onClick={() => segnaComeCompletato(o.id)} style={{ padding: "5px 10px", backgroundColor: "green", color: "white", border: "none", borderRadius: "3px", cursor: "pointer", marginRight: "10px" }}>Completa</button>
+                    <button onClick={() => annullaOrdine(o.id)} style={{ padding: "5px 10px", backgroundColor: "red", color: "white", border: "none", borderRadius: "3px", cursor: "pointer" }}>Annulla</button>
                   </div>
                 </div>
               ))}
@@ -275,4 +293,4 @@ const Pagamenti = () => {
   );
 };
 
-export default Pagamenti;
+export default Ordini;

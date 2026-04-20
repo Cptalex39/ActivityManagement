@@ -13,9 +13,8 @@ import Attivita from "./react_redux/views/attivita_view/Attivita.jsx";
 import Clienti from "./react_redux/views/cliente_view/Clienti.jsx";
 import Servizi from "./react_redux/views/servizio_view/Servizi.jsx";
 import Spese from "./react_redux/views/spesa_view/Spese.jsx";
-import Lavori from "./react_redux/views/lavoro_view/Lavori.jsx";
 import RegistrazioneCliente from "./react_redux/views/customer_view/RegistrazioneCliente.jsx";
-import Pagamenti from "./react_redux/views/pagamento_view/pagamento.jsx";
+import Ordini from "./react_redux/views/ordine_view/Ordini.jsx";
 
 const Root = () => {
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
@@ -36,8 +35,7 @@ const Root = () => {
             <Route path="/profilo" element={<Profilo />} />
             <Route path="/clienti" element={<Clienti />} />
             <Route path="/servizi" element={<Servizi />} />
-            <Route path="/lavori" element={<Lavori />} />
-            <Route path="/pagamenti" element={<Pagamenti />} />
+            <Route path="/ordini" element={<Ordini />} />
             <Route path="/spese" element={<Spese />} />
             <Route path="/analisi" element={<Attivita />} />
           </>
