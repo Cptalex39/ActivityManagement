@@ -1,3 +1,4 @@
+
 // React e Redux
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -10,7 +11,7 @@ import { LavoroActions } from "../../actions/LavoroActions.js";
 import { ClienteActions } from "../../actions/ClienteActions.js";
 import { ServizioActions } from "../../actions/ServizioActions.js";
 // Riutilizzabile
-import PaginaWeb from "../../../riutilizzabile/pagine_web/PaginaWeb.jsx";
+import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 
 const Lavori = () => {
   const lavoroActions = new LavoroActions();

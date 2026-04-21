@@ -11,9 +11,9 @@ import { LavoroActions } from "../../actions/LavoroActions";
 import { SpesaActions } from "../../actions/SpesaActions";
 import { ServizioActions } from "../../actions/ServizioActions";
 // Riutilizzabile
-import { CardEntrateItems, CardEntrateItemsByName, CardUsciteItems, CardRicavi, CardEntrateUscite } from '../../../riutilizzabile/card_item/CardItem';
-import { FormEntrateUscite } from '../../../riutilizzabile/form_item/FormItem';
-import { RowEntrateUscite } from "../../../riutilizzabile/row_item/RowItem";
+import { CardEntrateItems, CardEntrateItemsByName, CardUsciteItems, CardRicavi, CardEntrateUscite } from '@gianlucascisciolo/riutilizzoreact';
+import { FormEntrateUscite } from '@gianlucascisciolo/riutilizzoreact'
+import { RowEntrateUscite } from "@gianlucascisciolo/riutilizzoreact";
 
 const Attivita = () => {
   const stileState = useSelector((state) => state.stile.value);

@@ -5,10 +5,11 @@ import { useSelector } from 'react-redux';
 import Header from "../components/Header.jsx";
 import { OperazioniForms } from '../forms/OperazioniForms';
 import { ClienteForms } from '../forms/ClienteForms';
+import { handleInsert, handleDelete, handleSearch } from '../operazioni/ClienteOperazioni.js';
 // Actions
 import { ClienteActions } from "../../actions/ClienteActions.js";
 // Riutilizzabile
-import PaginaWeb from '../../../riutilizzabile/pagine_web/PaginaWeb.jsx';
+import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 
 const Clienti = () => {
   const clienteState = useSelector((state) => state.cliente.value);
@@ -85,10 +86,10 @@ const Clienti = () => {
             lavoroActions: null, 
             // Handle operations
             handleBlurItem: handleBlurItem, 
-            handleInsert: (e) => clienteActions.inserimentoCliente(e, nuovoCliente, setNuovoCliente, attivitaState.lingua), 
-            handleSearch: (e) => clienteActions.ricercaClienti(e, datiRicerca, attivitaState.lingua), 
-            handleEdit: (e) => clienteActions.modificaClienti(e, selectedIdsModifica, setSelectedIdsModifica, clienteState.clienti, attivitaState.lingua),
-            handleDelete: (e) => clienteActions.eliminaClienti(e, selectedIdsEliminazione, setSelectedIdsEliminazione, clienteState.clienti, attivitaState.lingua),             
+            handleInsert: (e) => handleInsert(e, clienteActions, nuovoCliente, setNuovoCliente, attivitaState.lingua), 
+            handleSearch: (e) => handleSearch(e, clienteActions, datiRicerca, attivitaState.lingua), 
+            handleEdit: null,
+            handleDelete: (e) => handleDelete(e, clienteActions, selectedIdsEliminazione, setSelectedIdsEliminazione, clienteState.clienti, attivitaState.lingua),                 
             // Campi
             campiNuovoItem: campiNuovoCliente, 
             campiRicercaItems: campiRicercaClienti,

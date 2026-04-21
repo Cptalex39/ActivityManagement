@@ -8,7 +8,7 @@ import { SpesaForms } from "../forms/SpesaForms";
 // Actions
 import { SpesaActions } from "../../actions/SpesaActions";
 // Riutilizzabile
-import PaginaWeb from "../../../riutilizzabile/pagine_web/PaginaWeb.jsx";
+import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 
 const Spese = () => {
   const spesaActions = new SpesaActions();

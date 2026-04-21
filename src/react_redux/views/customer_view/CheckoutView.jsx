@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { OrdineActions } from "../../actions/OrdineActions";
 
 // Componente CheckoutView - VERSIONE FULL XXL
 const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvate }) => {
+  const ordineActions = new OrdineActions();
   // Stati per la gestione del form
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -58,6 +60,8 @@ const CheckoutView = ({ carrello, setCarrello, setPagina, setOrdini, carteSalvat
       spedizione: pagamento === "Spedizione" ? { indirizzo, carta: cartaSelezionata || numeroCarta } : null,
       corriere: pagamento === "Corriere" ? { indirizzo } : null
     };
+
+    ordineActions.inserimentoOrdine(nuovoOrdine);
 
     setOrdini(prev => [...prev, nuovoOrdine]);
     setOrdineConfermato(true);

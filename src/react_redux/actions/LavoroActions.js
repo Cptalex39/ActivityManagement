@@ -2,136 +2,112 @@
 import { useDispatch } from 'react-redux';
 // Reducers
 import { lavoroSliceActions } from '../store/reducers/LavoroReducer';
+// Actions
+import { Actions } from "./Actions";
 // Utils
 import { controlloLavoro } from "../../utils/Controlli";
 import { generaFileLavoriPDF, generaFileLavoriExcel } from "../../utils/File";
+import { getGiornoOrarioAttuale } from '../../utils/Tempo';
 
-export class LavoroActions {
+export class LavoroActions extends Actions {
   dispatch = useDispatch();
 
   constructor() {
-
+    super();
   }
 
+  /**
+   * Azione che azzera la lista dei lavori.
+   */
   azzeraLista() {
     this.dispatch(lavoroSliceActions.aggiornaLavori({
       lavori: -1,
     }));
   }
   
-  async inserimentoLavoro(e, servizi, clienti, nuovoLavoro, setNuovoLavoro, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler salvare il lavoro?" : "Are you sure you want to save the job?")) {
-      nuovoLavoro.totale = 0;
-      for(let servizio of servizi) {
-        if(servizio.quantita > 0) {
-          nuovoLavoro.totale += servizio.prezzo * servizio.quantita
-        }
-      }
-      for(let cliente of clienti) {
-        if (parseInt(cliente.id) === parseInt(nuovoLavoro.id_cliente)) {
-          nuovoLavoro["cliente"] = cliente.nome + " " + cliente.cognome 
-            + ((cliente.contatto && cliente.contatto !== "Contatto non inserito.") ? (" - " + cliente.contatto) : "") 
-            + ((cliente.email && cliente.email !== "Email non inserita.") ? (" - " + cliente.email) : "");
-          break;
-        }
-      }
-      nuovoLavoro["servizi"] = servizi;
-      
-      if (controlloLavoro(nuovoLavoro, setNuovoLavoro, lingua) > 0) 
-        return;
-
-      nuovoLavoro["giorno_attuale"] = nuovoLavoro["giorno"];
-      nuovoLavoro["totale_attuale"] = nuovoLavoro["totale"];
-      nuovoLavoro["note_attuale"] = nuovoLavoro["note"];
-      nuovoLavoro["servizi_attuale"] = nuovoLavoro["servizi"];
-      
-      const response = await fetch('/INSERISCI_ITEM', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nuovoLavoro),
-      });
-
-      if(response.status === 200) {
-        const result = await response.json();
-        nuovoLavoro.id = result.id;
-        nuovoLavoro["collegamenti"] = result.collegamenti;
-        nuovoLavoro["collegamenti_attuale"] = nuovoLavoro["collegamenti"];
-
-        this.dispatch(lavoroSliceActions.inserimentoLavoro({
-          nuovoLavoro: nuovoLavoro 
-        }))
-
-        alert(lingua === "italiano" ? "L\'inserimento del lavoro è andato a buon fine." : "Job entry was successful.");
-      }
-      else if(response.status === 400) {
-        alert(lingua === "italiano" ? "Errore: lavoro gia\' presente." : "Error: job already present.")
-      }
-      else {
-        alert(lingua === "italiano" ? "Errore durante il salvataggio del nuovo lavoro, riprova più tardi." : "Error while saving new job, try again later.");
+  /**
+   * Azione per l'inserimento di un nuovo lavoro nel sistema.
+   * 
+   * @param {Object} nuovoLavoro - dati del nuovo lavoro.
+   * @param {Array<Object>} servizi - servizi con la loro quantità.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async inserimentoLavoro(nuovoLavoro, servizi) {
+    /*
+    let descrizione = "", totale = 0;
+    for(let i = 0; i < servizi.length; i++) {
+      if(parseInt(servizi[i].quantita) > 0) {
+        descrizione += (i+1) + ": " + servizi[i].nome + " X " + servizi[i].quantita + "\n";
+        totale += parseFloat(servizi[i].prezzo) * parseInt(servizi[i].quantita);
       }
     }
-    else {
-      alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
-    }
+
+    nuovoLavoro = {
+      ...nuovoLavoro, 
+      codice: getGiornoOrarioAttuale() + "_" + nuovoLavoro.id_cliente, 
+      data_lavoro: new Date(), 
+      data_spedizione: null, 
+      data_consegna: null, 
+      stato: "CREATO",
+      descrizione: descrizione, 
+      totale: totale, 
+    };
+
+    const response = await super.getResponse("/INSERISCI_ITEM", nuovoLavoroAggiornato);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
+    */
+    console.log("Nuovo lavoro:")
+    console.log(nuovoLavoro);
   }
 
-  async ricercaLavori(e, datiRicerca, lingua) {
-    e.preventDefault();
-    
-    const response = await fetch('/VISUALIZZA_ITEMS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(datiRicerca),
-    });
+  /**
+   * Azione per eseguire la ricerca dei lavori.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca. 
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async ricercaLavori(datiRicerca) {    
+    const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
-    if(response.status === 200) {
+    if(response.ok) {
       const result = await response.json();
       
       this.dispatch(lavoroSliceActions.aggiornaLavori({
         lavori: result.items,
       }));
     }
-    else {
-      alert(lingua === "italiano" ? "Errore durante la ricerca dei lavori, riprova più tardi." : "Error during job research, please try again later.");
-    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
   
-  async handleSearchLavoriRangeFile(e, tipoFile, setTipoFile, datiRicerca, setLavori, lingua) {
-    e.preventDefault();
-
-    if (!confirm(lingua === "italiano" ? "Sei sicuro di voler ottenere il file?" : "Are you sure you want to get the file?")) {
-      alert(lingua === "italiano" ? "Operazione annullata." : "Operation canceled.");
-      return;
-    }
-
+  /**
+   * Azione per ottenere un file con i lavori.
+   * 
+   * @param {String} tipoFile - tipo del file (.pdf o .xlsx)
+   * @param {Function} setTipoFile - setter del tipo di file.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @param {Function} setLavori - setter dei lavori.
+   * @param {String} lingua - lingua attuale del sistema.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async handleSearchLavoriRangeFile(tipoFile, setTipoFile, datiRicerca, setLavori, lingua) {
     setTipoFile(tipoFile);
 
-    try {
-      const response = await fetch('/VISUALIZZA_ITEMS', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(datiRicerca),
-      });
+    const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        let errorMessage = lingua === "italiano" ? "Errore durante il recupero dei dati." : "Error while data recovery.";
-        if (errorData && errorData.message) {
-          errorMessage = errorData.message;
-        }
-        console.error(lingua === "italiano" ? "Errore nella richiesta:" : "Error in request", errorMessage, response.status);
-        alert(errorMessage);
-        return;
-      }
-
+    if(response.ok) {
       const result = await response.json();
+      
       setLavori(result.items);
 
       if (tipoFile === "pdf") {
@@ -140,237 +116,248 @@ export class LavoroActions {
       else {
         generaFileLavoriExcel(result.items, lingua);
       }
-    } 
-    catch (error) {
-      console.error("Errore nella richiesta:", error);
-      alert(lingua === "italiano" ? "Errore sconosciuto durante il recupero dei dati. Verificare la connessione." : "Unknown error while data recovery. Check the connection.");
     }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
 
-  async handleSearchEntrateLavori(setEntrateLavori, datiRicerca, lingua) {
+  /**
+   * Azione per la ricerca delle entrate dei lavori.
+   * 
+   * @param {Function} setEntrateLavori - setter delle entrate dei lavori.
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @returns {Object} risultato response operazione.
+   */
+  async handleSearchEntrateLavori(setEntrateLavori, datiRicerca) {
     const dati = {
       tipo_item: "lavoro", 
       primo_anno: datiRicerca.primo_anno, 
       ultimo_anno: datiRicerca.ultimo_anno
     };
     
-    const response = await fetch('/VISUALIZZA_ENTRATE_ITEMS', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(dati), 
-    });
-    
-    if(response.status === 200) {
+    const response = await super.getResponse("/VISUALIZZA_ENTRATE_ITEMS", dati);
+
+    if(response.ok) {
       const result = await response.json();
       setEntrateLavori(result.items);
     }
-    else {
-      alert(lingua === "italiano" ? "Errore durante la ricerca delle entrate dei lavori, riprova più tardi." : "Error while searching job entries, please try again later.");
-    }
+    
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   };
 
+  /**
+   * Azione per selezionare un'operazione sul lavoro.
+   * 
+   * @param {String} icon - icona dell'operazione selezionata.
+   * @param {Object} item - item selezionato.
+   * @param {Array<number>} selectedCodiciModifica - codici dei lavori selezionati per la modifica.
+   * @param {Function} setSelectedCodiciModifica - setter dei codici dei lavori selezionati per la modifica.
+   * @param {Array<number>} selectedCodiciEliminazione - codici dei lavori selezionati per l'eliminazione.
+   * @param {Function} setSelectedCodiciEliminazione - setter dei codici dei lavori selezionati per l'eliminazione.
+   * @param {Function} setSelectedPencilCount - setter per il conteggio del numero di lavori selezionati per la modifica.
+   * @param {Function} setSelectedTrashCount - setter per il conteggio del numero di lavori selezionati per l'eliminazione.
+   */
   selezioneOperazioneLavoro(
-    icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
+    icon, item, selectedCodiciModifica, setSelectedCodiciModifica, selectedCodiciEliminazione, setSelectedCodiciEliminazione, 
     setSelectedPencilCount, setSelectedTrashCount
   ) {
     if(icon === "trash") {
-      if(selectedIdsEliminazione.includes(item.id)) {
+      if(selectedCodiciEliminazione.includes(item.codice)) {
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 0
         }))
 
-        setSelectedIdsEliminazione(prevIds => prevIds.filter(itemId => itemId !== item.id));
+        setSelectedCodiciEliminazione(prevCodici => prevCodici.filter(itemCodice => itemCodice !== item.codice));
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-          id_lavoro: item.id,
+          codice_lavoro: item.codice,
         }));
 
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 2
         }));
 
-        setSelectedIdsEliminazione(prevIds => [...prevIds, item.id]);
+        setSelectedCodiciEliminazione(prevCodici => [...prevCodici, item.codice]);
         setSelectedTrashCount(prevCount => prevCount + 1);
-        setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
+        setSelectedCodiciModifica(prevCodiciModifica => prevCodiciModifica.filter(itemCodice => itemCodice !== item.codice));
         setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
       }
     }
     else if(icon === "pencil") {
-      if(selectedIdsModifica.includes(item.id)) {
-        
+      if(selectedCodiciModifica.includes(item.codice)) {
         this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-          id_lavoro: item.id,
+          codice_lavoro: item.codice,
         }));
 
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 0
         }));
 
-        setSelectedIdsModifica(prevIdsModifica => prevIdsModifica.filter(itemId => itemId !== item.id));
+        setSelectedCodiciModifica(prevCodiciModifica => prevCodiciModifica.filter(itemCodice => itemCodice !== item.codice));
         setSelectedPencilCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(lavoroSliceActions.aggiornaTipoSelezione({
-          id_lavoro: item.id, 
+          codice_lavoro: item.codice, 
           nuova_selezione: 1
         }))
 
-        setSelectedIdsModifica(prevIdsModifica => [...prevIdsModifica, item.id]);
+        setSelectedCodiciModifica(prevCodiciModifica => [...prevCodiciModifica, item.codice]);
         setSelectedPencilCount(prevCount => prevCount + 1);
-        setSelectedIdsEliminazione(prevIds => prevIds.filter(itemId => itemId !== item.id));
+        setSelectedCodiciEliminazione(prevCodici => prevCodici.filter(itemCodice => itemCodice !== item.codice));
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
     }
   }
 
-  async modificaLavori(e, servizi, lavori, selectedIdsModifica, setSelectedIdsModifica, lingua) {
-    e.preventDefault();
+  /**
+   * Azione per eseguire la modifica dei lavori.
+   * 
+   * @param {Array<Object>} lavori - collezione dei lavori.
+   * @param {Array<String>} selectedCodiciModifica - codici dei lavori selezionati per la modifica.
+   * @param {Array<String>} setSelectedCodiciModifica - setter dei codici dei lavori selezionati per la modifica.
+   * 
+   * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
+   */
+  async modificaLavori(lavori, selectedCodiciModifica, setSelectedCodiciModifica) {
+    let lavoriDaModificare = lavori.filter(lavoro => selectedCodiciModifica.includes(lavoro.codice));
+    let codiciLavoriNonModificati = [];
+    let codiciLavoriModificati = [];
+    let esitiModifiche = [];
 
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler modificare i lavori?" : "Are you sure you want to edit the jobs?")) {
-      let lavoriDaModificare = lavori.filter(lavoro => selectedIdsModifica.includes(lavoro.id));
-
-      let idLavoriNonModificati = [];
-      let idLavoriModificati = [];
-      let esitoModifica = lingua === "italiano" ? "Esito modifica:\n" : "Modification outcome:\n";
-      for(let i = 0; i < lavoriDaModificare.length; i++) {
-        const dati = {
-          tipo_item: "lavoro", 
-          servizi: servizi, 
-          item: lavoriDaModificare[i] 
-        }
-        const response = await fetch('/MODIFICA_ITEM', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dati),
-        });
-        if(response.status === 200) {           
-          esitoModifica += lingua === "italiano" ? "Lavoro numero " + (i+1) + ": modifica avvenuta con successo.\n" : "Job number " + (i+1) + ": successful modification.\n";
-          idLavoriModificati.push(lavoriDaModificare[i].id);
-        }
-        else if(response.status === 400) {
-          esitoModifica += lingua === "italiano" ? "Lavoro numero " + (i+1) + ": errore durante la modifica: lavoro gia\' presente.\n" : "Job number " + (i+1) + ": Error while editing: job already present.\n";
-          idLavoriNonModificati.push(lavoriDaModificare[i].id);
-        }
-        else {
-          esitoModifica += lingua === "italiano" ? "Lavoro numero " + (i+1) + ": errore durante la modifica.\n" : "Job number " + (i+1) + ": error while editing.\n";
-          idLavoriNonModificati.push(lavoriDaModificare[i].id);
-        }
+    for(let i = 0; i < lavoriDaModificare.length; i++) {
+      const dati = {
+        tipo_item: "lavoro", 
+        item: lavoriDaModificare[i] 
       }
 
-      let lavoriAggiornati = [];
-      for (let i = 0; i < lavori.length; i++) {
-        let lavoroAggiornato = { ...lavori[i] };
-        if(lavoroAggiornato.tipo_selezione === 1) {
-          lavoroAggiornato.tipo_selezione = 0;
-        }
-        lavoriAggiornati.push(lavoroAggiornato);
+      const response = await super.getResponse("/MODIFICA_ITEM", dati);
+
+      if(response.ok) {
+        esitiModifiche[i] = [true, response.status];
+        codiciLavoriModificati.push(lavoriDaModificare[i].codice);
       }
-      
-      this.dispatch(lavoroSliceActions.aggiornaLavori({
-        lavori: lavoriAggiornati,
+      else {
+        esitiModifiche[i] = [false, response.status];
+        codiciLavoriNonModificati.push(lavoriDaModificare[i].codice);
+      }
+    }
+
+    let lavoriAggiornati = [];
+
+    for (let i = 0; i < lavori.length; i++) {
+      let lavoroAggiornato = { ...lavori[i] };
+      if(lavoroAggiornato.tipo_selezione === 1) {
+        lavoroAggiornato.tipo_selezione = 0;
+      }
+      lavoriAggiornati.push(lavoroAggiornato);
+    }
+    
+    this.dispatch(lavoroSliceActions.aggiornaLavori({
+      lavori: lavoriAggiornati,
+    }));
+
+    for(let codice of codiciLavoriNonModificati) {
+      this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
+        codice_lavoro: codice
       }));
-
-      for(let id of idLavoriNonModificati) {
-        this.dispatch(lavoroSliceActions.getLavoroPrimaDellaModifica({
-          id_lavoro: id
-        }));
-      }
-
-      for(let id of idLavoriModificati) {
-        this.dispatch(lavoroSliceActions.getLavoroDopoLaModifica({
-          id_lavoro: id
-        }))
-      }
-
-      setSelectedIdsModifica([]);
-
-      alert(esitoModifica);
     }
-    else {
-      alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
+
+    for(let codice of codiciLavoriModificati) {
+      this.dispatch(lavoroSliceActions.getLavoroDopoLaModifica({
+        codice_lavoro: codice
+      }))
     }
+
+    setSelectedCodiciModifica([]);
+
+    return {
+      esitiModifiche: esitiModifiche, 
+    };
   }
 
-  aggiornaLavoro(id_lavoro, nome_attributo, nuovo_valore) {
+  /**
+   * Azione per aggiornare un attributo di un lavoro.
+   * 
+   * @param {String} codice_lavoro - codice del lavoro da aggiornare. 
+   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
+   * @param {*} nuovo_valore - nuovo valore dell'attributo da aggiornare.
+   */
+  aggiornaLavoro(codice_lavoro, nome_attributo, nuovo_valore) {
     this.dispatch(lavoroSliceActions.aggiornaLavoro({
-      id_lavoro: id_lavoro, 
+      codice_lavoro: codice_lavoro, 
       nome_attributo: nome_attributo, 
       nuovo_valore: nuovo_valore
     }))
   }
 
-  async eliminaLavori(e, selectedIdsEliminazione, setSelectedIdsEliminazione, lavori, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i lavori?" : "Are you sure you want to eliminate jobs?")) {
-      const dati = {
-        tipo_item: "lavoro", 
-        ids: selectedIdsEliminazione
-      }
-      
-      const itemsRestanti = (lavori && lavori !== -1) ? lavori.filter(lavoro => !dati.ids.includes(lavoro.id)) : -1;
-      
-      const response = await fetch('/ELIMINA_ITEMS', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dati),
-      });
-      if(response.status === 200) {  
-                
-        this.dispatch(lavoroSliceActions.aggiornaLavori({
-          lavori: itemsRestanti
-        }))
+  /**
+   * Azione per eseguire l'eliminazione dei lavori selezionati.
+   * 
+   * @param {Array<String} selectedCodiciEliminazione - codici dei lavori selezionati per la modifica.
+   * @param {Function} setSelectedCodiciEliminazione - setter dei lavori selezionati per la modifica.
+   * @param {Array<Object>} lavori - ollezione dei lavori.
+   * 
+   * @returns {Object} risultato response operazione.
+   */
+  async eliminaLavori(selectedCodiciEliminazione, setSelectedCodiciEliminazione, lavori) {
+    const dati = {
+      tipo_item: "lavoro", 
+      codici: selectedCodiciEliminazione
+    }
+    
+    const itemsRestanti = (lavori && lavori !== -1) ? lavori.filter(lavoro => !dati.codici.includes(lavoro.codice)) : -1;
+    const response = await super.getResponse("/ELIMINA_ITEMS", dati);
+    
+    if(!response.ok) {
+      return {
+        isOK: response.ok, 
+        responseStatus: response.status, 
+      };
+    }
+              
+    this.dispatch(lavoroSliceActions.aggiornaLavori({
+      lavori: itemsRestanti
+    }))
 
-        setSelectedIdsEliminazione([]);
-        alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
-      }
-      else {
-        alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei lavori, riprova più tardi." : "Error while deleting jobs, try again later.");
-      }
-    }
-    else {
-      alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
-    }
+    setSelectedCodiciEliminazione([]);
+    
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
 
-  async handleDeleteLavoriRangeFile(e, datiRicerca, lingua) {
-    e.preventDefault();
-    if (confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i lavori?" : "Are you sure you want to eliminate jobs?")) {
-      const dati = {
-        tipo_item: "lavoro", 
-        "primo_giorno": datiRicerca.primo_giorno, 
-        "ultimo_giorno": datiRicerca.ultimo_giorno 
-      }
+  /**
+   * Azione per eliminare i lavori compreso in un range di due date estremi inclusi.
+   * 
+   * @param {Object} datiRicerca - dati della ricerca.
+   * @returns {Object} risultato response operazione.
+   */
+  async handleDeleteLavoriRangeFile(datiRicerca) {
+    const dati = {
+      tipo_item: "lavoro", 
+      "primo_giorno": datiRicerca.primo_giorno, 
+      "ultimo_giorno": datiRicerca.ultimo_giorno 
+    }
+
+    const response = await super.getResponse("/ELIMINA_ITEMS_RANGE_GIORNI", dati);
     
-      const response = await fetch('/ELIMINA_ITEMS_RANGE_GIORNI', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(dati),
-      });
-      if(response.status === 200) {
-        alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
-      }
-      else {
-        alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei lavori, riprova più tardi." : "Error while deleting jobs, try again later."); 
-      }
-    }
-    else {
-      alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
-    }
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    };
   }
 }
 

@@ -6,12 +6,13 @@ import { useSelector } from 'react-redux';
 import Header from "../components/Header";
 import { OperazioniForms } from '../forms/OperazioniForms';
 import { AutenticazioneForms } from '../forms/AutenticazioneForms';
+import { handleLogin } from '../operazioni/AutenticazioneOperazioni';
 // Actions
 import { AutenticazioneActions } from "../../actions/AutenticazioneActions";
 // Riutilizzabile
-import { FormLogin } from "../../../riutilizzabile/form_item/FormItem";
-import { CardLogin } from '../../../riutilizzabile/card_item/CardItem';
-import { RowLogin } from '../../../riutilizzabile/row_item/RowItem';
+import { FormLogin } from '@gianlucascisciolo/riutilizzoreact';
+import { CardLogin } from '@gianlucascisciolo/riutilizzoreact';
+import { RowLogin } from '@gianlucascisciolo/riutilizzoreact';
 
 const Login = () => {
   const autenticazioneActions = new AutenticazioneActions();
@@ -40,7 +41,7 @@ const Login = () => {
       <LoginTag 
         campi={campiLogin}
         indici={[...Array(campiLogin.label.length).keys()]}
-        eseguiLogin={(e) => autenticazioneActions.login(e, datiLogin, setDatiLogin, navigate, attivitaState.lingua)} 
+        eseguiLogin={(e) => handleLogin(e, autenticazioneActions, datiLogin, setDatiLogin, navigate, attivitaState.lingua)} 
       />
     </>
   );

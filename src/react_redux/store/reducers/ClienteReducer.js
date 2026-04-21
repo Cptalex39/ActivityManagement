@@ -33,36 +33,6 @@ const reducers = {
       }
     }
   },
-  getClientePrimaDellaModifica: (state, action) => {
-    if(state.value.clienti && state.value.clienti !== -1) {
-      for(let i = 0; i < state.value.clienti.length; i++) {
-        if(state.value.clienti[i].id === action.payload.id_cliente) {
-          state.value.clienti[i]["contatto"] = state.value.clienti[i]["contatto_attuale"];
-          state.value.clienti[i]["email"] = state.value.clienti[i]["email_attuale"]; 
-          state.value.clienti[i]["note"] = state.value.clienti[i]["note_attuale"]; 
-          break;
-        }
-      }
-    }
-  },
-  getClienteDopoLaModifica: (state, action) => {
-    if(state.value.clienti && state.value.clienti !== -1) {
-      for(let i = 0; i < state.value.clienti.length; i++) {
-        if(state.value.clienti[i].id === action.payload.id_cliente) {
-          state.value.clienti[i]["contatto_attuale"] = state.value.clienti[i]["contatto"];
-          state.value.clienti[i]["email_attuale"] = state.value.clienti[i]["email"]; 
-          state.value.clienti[i]["note_attuale"] = state.value.clienti[i]["note"]; 
-          break;
-        }
-      }
-    }
-  },
-  inserimentoCliente: (state, action) => {
-    if(state.value.clienti === -1) {
-      state.value.clienti = [];
-    }
-    state.value.clienti.push(action.payload.nuovoCliente);
-  },
 };
 
 const clienteSlice = createSlice ({
@@ -75,9 +45,6 @@ export const clienteSliceActions = {
   aggiornaClienti: clienteSlice.actions.aggiornaClienti,
   aggiornaTipoSelezione: clienteSlice.actions.aggiornaTipoSelezione,
   aggiornaCliente: clienteSlice.actions.aggiornaCliente,
-  getClientePrimaDellaModifica: clienteSlice.actions.getClientePrimaDellaModifica,
-  getClienteDopoLaModifica: clienteSlice.actions.getClienteDopoLaModifica,
-  inserimentoCliente: clienteSlice.actions.inserimentoCliente,
 };
 
 export const clienteReducer = clienteSlice.reducer;

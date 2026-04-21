@@ -4,7 +4,7 @@ import Header from "../components/Header.jsx";
 import { OperazioniForms } from "../forms/OperazioniForms";
 import { ServizioForms } from "../forms/ServizioForms";
 import { ServizioActions } from "../../actions/ServizioActions";
-import PaginaWeb from "../../../riutilizzabile/pagine_web/PaginaWeb.jsx";
+import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 // servizi
 const Servizi = () => {
   const servizioActions = new ServizioActions();

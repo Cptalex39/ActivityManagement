@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 // Actions
 import { AttivitaActions } from '../../actions/AttivitaActions';
 // Riutilizzabile
-import { CardWidget, CardEntrateItems, CardUsciteItems, CardRicavi } from "../../../riutilizzabile/card_item/CardItem";
+import { CardWidget, CardEntrateItems, CardUsciteItems, CardRicavi } from '@gianlucascisciolo/riutilizzoreact';
 
 const DragAndDrop = ({ initialPositions, onClickWidget }) => {
   const [dragging, setDragging] = useState(false);

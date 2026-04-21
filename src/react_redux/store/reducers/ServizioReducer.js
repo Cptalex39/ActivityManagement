@@ -37,10 +37,12 @@ const reducers = {
     if(state.value.servizi && state.value.servizi !== -1) {
       for(let i = 0; i < state.value.servizi.length; i++) {
         if(state.value.servizi[i].id === action.payload.id_servizio) {
+          state.value.servizi[i]["tipo"] = state.value.servizi[i]["tipo_attuale"];
           state.value.servizi[i]["nome"] = state.value.servizi[i]["nome_attuale"];
+          state.value.servizi[i]["descrizione"] = state.value.servizi[i]["descrizione_attuale"];
           state.value.servizi[i]["prezzo"] = state.value.servizi[i]["prezzo_attuale"]; 
-          state.value.servizi[i]["note"] = state.value.servizi[i]["note_attuale"]; 
           state.value.servizi[i]["in_uso"] = state.value.servizi[i]["in_uso_attuale"]; 
+          state.value.servizi[i]["note"] = state.value.servizi[i]["note_attuale"]; 
           break;
         }
       }
@@ -50,10 +52,12 @@ const reducers = {
     if(state.value.servizi && state.value.servizi !== -1) {
       for(let i = 0; i < state.value.servizi.length; i++) {
         if(state.value.servizi[i].id === action.payload.id_servizio) {
+          state.value.servizi[i]["tipo_attuale"] = state.value.servizi[i]["tipo"];
           state.value.servizi[i]["nome_attuale"] = state.value.servizi[i]["nome"];
+          state.value.servizi[i]["descrizione_attuale"] = state.value.servizi[i]["descrizione"];
           state.value.servizi[i]["prezzo_attuale"] = state.value.servizi[i]["prezzo"]; 
+          state.value.servizi[i]["in_uso_attuale"] = state.value.servizi[i]["in_uso"]; 
           state.value.servizi[i]["note_attuale"] = state.value.servizi[i]["note"]; 
-          state.value.servizi[i]["in_uso_attuale"] = state.value.servizi[i]["in_uso"];
           break;
         }
       }

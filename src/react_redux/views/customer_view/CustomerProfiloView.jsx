@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartaActions } from "../../actions/CartaActions";
+import { ClienteActions } from "../../actions/ClienteActions";
 
 const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setClienteLogged }) => {
+  const cartaActions = new CartaActions();
+  const clienteActions = new ClienteActions();
+
   const navigate = useNavigate();
 
   const clienteMock = {
@@ -22,6 +27,8 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
   const [dataMin, setDataMin] = useState("");
   const [dataMax, setDataMax] = useState("");
 
+  const [datiNuovaCarta, setDatiNuovacarta] = useState("");
+
   const [filtriFile, setFiltriFile] = useState({
     dataInizio: "",
     dataFine: "",
@@ -34,21 +41,35 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
       return;
     }
     const carta = { numero: nuovaCarta, scadenza: dataScadenza, cvv: cvv };
+
+    setDatiNuovacarta(carta);
+
+    cartaActions.inserimentoCarta(carta, setDatiNuovacarta);
+
     setCarteSalvate(prev => [...prev, carta]);
     setNuovaCarta("");
     setDataScadenza("");
     setCvv("");
   };
 
-  const rimuoviCarta = (indexToRemove) => {
+  const rimuoviCarta = (indexToRemove, numeroCarta) => {
     if (window.confirm("Sei sicuro di voler rimuovere questa carta?")) {
+      cartaActions.eliminazioneCarta(numeroCarta, "mr_user");
+      
       setCarteSalvate(prev => prev.filter((_, index) => index !== indexToRemove));
     }
   };
 
   const handleEliminaProfilo = () => {
     alert(`Profilo cancellato con successo! 🗑️`);
-    if (setClienteLogged) setClienteLogged(false);
+
+    const username = "mr_user";
+    clienteActions.richiestaEliminazioneProfilo(username);
+
+    if (setClienteLogged) {
+      setClienteLogged(false);
+    }
+
     navigate("/");
   };
 
@@ -175,7 +196,7 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
         {carteSalvate.map((carta, i) => (
           <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
             <span style={{ fontSize: "24px" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}>(Scad: {carta.scadenza})</small></span>
-            <button onClick={() => rimuoviCarta(i)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
+            <button onClick={() => rimuoviCarta(i, carta.numero)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
           </div>
         ))}
       </div>
