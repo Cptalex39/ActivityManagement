@@ -8,9 +8,9 @@ import { AutenticazioneForms } from "../forms/AutenticazioneForms";
 // Actions
 import { AutenticazioneActions } from "../../actions/AutenticazioneActions"
 // Riutilizzabile
-import { FormProfilo } from "../../../riutilizzabile/form_item/FormItem";
-import { CardProfilo } from "../../../riutilizzabile/card_item/CardItem";
-import { RowProfilo } from "../../../riutilizzabile/row_item/RowItem";
+import { FormProfilo } from '@gianlucascisciolo/riutilizzoreact';
+import { CardProfilo } from '@gianlucascisciolo/riutilizzoreact';
+import { RowProfilo } from '@gianlucascisciolo/riutilizzoreact';
 
 const Profilo = () => {
   const stileState = useSelector((state) => state.stile.value);

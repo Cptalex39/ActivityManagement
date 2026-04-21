@@ -9,7 +9,7 @@ import { handleInsert, handleDelete, handleSearch } from '../operazioni/ClienteO
 // Actions
 import { ClienteActions } from "../../actions/ClienteActions.js";
 // Riutilizzabile
-import PaginaWeb from '../../../riutilizzabile/pagine_web/PaginaWeb.jsx';
+import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 
 const Clienti = () => {
   const clienteState = useSelector((state) => state.cliente.value);

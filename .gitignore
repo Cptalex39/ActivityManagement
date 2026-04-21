@@ -1,6 +1,7 @@
 # Ignora i file con credenziali e i file di configurazione con credenziali
 .env
 config.env
+.npmrc
 secrets.txt
 *.key
 *.pem
@@ -39,6 +40,7 @@ node_modules
 eslint.config.js
 
 /package-lock.json
+
 
 
 
