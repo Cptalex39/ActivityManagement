@@ -9,7 +9,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
   const [dati, setDati] = useState({
     nome: "",
     cognome: "",
-    username: "mr_user",
+    username: "",
     password: "",
     conferma_password: "",
     email: "",
@@ -17,14 +17,16 @@ const RegistrazioneCliente = ({ chiudi }) => {
   });
 
   const registra = () => {
-    if (!dati.telefono || !dati.conferma_password || !dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
+    if (!dati.telefono || !dati.conferma_password ||!dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
       alert("Compila tutti i campi");
       return;
     }
 
     clienteActions.registrazioneCliente(dati, setDati, "italiano");
 
-    alert(`Registrazione completata con successo per ${dati.username}: Esegui il login per accedere`);
+    alert(`Registrazione completata con successo per ${dati.username}:
+Esegui il login per accedere`);
+    chiudi();
   };
 
   return (
@@ -63,6 +65,16 @@ const RegistrazioneCliente = ({ chiudi }) => {
 
             <br /><br />
 
+
+            <input
+              type="text"
+              placeholder="Username"
+              value={dati.username}
+              onChange={(e) =>
+                setDati({ ...dati, username: e.target.value })
+              }
+            />
+            <br /><br />
 
             <input
               type="text"
@@ -122,3 +134,12 @@ const RegistrazioneCliente = ({ chiudi }) => {
 };
 
 export default RegistrazioneCliente;
+
+
+
+
+
+
+
+
+
