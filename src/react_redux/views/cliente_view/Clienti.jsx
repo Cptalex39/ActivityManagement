@@ -166,6 +166,21 @@ const Clienti = () => {
                 >
                   {attivitaState.lingua === "italiano" ? "Ottieni file ordini" : "Get orders file"}
                 </button>
+
+                <button
+                  onClick={() => deleteClient(cliente)}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#800000",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontWeight: "bold"
+                  }}
+                >
+                  {attivitaState.lingua === "italiano" ? "Elimina cliente" : "Delete client"}
+                </button>
               </div>
             </div>
           ))}

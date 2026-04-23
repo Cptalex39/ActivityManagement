@@ -19,7 +19,8 @@ export class ClienteActions extends Actions {
    */
   azzeraLista() {
     this.dispatch(clienteSliceActions.aggiornaClienti({
-      clienti: -1, 
+      //clienti: -1, 
+      clienti: [], 
     }));
   }
 

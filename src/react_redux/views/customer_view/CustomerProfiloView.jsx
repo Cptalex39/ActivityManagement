@@ -151,6 +151,38 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
     transition: "0.2s opacity"
   };
 
+  const buttonStyle = {
+    padding: "10px 20px",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    fontSize: "14px",
+    alignSelf: "flex-end"
+  };
+
+  const [filtriRicerca, setFiltriRicerca] = useState({
+    termine: "",
+    metodo: "",
+    dataMin: "",
+    dataMax: "",
+    stato: ""
+  });
+
+
+  const handleChangeFiltriFile = (e) => {
+    const { name, value } = e.target;
+    setFiltriFile(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleChangeFiltriRicerca = (e) => {
+    const { name, value } = e.target;
+    setFiltriRicerca(prev => ({ ...prev, [name]: value }));
+  };
+
+  const sezioneTitoloStyle = { marginTop: 0, marginBottom: "15px", fontSize: "18px", fontWeight: "bold" };
+  const flexColumnStyle = { display: "flex", flexDirection: "column", flex: "1 1 0px", minWidth: "140px" };
+
   return (
     <div style={{ color: "white", marginTop: "40px", paddingBottom: "100px", fontFamily: "sans-serif" }}>
       <h2 style={{ fontSize: "48px", marginBottom: "40px" }}>Profilo Cliente</h2>
@@ -204,46 +236,64 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
       <hr style={{ margin: "80px 0", opacity: 0.2 }} />
 
       {/* SEZIONE STORICO ORDINI */}
-      <h3 style={{ fontSize: "42px", marginBottom: "35px" }}>Storico Ordini</h3>
+      <h3 style={{ fontSize: "42px", marginBottom: "35px" }}>Ordini</h3>
 
       {/* BOX ESPORTAZIONE */}
-      <div style={{ ...boxStyle, background: "rgba(40, 167, 69, 0.15)", borderColor: "#28a745" }}>
-        <h4 style={{ marginTop: 0, fontSize: "30px", color: "#28a745" }}>Esporta Documenti</h4>
-        <form onSubmit={handleDownloadFile} style={{ display: "flex", gap: "30px", flexWrap: "wrap", alignItems: "flex-end" }}>
-          <label style={labelStyle}>Da: <input type="date" style={inputStyle} value={filtriFile.dataInizio} onChange={(e) => setFiltriFile({...filtriFile, dataInizio: e.target.value})} /></label>
-          <label style={labelStyle}>A: <input type="date" style={inputStyle} value={filtriFile.dataFine} onChange={(e) => setFiltriFile({...filtriFile, dataFine: e.target.value})} /></label>
-          <label style={labelStyle}>Formato: 
-            <select style={inputStyle} value={filtriFile.formato} onChange={(e) => setFiltriFile({...filtriFile, formato: e.target.value})}>
-              <option value="pdf">PDF (.pdf)</option>
-              <option value="xlsx">Excel (.xlsx)</option>
+      <div style={{ marginBottom: "25px", padding: "20px", border: "1px solid #ccc", borderRadius: "8px", backgroundColor: "#f8f9fa", color: "black" }}>
+        <h3 style={sezioneTitoloStyle}>Ottieni file ordini</h3>
+        <form onSubmit={handleDownloadFile} style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+          <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Primo giorno</label><input type="date" name="dataInizio" value={filtriFile.dataInizio} onChange={handleChangeFiltriFile} style={inputStyle} /></div>
+          <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Ultimo giorno</label><input type="date" name="dataFine" value={filtriFile.dataFine} onChange={handleChangeFiltriFile} style={inputStyle} /></div>
+          <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Email</label><input type="email" name="email" value={filtriFile.email} onChange={handleChangeFiltriFile} placeholder="Email..." style={inputStyle} /></div>
+          <div style={flexColumnStyle}><label style={{fontSize:"13px", marginBottom:"5px"}}>Username</label><input type="text" name="username" value={filtriFile.username} onChange={handleChangeFiltriFile} placeholder="Username..." style={inputStyle} /></div>
+          <div style={{...flexColumnStyle, flex: "0 0 100px"}}><label style={{fontSize:"13px", marginBottom:"5px"}}>Stato</label>
+            <select name="stato" value={filtriFile.stato} onChange={handleChangeFiltriFile} style={inputStyle}>
+              <option value="tutti">Tutti</option>
+              <option value="completati">Completati</option>
+              <option value="in_sospeso">In sospeso</option>
             </select>
-          </label>
-          <button type="submit" style={{ ...buttonActionStyle, backgroundColor: "#28a745", color: "white", flex: "1", minHeight: "65px" }}>Scarica Report</button>
+          </div>
+          <div style={{...flexColumnStyle, flex: "0 0 100px"}}><label style={{fontSize:"13px", marginBottom:"5px"}}>Formato</label>
+            <select name="formato" value={filtriFile.formato} onChange={handleChangeFiltriFile} style={inputStyle}><option value="pdf">.PDF</option><option value="xlsx">.XLSX</option></select>
+          </div>
+          <button type="submit" style={{ ...buttonStyle, backgroundColor: "#28a745", color: "white" }}>Scarica</button>
         </form>
       </div>
 
-      {/* BOX FILTRI */}
-      <div style={{ ...boxStyle, background: "rgba(0, 123, 255, 0.15)", borderColor: "#007bff" }}>
-        <h4 style={{ marginTop: 0, fontSize: "30px", color: "#007bff" }}>Filtra Ricerca</h4>
-        <div style={{ display: "flex", gap: "30px", flexWrap: "wrap", alignItems: "flex-end" }}>
-          <label style={labelStyle}>Data: <input type="date" value={ricercaData} onChange={(e) => setRicercaData(e.target.value)} style={inputStyle}/></label>
-          <label style={labelStyle}>Ora: <input type="time" value={ricercaOra} onChange={(e) => setRicercaOra(e.target.value)} style={inputStyle}/></label>
-          <label style={labelStyle}>Metodo Pagamento: 
-            <select value={ricercaMetodo} onChange={(e) => setRicercaMetodo(e.target.value)} style={inputStyle}>
-              <option value="">Tutti i metodi</option>
+      {/* BOX FILTRA RISULTATI */}
+      <div style={{ marginBottom: "25px", padding: "20px", border: "1px solid #007bff", borderRadius: "8px", backgroundColor: "#e9f2fd", color: "black" }}>
+        <h3 style={{ ...sezioneTitoloStyle, color: "#0056b3" }}>Ricerca ordini</h3>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+          <div style={{...flexColumnStyle, flex: "1.5 1 0px"}}>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Nome o Data</label>
+            <input type="text" name="termine" value={filtriRicerca.termine} onChange={handleChangeFiltriRicerca} placeholder="Cerca..." style={inputStyle} />
+          </div>
+          <div style={flexColumnStyle}>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Tipologia</label>
+            <select name="metodo" value={filtriRicerca.metodo} onChange={handleChangeFiltriRicerca} style={inputStyle}>
+              <option value="">Tutte</option>
               <option value="Struttura">Struttura</option>
               <option value="Spedizione">Spedizione</option>
               <option value="Corriere">Corriere</option>
             </select>
-          </label>
-          {(ricercaData || ricercaOra || ricercaMetodo) && (
-            <button 
-              onClick={() => { setRicercaData(""); setRicercaOra(""); setRicercaMetodo(""); }} 
-              style={{ ...buttonActionStyle, backgroundColor: "#6c757d", color: "white", minHeight: "65px" }}
-            >
-              Reset
-            </button>
-          )}
+          </div>
+          <div style={flexColumnStyle}>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Dal giorno</label>
+            <input type="date" name="dataMin" value={filtriRicerca.dataMin} onChange={handleChangeFiltriRicerca} style={inputStyle} />
+          </div>
+          <div style={flexColumnStyle}>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Al giorno</label>
+            <input type="date" name="dataMax" value={filtriRicerca.dataMax} onChange={handleChangeFiltriRicerca} style={inputStyle} />
+          </div>
+          <div style={flexColumnStyle}>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Stato</label>
+            <select name="stato" value={filtriRicerca.stato} onChange={handleChangeFiltriRicerca} style={inputStyle}>
+              <option value="">Tutti</option>
+              <option value="completato">Completato</option>
+              <option value="in_sospeso">In sospeso</option>
+            </select>
+          </div>
+          <button onClick={() => setFiltriRicerca({termine:"", metodo:"", dataMin:"", dataMax:"", stato:""})} style={{ ...buttonStyle, backgroundColor: "#6c757d", color: "white" }}>Pulisci</button>
         </div>
       </div>
 
