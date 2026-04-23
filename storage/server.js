@@ -33,10 +33,10 @@ app.listen(3000, () => {
 /************************************************** Database **************************************************/
 
 const db = mysql.createConnection({
-  host: "host",
-  user: "user",
-  password: "password",
-  database: "activity_management"
+    host: "localhost",
+    user: "root",
+    password: "root",
+    database: "activity_management"
 })
 
 db.connect(err => {
@@ -193,6 +193,49 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
   }
 });
 
+app.post("/INSERISCI_ORDINE", async(req, res) => {
+  const lavoroSQL = new LavoroSQL();
+  const collegamentoSQL = new CollegamentoSQL();
+
+  try {
+    await beginTransaction();
+
+    // 1. Inserisci il lavoro (ordine o prenotazione) con i nuovi campi
+    const sql = lavoroSQL.SQL_INSERIMENTO_ORDINE;
+    const params = lavoroSQL.params_inserimento_ordine(req.body);
+    const result = await executeQuery(sql, params);
+    const insertedId = result.insertId;
+
+    // 2. Inserisci i collegamenti lavoro-servizio (carrello items)
+    const collegamenti = [];
+    if (req.body.servizi && req.body.servizi.length > 0) {
+      for (let servizio of req.body.servizi) {
+        if (servizio.quantita > 0) {
+          let params_collegamento = {
+            id_lavoro: insertedId,
+            id_servizio: servizio.id,
+            quantita: servizio.quantita,
+            prezzo: servizio.prezzo
+          };
+          await executeQuery(
+            collegamentoSQL.SQL_INSERIMENTO_COLLEGAMENTO,
+            collegamentoSQL.params_inserimento_collegamento(params_collegamento)
+          );
+          collegamenti.push(params_collegamento);
+        }
+      }
+    }
+
+    await commitTransaction();
+    return res.status(200).json({ id: insertedId, collegamenti: collegamenti });
+  }
+  catch (err) {
+    console.log("Errore inserimento ordine/prenotazione:", err);
+    await rollbackTransaction();
+    return res.status(500).json({ message: 'Errore durante la creazione dell\'ordine/prenotazione.' });
+  }
+});
+
 app.post("/VISUALIZZA_ITEMS", async(req, res) => {
   const clienteSQL = new ClienteSQL();
   const lavoroSQL = new LavoroSQL();
@@ -248,6 +291,40 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
     return res.status(500).json();
   }
 });
+
+/************************************************** CR: Catalogo **************************************************/
+
+// CR: Endpoint per ottenere il catalogo completo (servizi + prodotti in uso)
+app.post("/VISUALIZZA_CATALOGO", async(req, res) => {
+  const servizioSQL = new ServizioSQL();
+  let sql = "";
+  let params = [];
+
+  switch(req.body.filtro_tipo) {
+    case "prodotto":
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO_PRODOTTI;
+      break;
+    case "servizio":
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO_SERVIZI;
+      break;
+    default:
+      // tutti
+      sql = servizioSQL.SQL_SELEZIONE_CATALOGO;
+      break;
+  }
+  params = servizioSQL.params_selezione_catalogo();
+
+  try {
+    const result = await executeQuery(sql, params);
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+/*************************************************************************************************************/
 
 app.post("/VISUALIZZA_ENTRATE_ITEMS", async(req, res) => {
   const lavoroSQL = new LavoroSQL();
@@ -466,12 +543,3 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
     return res.status(500).json();
   }
 });
-
-
-
-
-
-
-
-
-

@@ -19,6 +19,8 @@ export default defineConfig({
       '/ELIMINA_ITEMS': 'http://localhost:3000', 
       '/ELIMINA_ITEMS_RANGE_GIORNI': 'http://localhost:3000', 
       '/MODIFICA_ITEM': 'http://localhost:3000', 
+      '/VISUALIZZA_CATALOGO': 'http://localhost:3000',
+      '/INSERISCI_ORDINE': 'http://localhost:3000',
     }
   }
 });

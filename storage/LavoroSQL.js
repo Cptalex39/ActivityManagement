@@ -72,11 +72,19 @@ export class LavoroSQL {
     WHERE 
       id = ?; 
   `;
-    
+  SQL_INSERIMENTO_ORDINE = ` 
+    INSERT INTO lavoro (
+      cliente, id_cliente, tipo_lavoro, giorno, totale, 
+      stato_pagamento, metodo_pagamento, tipo_ritiro, 
+      indirizzo_spedizione, data_prenotazione, ora_prenotazione, note
+    ) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?); 
+  `;
   constructor() {
 
   }
 
+  
   sql_selezione_lavori(params) {
     let sql = `
       SELECT 
@@ -158,10 +166,26 @@ export class LavoroSQL {
   params_eliminazione_lavori() {
     return [];
   }  
+  params_inserimento_ordine(params) {
+    return [
+      `${params.cliente}`,
+      params.id_cliente || null,
+      `${params.tipo_lavoro}`,              // 'ordine' o 'prenotazione'
+      `${params.giorno}`,
+      `${params.totale}`,
+      `${params.stato_pagamento}`,          // 'pagato_online', 'in_sospeso', etc.
+      `${params.metodo_pagamento}`,         // 'online', 'in_struttura', 'al_corriere'
+      params.tipo_ritiro || null,           // 'spedizione' o 'ritiro_in_struttura'
+      params.indirizzo_spedizione || null,
+      params.data_prenotazione || null,
+      params.ora_prenotazione || null,
+      `${params.note || ""}`,
+    ];
+  }
 }
 
 
-
+  
 
 
 
