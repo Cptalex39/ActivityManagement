@@ -7,6 +7,7 @@ import { OperazioniForms } from '../forms/OperazioniForms';
 import { ClienteForms } from '../forms/ClienteForms';
 // Actions
 import { ClienteActions } from "../../actions/ClienteActions.js";
+import { OrdineActions } from '../../actions/OrdineActions.js';
 // Riutilizzabile
 import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 
@@ -15,6 +16,7 @@ const Clienti = () => {
   const stileState = useSelector((state) => state.stile.value);
   const attivitaState = useSelector((state) => state.attivita.value);
   const clienteActions = new ClienteActions();
+  const ordineActions = new OrdineActions();
   const clienteForms = new ClienteForms();
   const operazioniForms = new OperazioniForms();
 
@@ -22,6 +24,7 @@ const Clienti = () => {
   const [selectedPencilCount, setSelectedPencilCount] = useState(0);
   const [selectedIdsEliminazione, setSelectedIdsEliminazione] = useState([]);
   const [selectedIdsModifica, setSelectedIdsModifica] = useState([]);
+  const [clientiDaEliminare, setClientiDaEliminare] = useState([]);
 
   //const clientiEliminazione = clienteState.clienti?.filter(c => c.profilo_eliminato === true) || [];
   // Possibili clienti da eliminare
@@ -45,6 +48,21 @@ const Clienti = () => {
     link.href = url;
     link.download = `ordini_${cliente.nome}_${cliente.cognome}.txt`;
     link.click();
+  };
+
+  const eliminaCliente = async (username) => {
+    if(!confirm(`Sei sicuro di voler eliminare il cliente ${username}?`)) {
+      alert("Eliminazione annullata.");
+      return;
+    }
+    
+    const response = await clienteActions.eliminaCliente(username)
+
+    if(response.isOK) {
+      alert("L\'eliminazione del cliente e\' avvenuta con successo.");
+      //clienteActions.ottieniClientiDaEliminare();
+      setClientiDaEliminare(prevState => prevState.filter(cliente => cliente.username !== username));
+    }
   };
   
   const [nuovoCliente, setNuovoCliente] = useState({
@@ -83,11 +101,34 @@ const Clienti = () => {
     clienteActions.aggiornaCliente(item.id, name, value);
   };
 
-  useEffect(() => {
-    clienteActions.azzeraLista();
-  }, []);
+  const ottieniNumeroPagamentiNonConfermatiCliente = async (idCliente) => {
+    const result = await ordineActions.ottieniNumeroPagamentiNonConfermatiCliente({ id_cliente: idCliente, });
+    
+    //alert(idCliente);
+    if(result.isOK) {
+      alert(`Il cliente ha ${result.numero_pagamenti_non_confermati} pagamento/i da confermare: ${result.numero_pagamenti_non_confermati!==0 ? "non puo\' essere eliminato." : "puo\' essere eliminato."}`);
+      if(result.numero_pagamenti_non_confermati === 0) {
+        setClientiDaEliminare(prevState => prevState.map(cliente => (cliente.id === idCliente ? { ...cliente, is_eliminabile: 1 } : cliente)));
+      }
+    }
+    else {
+      alert("Operazione fallita.");
+    }
+  };
+
   const campiNuovoCliente = clienteForms.getCampiNuovoCliente(nuovoCliente, (e) => operazioniForms.handleInputChange(e, setNuovoCliente), null, null)
   const campiRicercaClienti = clienteForms.getCampiRicercaClienti(datiRicerca, (e) => operazioniForms.handleInputChange(e, setDatiRicerca), null, null, attivitaState)
+
+  useEffect(() => {
+    clienteActions.azzeraLista();
+
+    const fetchClienti = async () => {
+      const result = await clienteActions.ottieniClientiDaEliminare();
+      setClientiDaEliminare(result.items);
+    };
+
+    fetchClienti();
+  }, []);
   
   return (
     <>
@@ -108,10 +149,10 @@ const Clienti = () => {
               lavoroActions: null,
               // Handle operations
               handleBlurItem: handleBlurItem,
-              handleInsert: (e) => clienteActions.inserimentoCliente(e, nuovoCliente, setNuovoCliente, attivitaState.lingua),
-              handleSearch: (e) => clienteActions.ricercaClienti(e, datiRicerca, attivitaState.lingua),
-              handleEdit: (e) => clienteActions.modificaClienti(e, selectedIdsModifica, setSelectedIdsModifica, clienteState.clienti, attivitaState.lingua),
-              handleDelete: (e) => clienteActions.eliminaClienti(e, selectedIdsEliminazione, setSelectedIdsEliminazione, clienteState.clienti, attivitaState.lingua),
+              handleInsert: null,
+              handleSearch: () => clienteActions.ricercaClienti(datiRicerca),
+              handleEdit: null,
+              handleDelete: null,
               // Campi
               campiNuovoItem: campiNuovoCliente,
               campiRicercaItems: campiRicercaClienti,
@@ -131,14 +172,14 @@ const Clienti = () => {
         />
       </div>
   
-        {clientiEliminazione.length > 0 && (
+        {clientiDaEliminare && clientiDaEliminare.length > 0 && (
           <div className="contenitore-1" style={{ marginTop: "20px" }}>
           <h2 style={{ marginBottom: "20px", color: "red" }}>
             {attivitaState.lingua === "italiano"
               ? "Clienti con richiesta eliminazione profilo"
               : "Customers with profile deletion request"}
           </h2>
-          {clientiEliminazione.map(cliente => (
+          {clientiDaEliminare.map(cliente => (
             <div key={cliente.id} style={{
               border: "1px solid #ddd",
               borderRadius: "8px",
@@ -150,37 +191,39 @@ const Clienti = () => {
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <h4>{cliente.nome} {cliente.cognome}</h4>
-                  <p>Email: {cliente.email} | Telefono: {cliente.contatto}</p>
+                  <p>Email: {cliente.email} | Contatto: {cliente.contatto}</p>
                 </div>
-                <button
-                  onClick={() => handleDownloadOrdini(cliente)}
-                  style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontWeight: "bold"
-                  }}
-                >
-                  {attivitaState.lingua === "italiano" ? "Ottieni file ordini" : "Get orders file"}
-                </button>
-
-                <button
-                  onClick={() => deleteClient(cliente)}
-                  style={{
-                    padding: "10px 20px",
-                    backgroundColor: "#800000",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontWeight: "bold"
-                  }}
-                >
-                  {attivitaState.lingua === "italiano" ? "Elimina cliente" : "Delete client"}
-                </button>
+                
+                {!cliente.is_eliminabile && (
+                  <button onClick={() => ottieniNumeroPagamentiNonConfermatiCliente(cliente.id)}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "orange",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {attivitaState.lingua === "italiano" ? "Controllo pagamenti" : "Payment Control"}
+                  </button>
+                )}
+                {cliente.is_eliminabile && (
+                  <button onClick={() => eliminaCliente(cliente.username)}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "#800000",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    {attivitaState.lingua === "italiano" ? "Elimina cliente" : "Delete client"}
+                  </button>
+                )}
               </div>
             </div>
           ))}

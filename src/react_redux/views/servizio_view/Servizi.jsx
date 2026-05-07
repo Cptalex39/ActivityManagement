@@ -23,22 +23,24 @@ const Servizi = () => {
     tipo_item: "servizio", 
     tipo_selezione: 0,
     nome: "",
-    tipologia_servizio: "", 
-    prezzo: "",
+    tipo: "", 
+    prezzo: "", 
+    descrizione: "", 
     note: "", 
     errore_nome: "", 
-    errore_tipologia_servizio: "", 
+    errore_tipo: "", 
     errore_prezzo: "", 
+    errore_descrizione: "",
     errore_note: ""
   });
   
   const [datiRicerca, setDatiRicerca] = useState({
+    id_cliente: -1, 
     tipo_item: "servizio", 
     nome: "", 
-    tipologia_servizio: "", 
+    tipo: "", 
     prezzo_min: "",
     prezzo_max: "",  
-    note: "", 
     in_uso: ""
   });
 
@@ -85,10 +87,10 @@ const Servizi = () => {
           stileState: stileState, 
           lavoroActions: null, 
           handleBlurItem: handleBlurItem, 
-          handleInsert: (e) => servizioActions.inserisciServizio(e, nuovoServizio, setNuovoServizio, attivitaState.lingua), 
-          handleSearch: (e) => servizioActions.ricercaServizi(e, datiRicerca, attivitaState.lingua), 
-          handleEdit:   (e) => servizioActions.modificaServizi(e, servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica, attivitaState.lingua), 
-          handleDelete: (e) => servizioActions.eliminaServizi(e, selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi, attivitaState.lingua), 
+          handleInsert: () => servizioActions.inserisciServizio(nuovoServizio, setNuovoServizio, attivitaState.lingua), 
+          handleSearch: () => servizioActions.ricercaServizi(datiRicerca), 
+          handleEdit:   () => servizioActions.modificaServizi(servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica), 
+          handleDelete: () => servizioActions.eliminaServizi(selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi), 
           campiNuovoItem: campiNuovoServizio, 
           campiRicercaItems: campiRicercaServizi,
           campiItemEsistente: servizioForms.getCampiServizioEsistente, 

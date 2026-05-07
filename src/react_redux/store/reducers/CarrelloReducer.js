@@ -23,6 +23,7 @@ const reducers = {
         nome: item.nome,
         prezzo: item.prezzo,
         tipo: item.tipo,
+        descrizione: item.descrizione || "", 
         note: item.note || "",
         quantita: quantita,
       });
@@ -69,16 +70,11 @@ const reducers = {
     }
   },
 
-  // Imposta il tipo di lavoro (ordine o prenotazione)
-  impostaTipoLavoro: (state, action) => {
-    state.value.tipoLavoro = action.payload.tipoLavoro;
-  },
-
   // Svuota il carrello (dopo checkout completato)
   svuotaCarrello: (state) => {
     state.value.items = [];
     state.value.tipoLavoro = null;
-  },
+  }, 
 }
 
 const carrelloSlice = createSlice({
@@ -92,8 +88,7 @@ export const carrelloSliceActions = {
   rimuoviDalCarrello: carrelloSlice.actions.rimuoviDalCarrello,
   aggiornaQuantita: carrelloSlice.actions.aggiornaQuantita,
   incrementaQuantita: carrelloSlice.actions.incrementaQuantita,
-  decrementaQuantita: carrelloSlice.actions.decrementaQuantita,
-  impostaTipoLavoro: carrelloSlice.actions.impostaTipoLavoro,
+  decrementaQuantita: carrelloSlice.actions.decrementaQuantita, 
   svuotaCarrello: carrelloSlice.actions.svuotaCarrello,
 };
 

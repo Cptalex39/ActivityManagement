@@ -6,7 +6,7 @@ import { spesaSliceActions } from '../store/reducers/SpesaReducer';
 import { Actions } from "./Actions";
 // Utils
 import { controlloSpesa } from "../../utils/Controlli";
-import { generaFileSpesePDF, generaFileSpeseExcel } from "../../utils/File";
+import { generaFileSpesePDF, generaFileSpeseExcel } from "../../utils/File"
 
 export class SpesaActions extends Actions {
   dispatch = useDispatch();

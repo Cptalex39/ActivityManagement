@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { NavbarApp } from "../components/navbar/NavbarApp";
+import { useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+import Header from "../components/Header";
 import { ClienteActions } from "../../actions/ClienteActions";
 
 //registazioe
 const RegistrazioneCliente = ({ chiudi }) => {
+  const autenticazioneState = useSelector((state) => state.autenticazione.value);
+  const navigate = useNavigate();
   const clienteActions = new ClienteActions();
 
   const [dati, setDati] = useState({
@@ -13,25 +17,27 @@ const RegistrazioneCliente = ({ chiudi }) => {
     password: "",
     conferma_password: "",
     email: "",
-    telefono: "",
+    contatto: "",
+    note: "",
+    tipo_item: "cliente",
   });
 
-  const registra = () => {
-    if (!dati.telefono || !dati.conferma_password ||!dati.cognome || !dati.nome || !dati.username || !dati.password || !dati.email) {
-      alert("Compila tutti i campi");
-      return;
+  const registra = async () => {
+    const response = await clienteActions.registrazioneCliente(dati, setDati, "italiano");
+
+    if(response.isOK) {
+      alert(`Registrazione completata con successo per ${dati.username}: \nEsegui il login per accedere`);
+      navigate("/login");
+    }
+    else {
+      alert("Errore durante la registrazione... Riprova più tardi.");
     }
 
-    clienteActions.registrazioneCliente(dati, setDati, "italiano");
-
-    alert(`Registrazione completata con successo per ${dati.username}:
-Esegui il login per accedere`);
-    chiudi();
   };
 
   return (
     <>
-      <NavbarApp />
+      <Header />
 
       <div className="main-content">
 
@@ -109,10 +115,10 @@ Esegui il login per accedere`);
 
              <input
               type="text"
-              placeholder="Telefono"
-              value={dati.telefono}
+              placeholder="Contatto"
+              value={dati.contatto}
               onChange={(e) =>
-                setDati({ ...dati, telefono: e.target.value })
+                setDati({ ...dati, contatto: e.target.value })
               }
             />
 

@@ -9,6 +9,8 @@ import { servizioReducer } from "./reducers/ServizioReducer";
 import { lavoroReducer } from "./reducers/LavoroReducer";
 import { spesaReducer } from "./reducers/SpesaReducer";
 import { carrelloReducer } from "./reducers/CarrelloReducer";  // CR: Carrello
+import { cartaReducer } from "./reducers/CartaReducer";
+import { ordineReducer } from "./reducers/OrdineReducer";
 
 const store = configureStore({
   reducer: {
@@ -20,6 +22,8 @@ const store = configureStore({
     lavoro: lavoroReducer,
     spesa: spesaReducer, 
     carrello: carrelloReducer,  // CR: Carrello
+    carta: cartaReducer, 
+    ordine: ordineReducer
   },
 });
 

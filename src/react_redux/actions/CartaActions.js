@@ -21,11 +21,14 @@ export class CartaActions extends Actions {
    * 
    * @returns {Object} risultato response operazione.
    */
-  async inserimentoCarta(nuovaCarta, setNuovaCarta, lingua) {
+  async inserimentoCarta(nuovaCarta, setNuovaCarta) {
     /*
     if (controlloCarta(nuovaCarta, setNuovaCarta, lingua) > 0) { 
       return null;
     }
+    */
+
+    nuovaCarta.circuito = nuovaCarta.is_visa ? "VISA" : "MASTERCARD";
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovaCarta);
 
@@ -38,15 +41,19 @@ export class CartaActions extends Actions {
       };
       
       setNuovaCarta(nuovaCartaAggiornata);
+
+      this.dispatch(cartaSliceActions.aggiungiCarta({
+        carta: nuovaCartaAggiornata, 
+      }));
     }
 
     return {
       isOK: response.ok, 
       responseStatus: response.status, 
     };
-    */
-    console.log("NuovaCarta:");
-    console.log(nuovaCarta);
+    
+    //console.log("NuovaCarta:");
+    //console.log(nuovaCarta);
   };
 
   /**
@@ -56,8 +63,12 @@ export class CartaActions extends Actions {
    * 
    * @returns {Object} risultato response operazione.
    */
-  async ottenimentoCarteCliente(datiRicerca) {
-    const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
+  async ottenimentoCarteCliente(id_cliente) {
+    const dati = {
+      id_cliente: id_cliente
+    }
+    
+    const response = await super.getResponse("/OTTENIMENTO_CARTE_CLIENTE", dati);
 
     if(response.ok) {
       const result = await response.json();
@@ -81,30 +92,27 @@ export class CartaActions extends Actions {
    * @param {Array<Object>} carte - elenco delle carte di un cliente.
    * @returns risultato response operazione.
    */
-  async eliminazioneCarta(codiceCarta, usernameCliente) {
-    /*
+  async eliminazioneCarta(id_carta, id_cliente) {
     const dati = {
-      tipo_item: "carta", 
-      ids: selectedIdsEliminazione
+      id_carta: id_carta, 
+      id_cliente: id_cliente, 
     }
     
-    const itemsRestanti = (carte && carte !== -1) ? carte.filter(carta => !dati.ids.includes(carta.id)) : -1;
-    const response = await super.getResponse("/ELIMINA_ITEMS", dati);
+    const response = await super.getResponse("/ELIMINA_CARTA", dati);
 
     if(response.ok) {
-      this.dispatch(cartaSliceActions.aggiornaCarte({
-        carte: itemsRestanti, 
+      this.dispatch(cartaSliceActions.rimuoviCarta({
+        id: id_carta, 
       }));
-      setSelectedIdsEliminazione([]);
     }
 
     return {
       isOK: response.ok, 
       responseStatus: response.status, 
     };
-    */
-    console.log("USERNAME CLIENTE: " + usernameCliente);
-    console.log("CODICE CARTA: " + codiceCarta);
+
+    //console.log("USERNAME CLIENTE: " + usernameCliente);
+    //console.log("CODICE CARTA: " + codiceCarta);
   }
 }
 

@@ -1,76 +1,122 @@
-import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartaActions } from "../../actions/CartaActions";
 import { ClienteActions } from "../../actions/ClienteActions";
+import { AutenticazioneActions } from "../../actions/AutenticazioneActions";
+import Header from "../components/Header";
 
-const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setClienteLogged }) => {
-  const cartaActions = new CartaActions();
+const CustomerProfiloView = () => {
+  const autenticazioneState = useSelector((state) => state.autenticazione.value);
+  const cartaState = useSelector((state) => state.carta.value);
+  const autenticazioneActions = new AutenticazioneActions();
   const clienteActions = new ClienteActions();
-
+  const cartaActions = new CartaActions();
+  const [ordini, setOrdini] = useState([]);
+  const [clienteLogget, setClienteLogged] = useState(true);
   const navigate = useNavigate();
-
-  const clienteMock = {
-    nome: "Mario",
-    cognome: "Rossi",
-    email: "mario.rossi@email.it",
-    telefono: "3331234567"
-  };
-
-  const [nuovaCarta, setNuovaCarta] = useState("");
-  const [dataScadenza, setDataScadenza] = useState("");
-  const [cvv, setCvv] = useState("");
-  const [mostraConferma, setMostraConferma] = useState(false);
-
+  const [mostraElimina, setMostraElimina] = useState(false);
+  const [mostraModifica, setMostraModifica] = useState(false);
   const [ricercaData, setRicercaData] = useState("");
   const [ricercaOra, setRicercaOra] = useState("");
   const [ricercaMetodo, setRicercaMetodo] = useState("");
   const [dataMin, setDataMin] = useState("");
   const [dataMax, setDataMax] = useState("");
-
-  const [datiNuovaCarta, setDatiNuovacarta] = useState("");
-
+  const [datiNuovaCarta, setDatiNuovaCarta] = useState({
+    tipo_item: "carta",
+    numero: "", 
+    mese_scadenza: "",
+    anno_scadenza: "",  
+    cvv_cvs: "", 
+    nome_titolare: "", 
+    is_visa: false, 
+    is_mastercard: false,
+    id_cliente: autenticazioneState.id_utente, 
+  });
+  const [datiProfilo, setDatiProfilo] = useState({
+    id: autenticazioneState.id_utente, 
+    email: autenticazioneState.email, 
+    contatto: autenticazioneState.contatto, 
+    indirizzo: autenticazioneState.indirizzo, 
+    username: autenticazioneState.username, 
+    password_attuale: "", 
+    nuova_password: "", 
+    conferma_nuova_password: "", 
+  })
   const [filtriFile, setFiltriFile] = useState({
     dataInizio: "",
     dataFine: "",
     formato: "pdf"
   });
 
-  const salvaCarta = () => {
-    if (!nuovaCarta || !dataScadenza || !cvv) {
-      alert("Compila tutti i campi della carta.");
+  const salvaCarta = async () => {
+    if (!datiNuovaCarta.numero || !datiNuovaCarta.mese_scadenza || !datiNuovaCarta.anno_scadenza || !datiNuovaCarta.cvv_cvs || !datiNuovaCarta.nome_titolare || (!datiNuovaCarta.is_visa && !datiNuovaCarta.is_mastercard)) {
+      alert("Compila tutti i campi.");
+      console.log(datiNuovaCarta);
       return;
     }
-    const carta = { numero: nuovaCarta, scadenza: dataScadenza, cvv: cvv };
-
-    setDatiNuovacarta(carta);
-
-    cartaActions.inserimentoCarta(carta, setDatiNuovacarta);
-
-    setCarteSalvate(prev => [...prev, carta]);
-    setNuovaCarta("");
-    setDataScadenza("");
-    setCvv("");
+    
+    await cartaActions.inserimentoCarta(datiNuovaCarta, setDatiNuovaCarta);
+    
+    alert("Salvataggio carta avvenuto con successo.");
   };
 
-  const rimuoviCarta = (indexToRemove, numeroCarta) => {
+  const [isButtonVisaSelected, setIsButtonVisaSelected] = useState(false);
+  const [isButtonMastercardSelected, setIsButtonMastercardSelected] = useState(false);
+
+  const isVisa = () => {
+    setIsButtonVisaSelected(!isButtonVisaSelected);
+    setIsButtonMastercardSelected(false);
+    setDatiNuovaCarta(prevState => ({
+      ...prevState, 
+      is_visa: !isButtonVisaSelected,
+      is_mastercard: false, 
+    }));
+  };
+
+  const isMastercard = () => {
+    setIsButtonMastercardSelected(!isButtonMastercardSelected);
+    setIsButtonVisaSelected(false);
+    setDatiNuovaCarta(prevState => ({
+      ...prevState, 
+      is_visa: false,
+      is_mastercard: !isButtonMastercardSelected, 
+    }));  
+  }
+
+  const rimuoviCarta = async (indexToRemove, idCarta) => {
     if (window.confirm("Sei sicuro di voler rimuovere questa carta?")) {
-      cartaActions.eliminazioneCarta(numeroCarta, "mr_user");
-      
-      setCarteSalvate(prev => prev.filter((_, index) => index !== indexToRemove));
+      const result = await cartaActions.eliminazioneCarta(idCarta, autenticazioneState.id_utente);
+      if(result.isOK) {
+        alert("La carta e\' stata eliminata.");
+      }      
     }
   };
 
-  const handleEliminaProfilo = () => {
-    alert(`Profilo cancellato con successo! 🗑️`);
-
-    const username = "mr_user";
-    clienteActions.richiestaEliminazioneProfilo(username);
-
-    if (setClienteLogged) {
-      setClienteLogged(false);
+  const handleEliminaProfilo = async () => {
+    const result = await clienteActions.richiestaEliminazioneProfilo(autenticazioneState.username);
+    if(result.isOK) {
+      alert("Richiesta eliminazione profilo inviata. Riceverai tramite e-mail il risultato (Conferma/Annullamento) nei prossimi giorni.");
+      autenticazioneActions.logout(navigate);
     }
+    else {
+      alert("Operazione fallita... Riprova più tardi.");
+    }
+  };
 
-    navigate("/");
+  const handleModificaProfilo = async () => {
+    const result = await clienteActions.modificaProfilo(datiProfilo);
+    if(!result.isPasswordCorrect) {
+      alert("La password attuale inserita non è corretta... Operazione fallita.");
+      return;
+    }
+    if(result.isOK) {
+      alert("Modifica profilo eseguita correttamente.");
+      setMostraModifica(false);
+    }
+    /*
+    alert("Richiesta eliminazione profilo inviata. Riceverai tramite e-mail il risultato (Conferma/Annullamento) nei prossimi giorni.");
+    */
   };
 
   const handleDownloadFile = (e) => {
@@ -169,7 +215,6 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
     stato: ""
   });
 
-
   const handleChangeFiltriFile = (e) => {
     const { name, value } = e.target;
     setFiltriFile(prev => ({ ...prev, [name]: value }));
@@ -183,19 +228,98 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
   const sezioneTitoloStyle = { marginTop: 0, marginBottom: "15px", fontSize: "18px", fontWeight: "bold" };
   const flexColumnStyle = { display: "flex", flexDirection: "column", flex: "1 1 0px", minWidth: "140px" };
 
+  useEffect(() => {
+    cartaActions.ottenimentoCarteCliente(autenticazioneState.id_utente);
+  }, []);
+
   return (
     <div style={{ color: "white", marginTop: "40px", paddingBottom: "100px", fontFamily: "sans-serif" }}>
+      <Header />
+
+      <div className="main-content"></div>
+
       <h2 style={{ fontSize: "48px", marginBottom: "40px" }}>Profilo Cliente</h2>
 
       {/* BOX INFO CLIENTE */}
       <div style={boxStyle}>
-        <p style={{ margin: "15px 0" }}><strong>Nome:</strong> {clienteMock.nome} {clienteMock.cognome}</p>
-        <p style={{ margin: "15px 0" }}><strong>Email:</strong> {clienteMock.email}</p>
-        <p style={{ margin: "15px 0" }}><strong>Telefono:</strong> {clienteMock.telefono}</p>
+        <p style={{ margin: "15px 0" }}><strong>{autenticazioneState.nome} {autenticazioneState.cognome}</strong></p>
+        <p style={{ margin: "15px 0" }}><strong>Email:</strong> 
+          <input type="text" placeholder="Email" value={datiProfilo.email} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              email: e.target.value
+            }))}  
+          />
+        </p>
+        <p style={{ margin: "15px 0" }}><strong>Contatto:</strong> 
+          <input type="text" placeholder="Contatto" value={datiProfilo.contatto} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              contatto: e.target.value
+            }))}  
+          />
+        </p>
+        <p style={{ margin: "15px 0" }}><strong>Ultimo indirizzo:</strong> 
+          <input type="text" placeholder="indirizzo" value={datiProfilo.indirizzo} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              indirizzo: e.target.value
+            }))}  
+          />
+        </p>
+        <p style={{ margin: "15px 0" }}><strong>Username:</strong> 
+          <input type="text" placeholder="Username" value={datiProfilo.username} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              username: e.target.value
+            }))}  
+          />
+        </p>
+        <p style={{ margin: "15px 0" }}><strong>Password attuale:</strong> 
+          <input type="text" placeholder="Password attuale" value={datiProfilo.password_attuale} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              password_attuale: e.target.value
+            }))}  
+          />
+        </p>
+        <h3>Cambio password</h3>
+        <p style={{ margin: "15px 0" }}><strong>Nuova password:</strong> 
+          <input type="text" placeholder="Nuova password" value={datiProfilo.nuova_password} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              nuova_password: e.target.value
+            }))}  
+          />
+        </p>
+        <p style={{ margin: "15px 0" }}><strong>Conferma nuova password:</strong> 
+          <input type="text" placeholder="Conferma nuova password" value={datiProfilo.conferma_nuova_password} style={inputStyle} 
+            onChange={(e) => setDatiProfilo(prevState => ({
+              ...prevState, 
+              conferma_nuova_password: e.target.value
+            }))}  
+          />
+        </p>
         <div style={{ marginTop: "35px" }}>
-          {!mostraConferma ? (
+          {!mostraModifica ? (
             <button 
-              onClick={() => setMostraConferma(true)} 
+              onClick={() => setMostraModifica(true)} 
+              style={{ ...buttonActionStyle, backgroundColor: "#0056b3", color: "white" }}
+            >
+              Modifica Profilo
+            </button>
+          ) : (
+            <div style={{ background: "rgba(0, 0, 255, 0.2)", padding: "30px", borderRadius: "12px", border: "2px solid blue" }}>
+              <p style={{ fontWeight: "bold", fontSize: "24px", margin: "0 0 20px 0" }}>Sei sicuro di voler procedere?</p>
+              <button onClick={handleModificaProfilo} style={{ ...buttonActionStyle, backgroundColor: "blue", color: "white", marginRight: "20px" }}>Sì, modifica</button>
+              <button onClick={() => setMostraModifica(false)} style={buttonActionStyle}>Annulla</button>
+            </div>
+          )}
+        </div>
+        <div style={{ marginTop: "35px" }}>
+          {!mostraElimina ? (
+            <button 
+              onClick={() => setMostraElimina(true)} 
               style={{ ...buttonActionStyle, backgroundColor: "#dc3545", color: "white" }}
             >
               Elimina Profilo
@@ -204,33 +328,75 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
             <div style={{ background: "rgba(255, 0, 0, 0.2)", padding: "30px", borderRadius: "12px", border: "2px solid red" }}>
               <p style={{ fontWeight: "bold", fontSize: "24px", margin: "0 0 20px 0" }}>Sei sicuro di voler procedere?</p>
               <button onClick={handleEliminaProfilo} style={{ ...buttonActionStyle, backgroundColor: "red", color: "white", marginRight: "20px" }}>Sì, elimina</button>
-              <button onClick={() => setMostraConferma(false)} style={buttonActionStyle}>Annulla</button>
+              <button onClick={() => setMostraElimina(false)} style={buttonActionStyle}>Annulla</button>
             </div>
           )}
         </div>
       </div>
-
-      {/* SEZIONE CARTE SALVATE */}
-      <h3 style={{ fontSize: "36px", marginBottom: "25px" }}>Carte Salvate</h3>
-      <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px" }}>
-        <input type="text" placeholder="Numero carta (16 cifre)" value={nuovaCarta} onChange={(e) => setNuovaCarta(e.target.value)} style={inputStyle} />
-        <div style={{ display: "flex", gap: "20px" }}>
-          <input type="text" placeholder="MM/AA" value={dataScadenza} onChange={(e) => setDataScadenza(e.target.value)} style={inputStyle} />
-          <input type="text" placeholder="CVV" value={cvv} onChange={(e) => setCvv(e.target.value)} style={inputStyle} />
-        </div>
-        <button onClick={salvaCarta} style={{ ...buttonActionStyle, backgroundColor: "#007bff", color: "white" }}>
-          Salva carta
-        </button>
-      </div>
-
-      <div style={{ marginBottom: "50px" }}>
-        {carteSalvate.length === 0 && <p style={{ opacity: 0.7, fontSize: "22px" }}>Nessuna carta salvata</p>}
-        {carteSalvate.map((carta, i) => (
-          <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
-            <span style={{ fontSize: "24px" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}>(Scad: {carta.scadenza})</small></span>
-            <button onClick={() => rimuoviCarta(i, carta.numero)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
+      
+      {/* CARTE */}
+      <div style={{paddingLeft:"50px"}}>
+        <h3 style={{ fontSize: "36px", marginBottom: "25px" }}>Nuova carta</h3>
+        <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
+          <input type="text" placeholder="Numero carta (16 cifre)" value={datiNuovaCarta.numero} style={inputStyle} 
+            onChange={(e) => setDatiNuovaCarta(prevState => ({
+              ...prevState, 
+              numero: e.target.value
+            }))}  
+          />
+          <div style={{ display: "flex", gap: "20px" }}>
+            <div style={{ display: "flex", gap: "20px" }}>
+              <input type="text" placeholder="MM" value={datiNuovaCarta.data_scadenza} style={inputStyle} 
+                onChange={(e) => setDatiNuovaCarta(prevState => ({
+                  ...prevState, 
+                  mese_scadenza: e.target.value
+                }))}  
+              />
+              <input type="text" placeholder="AAAA" value={datiNuovaCarta.data_scadenza} style={inputStyle} 
+                onChange={(e) => setDatiNuovaCarta(prevState => ({
+                  ...prevState, 
+                  anno_scadenza: e.target.value
+                }))}  
+              />
+            </div>
+            <input type="text" placeholder="CVV / CVS" value={datiNuovaCarta.cvv_cvs} style={inputStyle} 
+              onChange={(e) => setDatiNuovaCarta(prevState => ({
+                ...prevState, 
+                cvv_cvs: e.target.value
+              }))}  
+            />
           </div>
-        ))}
+          <input type="text" placeholder="Nome titolare" value={datiNuovaCarta.nome_titolare} style={inputStyle} 
+            onChange={(e) => setDatiNuovaCarta(prevState => ({
+              ...prevState, 
+              nome_titolare: e.target.value
+            }))}  
+          />
+          <div style={{ display: "flex", gap: "20px", justifyContent: "space-between", }}>
+            <button onClick={isVisa} style={{ backgroundColor:(isButtonVisaSelected ? "#007bff" : "#FFFFFF"), color:"#000000" }}>
+              VISA
+            </button>
+            <button onClick={isMastercard} style={{ backgroundColor:(isButtonMastercardSelected ? "#007bff" : "#FFFFFF"), color:"#000000"}}>
+              MASTERCARD
+            </button>
+          </div>
+          <button onClick={salvaCarta} style={{ ...buttonActionStyle, backgroundColor: "#007bff", color: "white" }}>
+            Salva carta
+          </button>
+        </div>
+        
+        <h3 style={{ fontSize: "36px", marginBottom: "25px" }}>Carte salvate</h3>
+        <div style={{ marginBottom: "50px" }}>
+          {cartaState.carte.length === 0 && <p style={{ opacity: 0.7, fontSize: "22px" }}>Nessuna carta salvata</p>}
+          {cartaState.carte.map((carta, i) => (
+            <>
+              <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                <span style={{ fontSize: "24px" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}>(Scad: {carta.mese_scadenza+"/"+carta.anno_scadenza})</small></span>
+                <button onClick={() => rimuoviCarta(i, carta.id)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
+              </div>
+            </>
+          ))}
+        </div>
       </div>
 
       <hr style={{ margin: "80px 0", opacity: 0.2 }} />
@@ -269,7 +435,7 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
             <input type="text" name="termine" value={filtriRicerca.termine} onChange={handleChangeFiltriRicerca} placeholder="Cerca..." style={inputStyle} />
           </div>
           <div style={flexColumnStyle}>
-            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Tipologia</label>
+            <label style={{ fontSize: "13px", marginBottom: "5px" }}>Tipo</label>
             <select name="metodo" value={filtriRicerca.metodo} onChange={handleChangeFiltriRicerca} style={inputStyle}>
               <option value="">Tutte</option>
               <option value="Struttura">Struttura</option>
@@ -305,17 +471,17 @@ const CustomerProfiloView = ({ ordini, carteSalvate, setCarteSalvate, setCliente
           <p style={{ color: "orange", fontSize: "28px", fontWeight: "bold" }}>Nessun ordine trovato per i filtri selezionati.</p>
         ) : (
           ordiniFiltrati.map((ordine, index) => {
-            const totale = ordine.prodotti.reduce((sum, item) => sum + item.prezzo * item.quantita, 0);
+            const totale = ordine.items.reduce((sum, item) => sum + item.prezzo * item.quantita, 0);
             return (
               <div key={index} style={{ background: "white", color: "black", padding: "40px", borderRadius: "20px", marginBottom: "40px", maxWidth: "850px", boxShadow: "0 15px 30px rgba(0,0,0,0.3)" }}>
                 <h5 style={{ fontSize: "30px", margin: "0 0 20px 0", color: "#333" }}>Ordine #{ordine.id || index + 1}</h5>
                 <p style={{ fontSize: "22px" }}><strong>Data ordine:</strong> {ordine.data}</p>
                 <ul style={{ paddingLeft: "30px", fontSize: "22px" }}>
-                  {ordine.prodotti.map((item, i) => (
+                  {ordine.items.map((item, i) => (
                     <li key={i} style={{ marginBottom: "15px" }}>
                       <strong>{item.nome}</strong> x {item.quantita} — <span style={{ color: "#28a745", fontWeight: "bold" }}>€{(item.prezzo * item.quantita).toFixed(2)}</span>
                       <br />
-                      <small style={{ color: "#777", fontSize: "18px" }}>Tipo: {item.tipo === "service" ? "Servizio in struttura" : "Prodotto spedibile"}</small>
+                      <small style={{ color: "#777", fontSize: "18px" }}>Tipo: {item.tipo === "Servizio" ? "Servizio in struttura" : "Prodotto spedibile"}</small>
                     </li>
                   ))}
                 </ul>

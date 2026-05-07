@@ -1,3 +1,5 @@
+import Stile from './Stile';
+import { ShoppingCart } from "lucide-react";
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 // React e Redux
@@ -24,6 +26,7 @@ import {
 // Actions
 import { StileActions } from '../../../actions/StileActions';
 import { AttivitaActions } from '../../../actions/AttivitaActions';
+import { AutenticazioneActions } from '../../../actions/AutenticazioneActions';
 
 /*** Styled Components aggiuntivi per il carrello badge ***/
 
@@ -52,6 +55,7 @@ const BadgeNumero = styled.span`
 export const NavbarCliente = () => {
   const attivitaActions = new AttivitaActions();
   const stileActions = new StileActions();
+  const autenticazioneActions = new AutenticazioneActions();
   const attivitaState = useSelector((state) => state.attivita.value);
   const stileState = useSelector((state) => state.stile.value);
   const carrelloState = useSelector((state) => state.carrello.value);
@@ -99,89 +103,59 @@ export const NavbarCliente = () => {
 
   const numItems = getNumeroItemsCarrello();
 
+  const totaleCarrello = 5;
+
   return (
     <>
       <Navbar expand="lg">
-        {/* Sinistra: link area cliente */}
         <StyledNavLeft>
-          <StyledNavLink as={NavLink} to="/catalogo" onContextMenu={handleContextMenu}>
-            {attivitaState.lingua === "italiano" ? "Catalogo" : "Catalog"}
-          </StyledNavLink>
-          <StyledNavLink as={NavLink} to="/carrello" onContextMenu={handleContextMenu}>
-            <CarrelloBadgeContainer>
-              {attivitaState.lingua === "italiano" ? "Carrello" : "Cart"}
-              {numItems > 0 && <BadgeNumero>{numItems}</BadgeNumero>}
-            </CarrelloBadgeContainer>
-          </StyledNavLink>
+          <StyledNavLink as={NavLink} to="/nuovo-ordine" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Nuovo ordine" : "New order"}</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Ordini" : "Orders"}</StyledNavLink>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;
         </StyledNavLeft>  
 
-        {/* Centro: logo (torna alla home) */}
         <StyledNavCenter>
           <StyledNavLinkHome as={NavLink} to="/" onContextMenu={handleContextMenu}>
             <img src={logo} alt="Logo" style={{width:"70px"}} />
           </StyledNavLinkHome>
         </StyledNavCenter>
 
-        {/* Destra: stile, lingua, link admin */}
         <StyledNavRight>
-          {/* Dropdown Stile (solo sfondo, semplificato per il cliente) */}
-          <StyledNavDropdown title={attivitaState.lingua === "italiano" ? "Stile" : "Style"} show={dropdownStile}
-            onMouseEnter={() => setDropdownStile(true)}
-            onMouseLeave={() => setDropdownStile(false)}
-            onContextMenu={handleContextMenu}
+          <StyledNavLink as={NavLink} to="/carrello" onContextMenu={handleContextMenu}
+            style={{
+              cursor: "pointer",
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              marginRight: "15px", 
+            }}
           >
-            <StyledDropdownContainer>
-              <StyledSubMenuContainer>
-                <StyledNavDropdown title={attivitaState.lingua === "italiano" ? "Sfondo" : "Background"} show={dropdownSfondo}
-                  onMouseEnter={() => setDropdownSfondo(true)}
-                  onMouseLeave={() => setDropdownSfondo(false)}
+            {getNumeroItemsCarrello() > 0 && (
+              <>
+                <ShoppingCart size={28} color="white" />
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "-8px",
+                    right: "-10px",
+                    color: "#00D100",
+                    padding: "0px 5px",
+                    fontSize: "30px", 
+                    fontWeight: "bold", 
+                  }}
                 >
-                  {(dropdownSfondo === true) && (
-                    <>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("img", montagne, attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Montagne" : "Mountains"}
-                      </StyledNavDropdownItem>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("img", mongolfiera, attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Mongolfiera" : "Hot Air Balloon"}
-                      </StyledNavDropdownItem>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("img", negozio, attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Negozio" : "Store"}
-                      </StyledNavDropdownItem>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("img", salone, attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Salone" : "Salon"}
-                      </StyledNavDropdownItem>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("rgb", "#111111", attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Sfondo scuro" : "Dark background"}
-                      </StyledNavDropdownItem>
-                      <StyledNavDropdownItem as={NavLink} to="#" 
-                        onClick={() => stileActions.cambioSfondo("rgb", "#8F8F8F", attivitaState.lingua)}
-                      >
-                        {attivitaState.lingua === "italiano" ? "Sfondo chiaro" : "Light background"}
-                      </StyledNavDropdownItem>
-                    </>
-                  )}
-                </StyledNavDropdown>
-              </StyledSubMenuContainer>
-            </StyledDropdownContainer>
-          </StyledNavDropdown>
-
-          {/* Link al login admin */}
-          <StyledNavLink as={NavLink} to="/login" onContextMenu={handleContextMenu}>
-            {attivitaState.lingua === "italiano" ? "Area Admin" : "Admin Area"}
+                  {getNumeroItemsCarrello()}
+                </span>
+              </>
+            )}
           </StyledNavLink>
+
+          <Stile />
+          
+          <StyledNavLink as={NavLink} to="/profilo-cliente" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Profilo" : "Profile"}</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/" onClick={(e) => autenticazioneActions.logout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
 
           {/* Cambio lingua */}
           <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>

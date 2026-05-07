@@ -1,3 +1,4 @@
+import Stile from "./Stile";
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';
 // React e Redux
@@ -25,7 +26,7 @@ import { AutenticazioneActions } from "../../../actions/AutenticazioneActions"
 import { StileActions } from '../../../actions/StileActions';
 import { AttivitaActions } from '../../../actions/AttivitaActions';
 
-export const NavbarApp = () => {
+export const NavbarAdmin = () => {
   const autenticazioneActions = new AutenticazioneActions();
   const attivitaActions = new AttivitaActions();
   const stileActions = new StileActions()
@@ -94,11 +95,7 @@ export const NavbarApp = () => {
             <>
               <StyledNavLink as={NavLink} to="/clienti" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Clienti" : "Clients"}</StyledNavLink>
               <StyledNavLink as={NavLink} to="/servizi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Servizi" : "Services"}</StyledNavLink>
-             
-              <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>
-                {attivitaState.lingua === "italiano" ? "Ordini" : "Orders"}
-              </StyledNavLink>
-
+              <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Ordini" : "Orders"}</StyledNavLink>
               <StyledNavLink as={NavLink} to="/spese" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Spese" : "Expenses"}</StyledNavLink>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;
@@ -122,114 +119,8 @@ export const NavbarApp = () => {
 
         <StyledNavRight>
           <>
-            <StyledNavDropdown title={attivitaState.lingua === "italiano" ? "Stile" : "Style"} show={dropdownStile}
-              onMouseEnter={() => setDropdownStile(true)}
-              onMouseLeave={() => setDropdownStile(false)}
-              onContextMenu={handleContextMenu}
-            >
-              <StyledDropdownContainer>
-                <StyledSubMenuContainer>
-                  <StyledNavDropdown title={attivitaState.lingua === "italiano" ? "Sfondo" : "Background"} show={dropdownSfondo}
-                    onMouseEnter={() => setDropdownSfondo(true)}
-                    onMouseLeave={() => setDropdownSfondo(false)}
-                  >
-                    {(dropdownSfondo === true) && (
-                      <>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", montagne, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Montagne" : "Mountains"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", mongolfiera, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Mongolfiera" : "Hot Air Balloon"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", negozio, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Negozio" : "Store"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", salone, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Salone" : "Salon"}
-                        </StyledNavDropdownItem>
 
-                        
-
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", scrivania, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Scrivania" : "Desk"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("img", legno, attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Legno" : "Wood"}
-                        </StyledNavDropdownItem>
-
-
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("rgb", "#111111", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Sfondo scuro" : "Dark background"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioSfondo("rgb", "#8F8F8F", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Sfondo chiaro" : "Light background"}
-                        </StyledNavDropdownItem>
-                      </>
-                    )}
-                  </StyledNavDropdown>
-                  <StyledNavDropdown title={attivitaState.lingua === "italiano" ? "Elemento" : "Item"} show={dropdownItem}
-                    onMouseEnter={() => setDropdownItem(true)}
-                    onMouseLeave={() => setDropdownItem(false)}
-                  >
-                    {(dropdownItem === true) && (
-                      <>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("item", "list", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Riga" : "Row"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("item", "card", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Carta" : "Card"}
-                        </StyledNavDropdownItem>
-                      </>
-                    )}
-                  </StyledNavDropdown>
-                  <StyledNavDropdown title="Form" show={dropdownForm}
-                    onMouseEnter={() => setDropdownForm(true)}
-                    onMouseLeave={() => setDropdownForm(false)}
-                  >
-                    {(dropdownForm === true) && (
-                      <>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "form", attivitaState.lingua)}
-                        >
-                          Form
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "row", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Riga" : "Row"}
-                        </StyledNavDropdownItem>
-                        <StyledNavDropdownItem as={NavLink} to="#" 
-                          onClick={() => stileActions.cambioVista("form", "card", attivitaState.lingua)}
-                        >
-                          {attivitaState.lingua === "italiano" ? "Carta" : "Card"}
-                        </StyledNavDropdownItem>
-                      </>
-                    )}
-                  </StyledNavDropdown>
-                </StyledSubMenuContainer>
-              </StyledDropdownContainer>
-            </StyledNavDropdown>
-
+            <Stile />
                
             {(autenticazioneState.isLogged === false) && (
               <>

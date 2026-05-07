@@ -1,7 +1,7 @@
 export class ServizioSQL {
   SQL_INSERIMENTO_SERVIZIO = ` 
-    INSERT INTO servizio (nome, prezzo, tipo, note, in_uso) 
-    VALUES (?, ?, ?, ?, ?); 
+    INSERT INTO servizio (nome, tipo, prezzo, descrizione, note, in_uso) 
+    VALUES (?, ?, ?, ?, ?, 1); 
   `;
   
   SQL_SELEZIONE_TUTTI_I_SERVIZI = `
@@ -118,10 +118,12 @@ export class ServizioSQL {
         id, 
         nome, 
         nome AS nome_attuale, 
-        prezzo, 
-        prezzo AS prezzo_attuale, 
         tipo, 
         tipo AS tipo_attuale, 
+        prezzo, 
+        prezzo AS prezzo_attuale, 
+        descrizione, 
+        descrizione as descrizione_attuale, 
         note, 
         note AS note_attuale, 
         CASE 
@@ -136,17 +138,15 @@ export class ServizioSQL {
       FROM 
         servizio 
       WHERE 
-        nome LIKE ? AND (prezzo BETWEEN ? AND ?)  
+        nome LIKE ? AND (prezzo BETWEEN ? AND ?)
     `;
   
-    sql += (!params.note) ? " AND (note LIKE ? OR note IS NULL) " : " AND note LIKE ? ";
-    
     // CR: Filtro per tipo (servizio/prodotto)
     if(params.tipo && params.tipo !== "" && params.tipo !== "tutti") {
       sql += " AND tipo = '" + params.tipo + "' ";
     }
 
-    if(params.in_uso.toLowerCase() === "s" || params.in_uso.toLowerCase() === "si") {
+    if(params.id_cliente > 0 || params.in_uso.toLowerCase() === "s" || params.in_uso.toLowerCase() === "si") {
       sql += " AND in_uso = 1; ";
     }
     else if(params.in_uso.toLowerCase() === "n" || params.in_uso.toLowerCase() === "no") {
@@ -154,8 +154,7 @@ export class ServizioSQL {
     }
     else if(params.in_uso) {
       sql += " AND in_uso = -1; ";
-    }
-    
+    }    
   
     return sql;
   };
@@ -174,10 +173,10 @@ export class ServizioSQL {
   params_inserimento_servizio(params) {
     return [
       `${params.nome}`, 
+      `${params.tipo}`, 
       `${params.prezzo}`, 
-      `${params.tipo || 'servizio'}`,
+      `${params.descrizione}`, 
       `${params.note}`, 
-      params.in_uso 
     ];
   }
 

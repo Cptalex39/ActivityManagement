@@ -10,6 +10,8 @@ import { ServizioSQL } from './ServizioSQL.js'
 import { SpesaSQL } from './SpesaSQL.js';
 import { AutenticazioneSQL } from './AutenticazioneSQL.js';
 import { CollegamentoSQL } from './CollegamentoSQL.js';
+import { CartaSQL } from './CartaSQL.js';
+import { OrdineSQL } from './OrdineSQL.js';
 
 
 const app = express();
@@ -33,10 +35,10 @@ app.listen(3000, () => {
 /************************************************** Database **************************************************/
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
-    database: "activity_management"
+  host: "host",
+  user: "user",
+  password: "password",
+  database: "activity_management"
 })
 
 db.connect(err => {
@@ -92,9 +94,27 @@ const rollbackTransaction = (connection = db) => {
 
 app.post("/LOGIN", async (req, res) => {
   const autenticazioneSQL = new AutenticazioneSQL();
+  const clienteSQL = new ClienteSQL();
   try {
     await beginTransaction();
-    const [utentiResult] = await executeQuery(autenticazioneSQL.SQL_SELEZIONE_UTENTE, autenticazioneSQL.params_selezione_utente(req.body));
+    let sql = "";
+    let params = [];
+    switch(req.body.tipo_utente) {
+      case "utente":
+        console.log("UTENTE")
+        sql = autenticazioneSQL.SQL_SELEZIONE_UTENTE;
+        params = autenticazioneSQL.params_selezione_utente(req.body);
+        break;
+      case "cliente":
+        console.log("CLIENTE");
+        sql = clienteSQL.SQL_SELEZIONE_CLIENTE;
+        params = clienteSQL.params_selezione_cliente(req.body);
+        break;
+      default:
+        console.log("Errore, riprova piu\' tardi (Error, please try again later.)");
+        return;
+    }
+    const [utentiResult] = await executeQuery(sql, params);
     await commitTransaction();
     const utente = utentiResult;
     return res.status(200).json({ utente: utente });
@@ -106,17 +126,32 @@ app.post("/LOGIN", async (req, res) => {
   }
 });
 
-app.post("/MODIFICA_PROFILO", async (req, res) => {
+app.post("/MODIFICA_PROFILO_UTENTE", async (req, res) => {
   const autenticazioneSQL = new AutenticazioneSQL();
   try {
     await beginTransaction();
-    await executeQuery(autenticazioneSQL.sql_modifica_utente(req.body), autenticazioneSQL.params_modifica_utente(req.body));
+    const response = await executeQuery(autenticazioneSQL.sql_modifica_utente(req.body), autenticazioneSQL.params_modifica_utente(req.body));
+    await commitTransaction();
+    return res.status(200).json({ result: response });
+  } 
+  catch (err) {
+    await rollbackTransaction();
+    console.error('Errore durante la modifica del profilo: ', err);
+    return res.status(500).json({ message: 'Errore del server.' });
+  }
+});
+
+app.post("/MODIFICA_PROFILO_CLIENTE", async (req, res) => {
+  const clienteSQL = new ClienteSQL();
+  try {
+    await beginTransaction();
+    await executeQuery(clienteSQL.sql_modifica_cliente(req.body), clienteSQL.params_modifica_cliente(req.body));
     await commitTransaction();
     return res.status(200).json();
   } 
   catch (err) {
     await rollbackTransaction();
-    console.error('Errore durante il login: ', err);
+    console.error('Errore durante la modifica del profilo: ', err);
     return res.status(500).json({ message: 'Errore del server.' });
   }
 });
@@ -131,6 +166,7 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
   const collegamentoSQL = new CollegamentoSQL();
+  const cartaSQL = new CartaSQL();
   let sql = "";
   let params = [];
   let sql_inserimento_collegamento = "";
@@ -154,8 +190,13 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
       req.body["totale"] = req.body["totale"].substring(0, req.body["totale"].indexOf('€')).trim();
       params = spesaSQL.params_inserimento_spesa(req.body);
       break;
+    case "carta":
+      sql = cartaSQL.SQL_INSERIMENTO_CARTA;
+      params = cartaSQL.params_inserimento_carta(req.body);
+      break;
     default:
-      alert("Errore, riprova piu\' tardi (Error, please try again later.)");
+      //alert("Errore, riprova piu\' tardi (Error, please try again later.)");
+      console.log("Errore, riprova piu\' tardi (Error, please try again later.)");
       return;
   }
 
@@ -194,45 +235,29 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
 });
 
 app.post("/INSERISCI_ORDINE", async(req, res) => {
-  const lavoroSQL = new LavoroSQL();
-  const collegamentoSQL = new CollegamentoSQL();
+  const ordineSQL = new OrdineSQL();
+  const clienteSQL = new ClienteSQL();
 
   try {
     await beginTransaction();
 
-    // 1. Inserisci il lavoro (ordine o prenotazione) con i nuovi campi
-    const sql = lavoroSQL.SQL_INSERIMENTO_ORDINE;
-    const params = lavoroSQL.params_inserimento_ordine(req.body);
-    const result = await executeQuery(sql, params);
-    const insertedId = result.insertId;
-
-    // 2. Inserisci i collegamenti lavoro-servizio (carrello items)
-    const collegamenti = [];
-    if (req.body.servizi && req.body.servizi.length > 0) {
-      for (let servizio of req.body.servizi) {
-        if (servizio.quantita > 0) {
-          let params_collegamento = {
-            id_lavoro: insertedId,
-            id_servizio: servizio.id,
-            quantita: servizio.quantita,
-            prezzo: servizio.prezzo
-          };
-          await executeQuery(
-            collegamentoSQL.SQL_INSERIMENTO_COLLEGAMENTO,
-            collegamentoSQL.params_inserimento_collegamento(params_collegamento)
-          );
-          collegamenti.push(params_collegamento);
-        }
+    // Inserimento ordine con i nuovi campi
+    await executeQuery(ordineSQL.SQL_INSERIMENTO_ORDINE, ordineSQL.params_inserimento_ordine(req.body));
+    if(req.body.indirizzo !== req.body.indirizzo_attuale) {
+      const dati = {
+        indirizzo: req.body.indirizzo, 
+        id: req.body.id_cliente, 
       }
+      await executeQuery(clienteSQL.SQL_MODIFICA_INDIRIZZO, clienteSQL.params_modifica_indirizzo(dati));
     }
 
     await commitTransaction();
-    return res.status(200).json({ id: insertedId, collegamenti: collegamenti });
+    return res.status(200).json({});
   }
   catch (err) {
-    console.log("Errore inserimento ordine/prenotazione:", err);
+    console.log("Errore inserimento ordine: ", err);
     await rollbackTransaction();
-    return res.status(500).json({ message: 'Errore durante la creazione dell\'ordine/prenotazione.' });
+    return res.status(500).json({ message: 'Errore durante la creazione dell\'ordine.' });
   }
 });
 
@@ -242,6 +267,7 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
   const collegamentoSQL = new CollegamentoSQL();
+  const ordineSQL = new OrdineSQL();
   
   let sql = "";
   let params = [];
@@ -261,6 +287,11 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
     case "spesa":
       sql = spesaSQL.sql_selezione_spese(req.body);
       params = spesaSQL.params_selezione_spese(req.body);
+      break;
+    case "ordine":
+      console.log(req.body.metodo_pagamento);
+      sql = ordineSQL.sql_selezione_ordini(req.body);
+      params = ordineSQL.params_selezione_ordini(req.body);
       break;
     default:
       return res.status(500).json();
@@ -405,6 +436,41 @@ app.post("/OTTIENI_TUTTI_GLI_ITEMS", async(req, res) => {
   }
 });
 
+app.post("/ELIMINA_ITEM", async(req, res) => {
+  const clienteSQL = new ClienteSQL();
+  const cartaSQL = new CartaSQL();
+  let sql = "";
+  let params = [];
+
+  switch(req.body.tipo_item) {
+    case "cliente":
+      sql = clienteSQL.SQL_ELIMINAZIONE_CLIENTE;
+      params = clienteSQL.params_eliminazione_cliente(req.body);
+      break;
+    case "collegamento_carta_cliente":
+      sql = cartaSQL.SQL_ELIMINAZIONE_COLLEGAMENTO_CARTA_CLIENTE;
+      params = cartaSQL.params_eliminazione_collegamento_carta_cliente(req.body);
+      break;
+    /*
+    case "carta":
+      sql = cartaSQL.SQL_ELIMINAZIONE_CARTA;
+      params = cartaSQL.params_eliminazione_carta(req.body);
+      break;
+    */
+    default:
+      return res.status(500).json();
+  }
+
+  try {
+    await executeQuery(sql, params);
+    return res.status(200).json();
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
 app.post("/ELIMINA_ITEMS", async(req, res) => {
   const clienteSQL = new ClienteSQL();
   const lavoroSQL = new LavoroSQL();
@@ -543,3 +609,231 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
     return res.status(500).json();
   }
 });
+
+app.post("/RICHIESTA_ELIMINAZIONE", async(req, res) => {
+  const clienteSQL = new ClienteSQL();
+  let sql = "";
+  let params = [];
+
+  sql = clienteSQL.SQL_RICHIESTA_ELIMINAZIONE;
+  params = clienteSQL.params_richiesta_eliminazione(req.body);
+
+  try {
+    const result = await executeQuery(sql, params);
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_CLIENTI_DA_ELIMINARE", async(req, res) => {
+  const clienteSQL = new ClienteSQL();
+  let sql = "";
+  let params = [];
+  
+  sql = clienteSQL.SQL_OTTIENI_CLIENTI_DA_ELIMINARE; 
+  params = clienteSQL.params_ottieni_clienti_da_eliminare();
+  
+  try {
+    await beginTransaction();
+
+    const result = await executeQuery(sql, params);
+       
+    await commitTransaction();
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
+
+app.post("/COLLEGAMENTO_CARTA_CLIENTE", async(req, res) => {
+  const cartaSQL = new CartaSQL();
+  let sql = "";
+  let params = [];
+  
+  sql = cartaSQL.SQL_COLLEGAMENTO_CARTA_CLIENTE;
+  params = cartaSQL.params_collegamento_carta_cliente(req.body);
+  
+  try {
+    await beginTransaction();
+    const result = await executeQuery(sql, params);
+    await commitTransaction();
+    return res.status(200).json({});
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json();
+    }
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTENIMENTO_CARTE_CLIENTE", async(req, res) => {
+  const cartaSQL = new CartaSQL();
+  let sql = "";
+  let params = [];
+  
+  sql = cartaSQL.SQL_OTTENIMENTO_CARTE_CLIENTE; 
+  params = cartaSQL.params_ottenimento_carte_cliente(req.body);
+  
+  try {
+    await beginTransaction();
+
+    const result = await executeQuery(sql, params);
+       
+    await commitTransaction();
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
+
+app.post("/ELIMINA_CARTA", async(req, res) => {
+  const cartaSQL = new CartaSQL();
+  
+  try {
+    await beginTransaction();
+
+    await executeQuery(cartaSQL.SQL_ELIMINA_CARTA, cartaSQL.params_elimina_carta(req.body));
+    
+    await commitTransaction();
+    return res.status(200).json();
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_PAGAMENTI_DA_CONFERMARE", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    await beginTransaction();
+
+    const result = await executeQuery(ordineSQL.sql_ottieni_pagamenti_da_confermare(req.body), ordineSQL.params_ottieni_pagamenti_da_confermare(req.body));
+    
+    await commitTransaction();
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_ORDINI_ULTIME_48_ORE", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+  
+  try {
+    const result = await executeQuery(ordineSQL.SQL_OTTIENI_ORDINI_ULTIME_48_ORE, ordineSQL.params_ottieni_ordini_ultime_48_ore());
+    return res.status(200).json({ items: result });
+  } 
+  catch (err) {
+    return res.status(500).json();
+  }
+});
+
+app.post("/ANNULLA_PAGAMENTO_DA_CONFERMARE", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    await executeQuery(ordineSQL.SQL_ANNULLA_PAGAMENTO_DA_CONFERMARE, ordineSQL.params_annulla_pagamento_da_confermare(req.body));
+    return res.status(200).json();
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/CONFERMA_PAGAMENTO", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    await executeQuery(ordineSQL.SQL_CONFERMA_PAGAMENTO, ordineSQL.params_conferma_pagamento(req.body));
+    return res.status(200).json();
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_NUMERO_PAGAMENTI_NON_CONFERMATI_CLIENTE", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    const result = await executeQuery(ordineSQL.SQL_OTTIENI_NUMERO_PAGAMENTI_NON_CONFERMATI_CLIENTE, ordineSQL.params_ottieni_numero_pagamenti_non_confermati_cliente(req.body));
+    return res.status(200).json({ result: result }); 
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_PASSWORD", async(req, res) => {
+  const clienteSQL = new ClienteSQL();
+
+  try {
+    const result = await executeQuery(clienteSQL.SQL_OTTIENI_PASSWORD, clienteSQL.params_ottieni_password(req.body));
+    return res.status(200).json({ result: result }); 
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_PASSWORD_UTENTE", async(req, res) => {
+  const autenticazioneSQL = new AutenticazioneSQL();
+
+  try {
+    const result = await executeQuery(autenticazioneSQL.SQL_OTTIENI_PASSWORD, autenticazioneSQL.params_ottieni_password(req.body));
+    return res.status(200).json({ result: result }); 
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
+app.post("/ESEGUI_ANALISI", async(req, res) => {
+  const spesaSQL = new SpesaSQL();
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    await beginTransaction();
+
+    let result = await executeQuery(spesaSQL.SQL_OTTIENI_USCITE_SPESE, spesaSQL.params_ottieni_uscite_spese(req.body));
+    const usciteAnno = result;
+    result = await executeQuery(ordineSQL.SQL_OTTIENI_ENTRATE_ORDINI, ordineSQL.params_ottieni_entrate_ordini(req.body));
+    const entrateAnno = result;
+
+    await commitTransaction();
+    return res.status(200).json({ uscite_anno: usciteAnno, entrate_anno: entrateAnno });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
+
+
+
+
+
+
+

@@ -14,12 +14,12 @@ import { FormLogin } from '@gianlucascisciolo/riutilizzoreact';
 import { CardLogin } from '@gianlucascisciolo/riutilizzoreact';
 import { RowLogin } from '@gianlucascisciolo/riutilizzoreact';
 
-const Login = () => {
+const LoginAdmin = () => {
   const autenticazioneActions = new AutenticazioneActions();
   const autenticazioneForms = new AutenticazioneForms();
   const operazioniForms = new OperazioniForms();
   const [datiLogin, setDatiLogin] = useState({
-    tipo_utente: "cliente", 
+    tipo_utente: "utente", 
     username: "", 
     password: "", 
     errore_username: "", 
@@ -39,7 +39,7 @@ const Login = () => {
 
       <div className="main-content" />
 
-      <h1 style={{textAlign:"center", backgroundColor:"#000000", color:"gray"}}>LOGIN CLIENTE</h1>
+      <h1 style={{textAlign:"center", backgroundColor:"#000000", color:"gray"}}>LOGIN AMMINISTRATORE</h1>
       
       <LoginTag 
         campi={campiLogin}
@@ -50,12 +50,12 @@ const Login = () => {
       <br /> <br />
 
       <div style={{textAlign:"center"}}>
-        <button onClick={() => navigate("/login-admin")}>
-          Sono un amministratore
+        <button onClick={() => navigate("/login")}>
+          Sono un cliente
         </button>
       </div> 
     </>
   );
 };
 
-export default Login;
+export default LoginAdmin;

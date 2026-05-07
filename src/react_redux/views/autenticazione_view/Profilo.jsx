@@ -47,7 +47,7 @@ const Profilo = () => {
       <ProfiloTag  
         campi={campiProfilo} 
         indici={[...Array(campiProfilo.label.length).keys()]} 
-        eseguiModificaProfilo={(e) => autenticazioneActions.modificaProfilo(e, autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, attivitaState.lingua)} 
+        eseguiModificaProfilo={() => autenticazioneActions.modificaProfilo(autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, attivitaState.lingua)} 
       />
     </>
   )

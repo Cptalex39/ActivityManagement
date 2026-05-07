@@ -96,15 +96,17 @@ export class ServizioActions extends Actions {
   async ricercaServizi(datiRicerca) {
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
-    if(response.ok) {
-      const result = await response.json();
-      
+    const result = await response.json();
+
+    if(response.ok) {      
       this.dispatch(servizioSliceActions.aggiornaServizi({
         servizi: result.items, 
       }));
     }
+    console.log(result.items);
 
     return {
+      servizi: response.ok ? result.items : [],  
       isOK: response.ok, 
       responseStatus: response.status, 
     };

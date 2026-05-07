@@ -47,6 +47,18 @@ export class AttivitaActions extends Actions {
     e.preventDefault();
     this.dispatch(attivitaSliceActions.modificaLingua())
   }
+
+  async eseguiAnalisi(dati) {
+    const response = await super.getResponse("/ESEGUI_ANALISI", dati);
+    const json = response.ok ? await response.json() : null;
+
+    return {
+      uscite_anno: json?.uscite_anno || [],
+      entrate_anno: json?.entrate_anno || [],
+      isOK: response.ok,
+      responseStatus: response.status,
+    };
+  }
 }
 
 

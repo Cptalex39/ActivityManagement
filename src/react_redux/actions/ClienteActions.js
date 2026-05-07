@@ -2,10 +2,12 @@
 import { useDispatch } from 'react-redux';
 // Reducers
 import { clienteSliceActions } from '../store/reducers/ClienteReducer';
+import { autenticazioneSliceActions } from '../store/reducers/AutenticazioneReducer';
 // Actions
 import { Actions } from "./Actions";
 // Utils
 import { controlloCliente } from '../../utils/Controlli';
+import { encryptPassword, generateRandomString, passwordIsCorrect, PEPPER_HEX } from '../../utils/Sicurezza';
 
 export class ClienteActions extends Actions {
   dispatch = useDispatch();
@@ -19,8 +21,8 @@ export class ClienteActions extends Actions {
    */
   azzeraLista() {
     this.dispatch(clienteSliceActions.aggiornaClienti({
-      //clienti: -1, 
       clienti: [], 
+      listaDaAggiornare: "clienti", 
     }));
   }
 
@@ -34,20 +36,19 @@ export class ClienteActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async registrazioneCliente(nuovoCliente, setNuovoCliente, lingua) {
-    /*
     if (controlloCliente(nuovoCliente, setNuovoCliente, lingua) > 0) {
       return null;
     }
+    
+    nuovoCliente.salt_hex = generateRandomString(32);
+    nuovoCliente.password = encryptPassword(nuovoCliente.password, nuovoCliente.salt_hex, PEPPER_HEX);
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovoCliente);
 
     return {
-      isOK: response.ok, 
+      isOK: response.ok ? true : false, 
       responseStatus: response.status, 
     }
-    */
-    console.log("Nuovo cliente:");
-    console.log(nuovoCliente);
   }
 
   /**
@@ -65,6 +66,7 @@ export class ClienteActions extends Actions {
       
       this.dispatch(clienteSliceActions.aggiornaClienti({
         clienti: result.items, 
+        listaDaAggiornare: "clienti", 
       }))
     }
 
@@ -136,21 +138,19 @@ export class ClienteActions extends Actions {
    * 
    * @returns {Object} risultato response operazione.
    */
-  async eliminaClienti(selectedIdsEliminazione, setSelectedIdsEliminazione, clienti) {
+  async eliminaCliente(username) {
     const dati = {
+      username: username,
       tipo_item: "cliente", 
-      ids: selectedIdsEliminazione
     }
 
-    const itemsRestanti = (clienti && clienti !== -1) ? clienti.filter(cliente => !dati.ids.includes(cliente.id)) : -1;
-    const response = await super.getResponse("/ELIMINA_ITEMS", dati);
+    const response = await super.getResponse("/ELIMINA_ITEM", dati);
 
     if(response.ok) {
-      this.dispatch(clienteSliceActions.aggiornaClienti({
-        clienti: itemsRestanti, 
-      }));
-
-      setSelectedIdsEliminazione([]);
+      this.dispatch(clienteSliceActions.eliminaCliente({
+        username: username, 
+        listaDaAggiornare: "clienti", 
+      }))
     }
 
     return {
@@ -160,8 +160,59 @@ export class ClienteActions extends Actions {
   }
 
   async richiestaEliminazioneProfilo(username) {
-    console.log("Cliente che ha rischiesto l'eliminazione del profilo:");
-    console.log(username);
+    const dati = {
+      username: username
+    }
+
+    const response = await super.getResponse("RICHIESTA_ELIMINAZIONE", dati);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
+  }
+
+  async ottieniClientiDaEliminare() {
+    const response = await super.getResponse("/OTTIENI_CLIENTI_DA_ELIMINARE", {});
+
+    return {
+      items: response.ok ? (await response.json()).items : [], 
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
+  }
+
+  async modificaProfilo(dati) {
+    let isPasswordCorrect = false;
+    // otteniamo la password attuale e la confrontiamo con la password attuale inserita in input
+    let response = await super.getResponse("/OTTIENI_PASSWORD", dati)
+    if(response.ok) {
+      let result = (await response.json()).result[0];
+      console.log(`id: ${dati.id}`);
+      isPasswordCorrect = passwordIsCorrect(dati.password_attuale, result.password, result.salt_hex);
+    }
+    // se entrambe le password combaciano allora procediamo con le modifiche
+    if(isPasswordCorrect) {
+      if(dati.nuova_password !== "") {
+        dati.salt_hex = generateRandomString(32)
+        dati.nuova_password = encryptPassword(dati.nuova_password, dati.salt_hex, PEPPER_HEX);
+      }
+      response = await super.getResponse("/MODIFICA_PROFILO_CLIENTE", dati);
+      if(response.ok) {
+        this.dispatch(autenticazioneSliceActions.aggiornaProfiloCliente({
+          email: dati.email, 
+          contatto: dati.contatto, 
+          indirizzo: dati.indirizzo, 
+          username: dati.username
+        }));
+      }
+    }
+
+    return {
+      isPasswordCorrect: isPasswordCorrect, 
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
   }
 }
 

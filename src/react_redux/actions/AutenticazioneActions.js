@@ -6,6 +6,7 @@ import { autenticazioneSliceActions } from '../store/reducers/AutenticazioneRedu
 import { Actions } from "./Actions";
 // Utils
 import { controlloLogin, controlloProfilo } from "../../utils/Controlli";
+import { passwordIsCorrect, generateRandomString, encryptPassword, PEPPER_HEX } from '../../utils/Sicurezza';
 
 export class AutenticazioneActions extends Actions {
   dispatch = useDispatch();
@@ -34,6 +35,8 @@ export class AutenticazioneActions extends Actions {
         num_utenti: result.utente ? 1 : 0,
         password_db: result.utente ? result.utente.password : null,
         salt_hex_db: result.utente ? result.utente.salt_hex : null,
+        ruolo: result.utente.ruolo, 
+        indirizzo: result.utente.indirizzo, 
       };
           
       setDatiLogin(nuoviDati);
@@ -42,11 +45,22 @@ export class AutenticazioneActions extends Actions {
         return null;
       }
 
-      this.dispatch(autenticazioneSliceActions.login({
+      let payload = {
         username: datiLogin.username,
-        ruolo: datiLogin.ruolo,
-        note: datiLogin.note,
-      }));
+        ruolo: result.utente.ruolo, 
+        indirizzo: result.utente.indirizzo, 
+      };
+
+      if (result.utente.ruolo === "cliente") {
+        payload.id = result.utente.id;
+        payload.nome = result.utente.nome;
+        payload.cognome = result.utente.cognome;
+        payload.email = result.utente.email;
+        payload.contatto = result.utente.contatto;
+        payload.indirizzo = result.utente.indirizzo;
+      }
+
+      this.dispatch(autenticazioneSliceActions.login(payload));
     }
     
     return {
@@ -100,27 +114,48 @@ export class AutenticazioneActions extends Actions {
    * 
    * @returns {Object} risultato response operazione.
    */
-  async modificaProfilo(ruolo, datiProfilo, setDatiProfilo, lingua) {
+  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo, lingua) {
+    /*
     if(controlloProfilo(datiProfilo, setDatiProfilo, lingua) > 0) {
       return null;
     }
-
-    const response = await super.getResponse("/MODIFICA_PROFILO", datiProfilo);
-    
-    if(response.ok) {
-      this.dispatch(autenticazioneSliceActions.login({
-        isOK: response.ok, 
-        responseStatus: response.status, 
-        username: datiProfilo.nuovo_username,
-        ruolo: ruolo,
-        note: datiProfilo.note,
-      }));
+    */
+    let isPasswordCorrect = false;
+    // otteniamo la password attuale e la confrontiamo con la password attuale inserita in input
+    let response = await super.getResponse("/OTTIENI_PASSWORD_UTENTE", datiProfilo)
+    if(response.ok) { 
+      let result = (await response.json()).result[0];
+      isPasswordCorrect = passwordIsCorrect(datiProfilo.password_attuale, result.password, result.salt_hex);
+      if(isPasswordCorrect) {
+        datiProfilo.password_attuale = result.password;
+      }
+    }
+    // se entrambe le password combaciano allora procediamo con le modifiche
+    if(isPasswordCorrect) {
+      if(datiProfilo.nuova_password !== "") {
+        datiProfilo.salt_hex = generateRandomString(32);
+        datiProfilo.nuova_password = encryptPassword(datiProfilo.nuova_password, datiProfilo.salt_hex, PEPPER_HEX);
+      }
+      response = await super.getResponse("/MODIFICA_PROFILO_UTENTE", datiProfilo);
+      if(response.ok) {
+        this.dispatch(autenticazioneSliceActions.login({
+          username: datiProfilo.nuovo_username,
+          ruolo: ruolo, 
+        }));
+      }
     }
 
     return {
+      isPasswordCorrect: isPasswordCorrect, 
       isOK: response.ok, 
       responseStatus: response.status, 
     }
+  }
+
+  async aggiornaIndirizzo(nuovoIndirizzo) {
+    this.dispatch(autenticazioneSliceActions.aggiornaIndirizzo({
+      indirizzo: nuovoIndirizzo,
+    }));
   }
 
   /**

@@ -6,12 +6,18 @@ const name = "Cliente";
 const initialState = {
   value: {
     clienti: [], 
+    clientiDaEliminare: [], 
   } 
 }
 
 const reducers = {
   aggiornaClienti: (state, action) => {
-    state.value.clienti = action.payload.clienti;
+    if(action.payload.listaDaAggiornare === "clienti") {
+      state.value.clienti = action.payload.clienti;
+    }
+    if(action.payload.listaDaAggiornare === "clientiDaEliminare") {
+      state.value.clientiDaEliminare = action.payload.clienti;
+    }
   },
   aggiornaTipoSelezione: (state, action) => {
     if(state.value.clienti && state.value.clienti !== -1) {
@@ -33,18 +39,31 @@ const reducers = {
       }
     }
   },
+  eliminaCliente: (state, action) => {
+    if(action.payload.listaDaAggiornare === "clienti") {
+      state.value.clienti = state.value.clienti.filter(
+        (cliente) => cliente.username !== action.payload.username
+      );
+    }
+    if(action.payload.listaDaAggiornare === "clientiDaEliminare") {
+      state.value.clientiDaEliminare = state.value.clienti.filter(
+        (cliente) => cliente.username !== action.payload.username
+      );
+    }
+  },
 };
 
 const clienteSlice = createSlice ({
   name: name, 
   initialState: initialState,
   reducers: reducers,
-})
+});
 
 export const clienteSliceActions = {
   aggiornaClienti: clienteSlice.actions.aggiornaClienti,
   aggiornaTipoSelezione: clienteSlice.actions.aggiornaTipoSelezione,
-  aggiornaCliente: clienteSlice.actions.aggiornaCliente,
+  aggiornaCliente: clienteSlice.actions.aggiornaCliente, 
+  eliminaCliente: clienteSlice.actions.eliminaCliente,
 };
 
 export const clienteReducer = clienteSlice.reducer;

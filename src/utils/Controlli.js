@@ -77,11 +77,13 @@ export const controlloCliente = (dati, settersErrori, lingua) => {
   
   // controllo sulle note
   messaggioErrore = "";
+  /*
   if(!isInRange(dati.note.length, 0, 200)) {
     numErrori += 1;
     messaggioErrore = lingua === "italiano" ? "Lunghezza note non valida, deve avere un numero di caratteri tra 1 e 200 estremi inclusi." : "Invalid note length, must have between 1 and 200 characters including extremes.";
   }
   setErrore(settersErrori, "errore_note", messaggioErrore);
+  */
   return numErrori;
 }  
 

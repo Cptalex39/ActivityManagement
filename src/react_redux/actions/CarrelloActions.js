@@ -84,15 +84,6 @@ export class CarrelloActions extends Actions {
   }
 
   /**
-   * Azione per impostare il tipo del lavoro (ordine o prenotazione) nel carrello.
-   * 
-   * @param {String} tipoLavoro - tipo del lavoro del carrello.
-   */
-  impostaTipoLavoro(tipoLavoro) {
-    this.dispatch(carrelloSliceActions.impostaTipoLavoro({ tipoLavoro }));
-  }
-
-  /**
    * Azione per svuotare il carrello.
    */
   svuotaCarrello() {
