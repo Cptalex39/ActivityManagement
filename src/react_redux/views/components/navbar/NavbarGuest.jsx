@@ -14,8 +14,6 @@ import legno from "../../img/sfondi/legno.jpg";
 import mongolfiera from "../../img/sfondi/mongolfiera.jpg";
 import montagne from "../../img/sfondi/montagne.jpg";
 import salone from "../../img/sfondi/salone_barbiere.jpg";
-import italiano from "../../img/img_icons/italiano.png";
-import inglese from "../../img/img_icons/inglese.png";
 import logo from "../../img/Logo.png";
 import { 
   StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavDropdown, StyledNavDropdownItem, 
@@ -35,7 +33,6 @@ export const NavbarGuest = () => {
   const stileState = useSelector((state) => state.stile.value);
   const [dropdownClienti, setDropdownClienti] = useState(false);
   const [dropdownProfessionisti, setDropdownProfessionisti] = useState(false);
-  const [dropdownLavori, setDropdownLavori] = useState(false);
   const [dropdownSpese, setDropdownSpese] = useState(false);
   const [dropdownStile, setDropdownStile] = useState(false);
   const [dropdownSfondo, setDropdownSfondo] = useState(false);
@@ -75,7 +72,7 @@ export const NavbarGuest = () => {
       document.documentElement.style.maxHeight = '100%';
     } 
     else {
-      alert(attivitaState.lingua === "italiano" ? "Errore." : "Error.");
+      alert("Errore.");
     }
   }
 
@@ -104,30 +101,20 @@ export const NavbarGuest = () => {
           <>
             <Stile />
                
-            <>
-              <StyledNavLink 
-                as={NavLink} 
-                to="/login" 
-                onContextMenu={handleContextMenu}
-              >
-                Login
-              </StyledNavLink>
+            <StyledNavLink 
+              as={NavLink} 
+              to="/login" 
+              onContextMenu={handleContextMenu}
+            >
+              Login
+            </StyledNavLink>
 
-              <StyledNavLink 
-                as={NavLink} 
-                to="/registrazione" 
-                onContextMenu={handleContextMenu}
-              >
-                Registrazione
-              </StyledNavLink>
-            </>
-            
-            <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>
-              {(attivitaState.lingua === "italiano") ? (
-                <img src={italiano} style={{width:"50px", height:"auto"}} alt="Italian" />
-              ) : (
-                <img src={inglese} style={{width:"50px", height:"auto"}} alt="Italian" />
-              )}
+            <StyledNavLink 
+              as={NavLink} 
+              to="/registrazione" 
+              onContextMenu={handleContextMenu}
+            >
+              Registrazione
             </StyledNavLink>
           </>
         </StyledNavRight>  

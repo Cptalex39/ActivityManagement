@@ -1,12 +1,5 @@
 // React e Redux
 import { createSlice } from "@reduxjs/toolkit";
-// Store
-import clienti from "../img/img_widget/clienti.png";
-import servizi from '../img/img_widget/servizi.png';
-import lavori from '../img/img_widget/lavori.png';
-import spese from '../img/img_widget/spese.png';
-import analisi from '../img/img_widget/analisi.png';
-import profilo from '../img/img_widget/profilo.png';
 
 const BC_NOT_SELECTED = "rgba(0, 0, 0, 0.5)";
 const BC_SELECTED = "#0050EF";
@@ -14,7 +7,7 @@ const BC_VIEW = "rgba(0, 0, 0, 0.5)";
 
 const loadFromLocalStorage = () => {
   try {
-    const serializedState = localStorage.getItem("widgetsSession");
+    const serializedState = localStorage.getItem("attivitaSession");
     return serializedState ? JSON.parse(serializedState) : undefined;
   } 
   catch (e) {
@@ -26,7 +19,7 @@ const loadFromLocalStorage = () => {
 const saveToLocalStorage = (state) => {
   try {
     const serializedState = JSON.stringify(state);
-    localStorage.setItem("widgetsSession", serializedState);
+    localStorage.setItem("attivitaSession", serializedState);
   } 
   catch (e) {
     console.warn("Errore nel salvataggio dello stato nel local storage:", e);
@@ -37,31 +30,6 @@ const name = "Attivita";
 
 const initialState = loadFromLocalStorage() || {
   value: {
-    lingua: "italiano", 
-    clienti: {
-      id: 1, tipo:"CardWidget", tipoVisualizzazione: 0, nome: "clienti", titolo: "Clienti", 
-      img: clienti, backgroundColor: BC_NOT_SELECTED, x: 100, y: 100
-    }, 
-    servizi: {
-      id: 2, tipo:"CardWidget", tipoVisualizzazione: 0,  nome: "servizi", titolo: "Servizi", 
-      img: servizi, backgroundColor: BC_NOT_SELECTED, x: 450, y: 100
-    }, 
-    lavori: {
-      id: 3, tipo:"CardWidget", tipoVisualizzazione: 0,  nome: "lavori", titolo: "Lavori", 
-      img: lavori, backgroundColor: BC_NOT_SELECTED, x: 800, y: 100
-    }, 
-    spese: {
-      id: 4, tipo:"CardWidget", tipoVisualizzazione: 0,  nome: "spese", titolo: "Spese", 
-      img: spese, backgroundColor: BC_NOT_SELECTED, x: 1150, y: 100
-    },  
-    analisi: {
-      id: 5, tipo:"CardWidget", tipoVisualizzazione: 0,  nome: "analisi", titolo: "Analisi", 
-      img: analisi, backgroundColor: BC_NOT_SELECTED, x: 1500, y: 100
-    }, 
-    profilo: {
-      id: 6, tipo:"CardWidget",  tipoVisualizzazione: 0, nome: "profilo", titolo: "Profilo", 
-      img: profilo, backgroundColor: BC_NOT_SELECTED, x: 1850, y: 100 
-    },  
   },
 };
 
@@ -81,44 +49,6 @@ const getColor = (tipoVisualizzazione) => {
 }
 
 const reducers = {
-  modificaLingua: (state) => {
-    state.value.lingua = state.value.lingua === "italiano" ? "inglese" : "italiano";
-    [state.value.clienti.nome, state.value.clienti.titolo] = state.value.lingua === "italiano" ? ["clienti", "Clienti"]: ["clients", "Clients"];
-    [state.value.servizi.nome, state.value.servizi.titolo] = state.value.lingua === "italiano" ? ["servizi", "Servizi"]: ["services", "Services"];
-    [state.value.lavori.nome, state.value.lavori.titolo] = state.value.lingua === "italiano" ? ["lavori", "Lavori"]: ["jobs", "Jobs"];
-    [state.value.spese.nome, state.value.spese.titolo] = state.value.lingua === "italiano" ? ["spese", "Spese"]: ["expenses", "Expenses"];
-    [state.value.analisi.nome, state.value.analisi.titolo] = state.value.lingua === "italiano" ? ["analisi", "Analisi"]: ["analyses", "Analyses"];
-    [state.value.profilo.nome, state.value.profilo.titolo] = state.value.lingua === "italiano" ? ["profilo", "Profilo"]: ["profile", "Profile"];
-
-    saveToLocalStorage(state);
-  },
-  modificaWidget: (state, action) => {
-    state.value[action.payload.nomeWidget].tipoVisualizzazione = action.payload.tipoVisualizzazione;
-    state.value[action.payload.nomeWidget].backgroundColor = getColor(action.payload.tipoVisualizzazione);
-    saveToLocalStorage(state);
-  },
-  widgetSelected: (state) => {
-    const nomi = [
-      "clienti", "servizi", "lavori", "spese", "analisi", "profilo"
-    ];
-
-    for(let nome of nomi) {
-      state.value[nome].tipoVisualizzazione = (state.value[nome].tipoVisualizzazione === 0 || state.value[nome].tipoVisualizzazione === "0") ? 0 : 1
-      state.value[nome].backgroundColor = getColor(state.value[nome].tipoVisualizzazione);
-    }
-    saveToLocalStorage(state);
-  },
-  widgetView: (state) => {
-    const nomi = [
-      "clienti", "servizi", "lavori", "spese", "analisi", "profilo"
-    ];
-
-    for(let nome of nomi) {
-      state.value[nome].tipoVisualizzazione = (state.value[nome].tipoVisualizzazione === 0 || state.value[nome].tipoVisualizzazione === "0") ? 0 : 2
-      state.value[nome].backgroundColor = getColor(state.value[nome].tipoVisualizzazione);
-    }
-    saveToLocalStorage(state);
-  },
 };
 
 const attivitaSlice = createSlice({
@@ -128,10 +58,6 @@ const attivitaSlice = createSlice({
 });
 
 export const attivitaSliceActions = {
-  modificaLingua: attivitaSlice.actions.modificaLingua,
-  modificaWidget: attivitaSlice.actions.modificaWidget,
-  widgetSelected: attivitaSlice.actions.widgetSelected,
-  widgetView: attivitaSlice.actions.widgetView
 };
 
 export const attivitaReducer = attivitaSlice.reducer;

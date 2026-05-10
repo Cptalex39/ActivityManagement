@@ -4,12 +4,11 @@ import mysql from 'mysql2';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 // storage
+import { datiDB } from './DB.js';
 import { ClienteSQL } from './ClienteSQL.js';
-import { LavoroSQL } from './LavoroSQL.js';
 import { ServizioSQL } from './ServizioSQL.js'
 import { SpesaSQL } from './SpesaSQL.js';
 import { AutenticazioneSQL } from './AutenticazioneSQL.js';
-import { CollegamentoSQL } from './CollegamentoSQL.js';
 import { CartaSQL } from './CartaSQL.js';
 import { OrdineSQL } from './OrdineSQL.js';
 
@@ -35,10 +34,10 @@ app.listen(3000, () => {
 /************************************************** Database **************************************************/
 
 const db = mysql.createConnection({
-  host: "host",
-  user: "user",
-  password: "password",
-  database: "activity_management"
+  host: datiDB.host, 
+  user: datiDB.user, 
+  password: datiDB.password, 
+  database: datiDB.database, 
 })
 
 db.connect(err => {
@@ -162,10 +161,8 @@ app.post("/MODIFICA_PROFILO_CLIENTE", async (req, res) => {
 
 app.post("/INSERISCI_ITEM", async(req, res) => {
   const clienteSQL = new ClienteSQL();
-  const lavoroSQL = new LavoroSQL();
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
-  const collegamentoSQL = new CollegamentoSQL();
   const cartaSQL = new CartaSQL();
   let sql = "";
   let params = [];
@@ -180,10 +177,6 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
       sql = servizioSQL.SQL_INSERIMENTO_SERVIZIO;
       req.body["prezzo"] = req.body["prezzo"].substring(0, req.body["prezzo"].indexOf('€')).trim();
       params = servizioSQL.params_inserimento_servizio(req.body);
-      break;
-    case "lavoro":
-      sql = lavoroSQL.SQL_INSERIMENTO_LAVORO;
-      params = lavoroSQL.params_inserimento_lavoro(req.body);
       break;
     case "spesa":
       sql = spesaSQL.SQL_INSERIMENTO_SPESA;
@@ -202,25 +195,11 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
 
   try {
     await beginTransaction();
+    
     const result = await executeQuery(sql, params);
     const insertedId = result.insertId; // ottengo l'id inserito
     const collegamenti = [];
-    if(req.body.tipo_item === "lavoro") {
-      for(let servizio of req.body.servizi) {
-        if(servizio.quantita > 0) {
-          let params_collegamento = {
-            id_lavoro: insertedId, 
-            id_servizio: servizio.id, 
-            quantita: servizio.quantita, 
-            prezzo: servizio.prezzo 
-          }
-          sql_inserimento_collegamento = collegamentoSQL.SQL_INSERIMENTO_COLLEGAMENTO;
-          params_inserimento_collegamento = collegamentoSQL.params_inserimento_collegamento(params_collegamento);
-          await executeQuery(sql_inserimento_collegamento, params_inserimento_collegamento);
-          collegamenti.push(params_collegamento);
-        }
-      }
-    }  
+
     await commitTransaction();
     return res.status(200).json({ id: insertedId, collegamenti: collegamenti });
   } 
@@ -263,10 +242,8 @@ app.post("/INSERISCI_ORDINE", async(req, res) => {
 
 app.post("/VISUALIZZA_ITEMS", async(req, res) => {
   const clienteSQL = new ClienteSQL();
-  const lavoroSQL = new LavoroSQL();
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
-  const collegamentoSQL = new CollegamentoSQL();
   const ordineSQL = new OrdineSQL();
   
   let sql = "";
@@ -279,10 +256,6 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
     case "servizio":
       sql = servizioSQL.sql_selezione_servizi(req.body);
       params = servizioSQL.params_selezione_servizi(req.body);
-      break;
-    case "lavoro":
-      sql = lavoroSQL.sql_selezione_lavori(req.body);
-      params = lavoroSQL.params_selezione_lavori(req.body);
       break;
     case "spesa":
       sql = spesaSQL.sql_selezione_spese(req.body);
@@ -301,17 +274,6 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
     await beginTransaction();
 
     const result = await executeQuery(sql, params);
-    if(req.body.tipo_item === "lavoro") {
-      const servizi = await executeQuery(servizioSQL.SQL_SELEZIONE_TUTTI_I_SERVIZI, servizioSQL.params_selezione_tutti_i_servizi());
-      for(let i = 0; i < result.length; i++) {
-        let params = {
-          id_lavoro: result[i].id
-        }
-        result[i]["collegamenti"] = await executeQuery(collegamentoSQL.SQL_SELEZIONE_COLLEGAMENTI_LAVORO, collegamentoSQL.params_selezione_collegamenti_lavoro(params))
-        result[i]["collegamenti_attuale"] = result[i]["collegamenti"];
-        result[i]["servizi"] = servizi;
-      }
-    }
     
     await commitTransaction();
     return res.status(200).json({ items: result });
@@ -356,58 +318,6 @@ app.post("/VISUALIZZA_CATALOGO", async(req, res) => {
 });
 
 /*************************************************************************************************************/
-
-app.post("/VISUALIZZA_ENTRATE_ITEMS", async(req, res) => {
-  const lavoroSQL = new LavoroSQL();
-  const servizioSQL = new ServizioSQL();
-  let sql = "";
-  let params = [];
-  switch(req.body.tipo_item) {
-    case "lavoro":
-      sql = lavoroSQL.SQL_SELEZIONE_ENTRATE_LAVORI;
-      params = lavoroSQL.params_selezione_entrate_lavori(req.body);
-      break;
-    case "servizio":
-      sql = servizioSQL.SQL_SELEZIONE_ENTRATE_SERVIZI;
-      params = servizioSQL.params_selezione_entrate_servizi(req.body);
-      break;
-    default:
-      console.log("Tipo item non valido.");
-      return res.status(500).json();
-  }
-
-  try {
-    const result = await executeQuery(sql, params);
-
-    return res.status(200).json({ items: result });
-  } 
-  catch (err) {
-    console.log(err);
-    return res.status(500).json();
-  }
-});
-
-app.post("/VISUALIZZA_USCITE_ITEMS", async(req, res) => {
-  const spesaSQL = new SpesaSQL();
-  let sql = "";
-  let params = [];
-  switch(req.body.tipo_item) {
-    case "spesa":
-      sql = spesaSQL.SQL_SELEZIONE_USCITE_SPESE;
-      params = spesaSQL.params_selezione_uscite_spese(req.body);
-      break;
-    default:
-      return res.status(500).json();
-  }
-
-  try {
-    const result = await executeQuery(sql, params);
-    return res.status(200).json({ items: result });
-  } 
-  catch (err) {
-    return res.status(500).json();
-  }
-});
 
 app.post("/OTTIENI_TUTTI_GLI_ITEMS", async(req, res) => {
   const clienteSQL = new ClienteSQL();
@@ -473,7 +383,6 @@ app.post("/ELIMINA_ITEM", async(req, res) => {
 
 app.post("/ELIMINA_ITEMS", async(req, res) => {
   const clienteSQL = new ClienteSQL();
-  const lavoroSQL = new LavoroSQL();
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
   let sql = "";
@@ -483,9 +392,6 @@ app.post("/ELIMINA_ITEMS", async(req, res) => {
       break;
     case "servizio":
       sql = servizioSQL.sql_eliminazione_servizi(req.body.ids);
-      break;
-    case "lavoro":
-      sql = lavoroSQL.sql_eliminazione_lavori(req.body.ids);
       break;
     case "spesa":
       sql = spesaSQL.sql_eliminazione_spese(req.body.ids);
@@ -506,16 +412,11 @@ app.post("/ELIMINA_ITEMS", async(req, res) => {
 
 app.post("/ELIMINA_ITEMS_RANGE_GIORNI", async(req, res) => {
   const clienteSQL = new ClienteSQL();
-  const lavoroSQL = new LavoroSQL();
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
   let sql = "";
   let params = [];
   switch(req.body.tipo_item) {
-    case "lavoro":
-      sql = lavoroSQL.SQL_ELIMINAZIONE_LAVORI_RANGE_GIORNI; 
-      params = lavoroSQL.params_eliminazione_lavori_range_giorni(req.body);
-      break;
     case "spesa":
       sql = spesaSQL.SQL_ELIMINAZIONE_SPESE_RANGE_GIORNI;
       params = spesaSQL.params_eliminazione_spese_range_giorni(req.body);
@@ -535,10 +436,8 @@ app.post("/ELIMINA_ITEMS_RANGE_GIORNI", async(req, res) => {
 
 app.post("/MODIFICA_ITEM", async(req, res) => {
   const clienteSQL = new ClienteSQL();
-  const lavoroSQL = new LavoroSQL();
   const servizioSQL = new ServizioSQL();
   const spesaSQL = new SpesaSQL();
-  const collegamentoSQL = new CollegamentoSQL();
   let sql = "";
   let params = [];
   switch(req.body.tipo_item) {
@@ -557,10 +456,6 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
         params = servizioSQL.params_inserimento_servizio(req.body.item);
       }
       break;
-    case "lavoro":
-      sql = lavoroSQL.SQL_MODIFICA_LAVORO
-      params = lavoroSQL.params_modifica_lavoro(req.body.item);
-      break;
     case "spesa":
       sql = spesaSQL.SQL_MODIFICA_SPESA;
       params = spesaSQL.params_modifica_spesa(req.body.item);
@@ -571,17 +466,6 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
 
   try {
     await beginTransaction();
-    if(req.body.tipo_item === "lavoro") {
-      let params = {
-        id_lavoro: req.body.item.id
-      };
-      await executeQuery(collegamentoSQL.SQL_ELIMINAZIONE_COLLEGAMENTI_LAVORO, collegamentoSQL.params_eliminazione_collegamenti_lavoro(params));
-      for(let collegamento of req.body.item.collegamenti) {
-        if(collegamento.quantita > 0) {
-          await executeQuery(collegamentoSQL.SQL_INSERIMENTO_COLLEGAMENTO, collegamentoSQL.params_inserimento_collegamento(collegamento));        
-        }
-      }
-    }
 
     let insertedId = 0;
     if(req.body.tipo_item === "servizio") {
@@ -744,11 +628,11 @@ app.post("/OTTIENI_ORDINI_ULTIME_48_ORE", async(req, res) => {
   }
 });
 
-app.post("/ANNULLA_PAGAMENTO_DA_CONFERMARE", async(req, res) => {
+app.post("/ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE", async(req, res) => {
   const ordineSQL = new OrdineSQL();
 
   try {
-    await executeQuery(ordineSQL.SQL_ANNULLA_PAGAMENTO_DA_CONFERMARE, ordineSQL.params_annulla_pagamento_da_confermare(req.body));
+    await executeQuery(ordineSQL.SQL_ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE, ordineSQL.params_eliminazione_pagamento_da_confermare(req.body));
     return res.status(200).json();
   } 
   catch (err) {

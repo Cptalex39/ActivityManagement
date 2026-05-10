@@ -13,8 +13,6 @@ export default defineConfig({
       // Items
       '/INSERISCI_ITEM': 'http://localhost:3000', 
       '/VISUALIZZA_ITEMS': 'http://localhost:3000', 
-      '/VISUALIZZA_ENTRATE_ITEMS': 'http://localhost:3000', 
-      '/VISUALIZZA_USCITE_ITEMS': 'http://localhost:3000', 
       '/OTTIENI_TUTTI_GLI_ITEMS': 'http://localhost:3000', 
       '/ELIMINA_ITEM': 'http://localhost:3000', 
       '/ELIMINA_ITEMS': 'http://localhost:3000', 
@@ -31,7 +29,7 @@ export default defineConfig({
       '/ELIMINA_CARTA': 'http://localhost:3000', 
       '/OTTIENI_PAGAMENTI_DA_CONFERMARE': 'http://localhost:3000', 
       '/OTTIENI_ORDINI_ULTIME_48_ORE': 'http://localhost:3000', 
-      '/ANNULLA_PAGAMENTO_DA_CONFERMARE': 'http://localhost:3000', 
+      '/ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE': 'http://localhost:3000', 
       '/CONFERMA_PAGAMENTO': 'http://localhost:3000', 
       '/OTTIENI_NUMERO_PAGAMENTI_NON_CONFERMATI_CLIENTE': 'http://localhost:3000', 
       '/MODIFICA_PROFILO_CLIENTE': 'http://localhost:3000', 

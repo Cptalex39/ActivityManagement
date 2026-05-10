@@ -16,8 +16,6 @@ import legno from "../../img/sfondi/legno.jpg";
 import mongolfiera from "../../img/sfondi/mongolfiera.jpg";
 import montagne from "../../img/sfondi/montagne.jpg";
 import salone from "../../img/sfondi/salone_barbiere.jpg";
-import italiano from "../../img/img_icons/italiano.png";
-import inglese from "../../img/img_icons/inglese.png";
 import logo from "../../img/Logo.png";
 import { 
   StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavDropdown, StyledNavDropdownItem, 
@@ -109,8 +107,8 @@ export const NavbarCliente = () => {
     <>
       <Navbar expand="lg">
         <StyledNavLeft>
-          <StyledNavLink as={NavLink} to="/nuovo-ordine" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Nuovo ordine" : "New order"}</StyledNavLink>
-          <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Ordini" : "Orders"}</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/nuovo-ordine" onContextMenu={handleContextMenu}>Nuovo ordine</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>Ordini</StyledNavLink>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           &nbsp;&nbsp;
@@ -154,17 +152,9 @@ export const NavbarCliente = () => {
 
           <Stile />
           
-          <StyledNavLink as={NavLink} to="/profilo-cliente" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Profilo" : "Profile"}</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/carte" onContextMenu={handleContextMenu}>Carte</StyledNavLink>
+          <StyledNavLink as={NavLink} to="/profilo-cliente" onContextMenu={handleContextMenu}>Profilo</StyledNavLink>
           <StyledNavLink as={NavLink} to="/" onClick={(e) => autenticazioneActions.logout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
-
-          {/* Cambio lingua */}
-          <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>
-            {(attivitaState.lingua === "italiano") ? (
-              <img src={italiano} style={{width:"50px", height:"auto"}} alt="Italiano" />
-            ) : (
-              <img src={inglese} style={{width:"50px", height:"auto"}} alt="English" />
-            )}
-          </StyledNavLink>
         </StyledNavRight>  
       </Navbar>
     </>

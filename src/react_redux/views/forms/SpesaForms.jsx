@@ -6,35 +6,22 @@ import { controlloSpesa } from "../../../utils/Controlli";
 
 export class SpesaForms {
   attivitaState = useSelector((state) => state.attivita.value);
-  lingua = this.attivitaState.lingua;
-
+  
   constructor() {
 
   }
 
   getCampiNuovaSpesa(item, handleOnChange, handleOnClick, handleOnBlur) {
     return {
-      header: this.lingua === "italiano" ? "Nuova spesa" : "New expense", 
-      label: [
-        this.lingua === "italiano" ? "Nome*" : "Name*",  
-        this.lingua === "italiano" ? "Descrizione" : "Description", 
-        this.lingua === "italiano" ? "Totale*" : "Total*", 
-        this.lingua === "italiano" ? "Giorno*" : "Day*", 
-        this.lingua === "italiano" ? "Note" : "Notes"
-      ],  
+      header: "Nuova spesa",  
+      label: ["Nome*", "Descrizione", "Totale*", "Giorno*", "Note"],  
       type: [null, null, "text", "text", null], 
       step: [null, null, null, null, null], 
       min: [null, null, null, null, null], 
       name: ["nome", "descrizione", "totale", "giorno", "note"], 
       id: ["nuovo_nome_spesa", "nuova_descrizione_spesa", "nuovo_totale_spesa", "nuovo_giorno_spesa", "nuove_note_spesa"], 
       value: [item.nome, item.descrizione, item.totale, item.giorno, item.note], 
-      placeholder: [
-        this.lingua === "italiano" ? "Nome*" : "Name*", 
-        this.lingua === "italiano" ? "Descrizione" : "Description", 
-        this.lingua === "italiano" ? "Totale*" : "Total*", 
-        this.lingua === "italiano" ? "Giorno*" : "Day*", 
-        this.lingua === "italiano" ? "Note" : "Notes"
-      ], 
+      placeholder: ["Nome*", "Descrizione", "Totale*", "Giorno*", "Note"], 
       errore: [item.errore_nome, item.errore_descrizione, item.errore_totale, item.errore_giorno, item.errore_note], 
       options: [null, null, null, null, null],
       onChange: handleOnChange, 
@@ -45,31 +32,15 @@ export class SpesaForms {
 
   getCampiRicercaSpese(item, handleOnChange, handleOnClick, handleOnBlur) {
     return {
-      header: this.lingua === "italiano" ? "Ricerca spese" : "Expenses research", 
-      label: [
-        this.lingua === "italiano" ? "Nome" : "Name", 
-        this.lingua === "italiano" ? "Descrizione" : "Description", 
-        this.lingua === "italiano" ? "Totale minimo" : "Minimum total",  
-        this.lingua === "italiano" ? "Totale massimo" : "Maximum total",  
-        this.lingua === "italiano" ? "Primo giorno" : "First day",  
-        this.lingua === "italiano" ? "Ultimo giorno" : "Last day", 
-        this.lingua === "italiano" ? "Note" : "Notes", 
-      ], 
+      header: "Ricerca spese", 
+      label: ["Nome", "Descrizione", "Totale minimo", "Totale massimo", "Primo giorno", "Ultimo giorno", "Note"], 
       type: [null, null, "text", "text", "text", "text", null], 
       step: [null, null, null, null, null, null, null], 
       min: [null, null, null, null, null, null, null], 
       name: ["nome", "descrizione", "totale_min", "totale_max", "primo_giorno", "ultimo_giorno", "note"], 
       id: ["ricerca_nome_spesa", "ricerca_descrizione_spesa", "ricerca_totale_min_spesa", "ricerca_totale_max_spesa", "ricerca_primo_giorno_spesa", "ricerca_ultimo_giorno_spesa", "ricerca_note_spesa"], 
       value: [item.nome, item.descrizione, item.totale_min, item.totale_max, item.primo_giorno, item.ultimo_giorno, item.note], 
-      placeholder: [
-        this.lingua === "italiano" ? "Nome" : "Name", 
-        this.lingua === "italiano" ? "Descrizione" : "Description", 
-        this.lingua === "italiano" ? "Totale minimo" : "Minimum total",  
-        this.lingua === "italiano" ? "Totale massimo" : "Maximum total",  
-        this.lingua === "italiano" ? "Primo giorno" : "First day",  
-        this.lingua === "italiano" ? "Ultimo giorno" : "Last day", 
-        this.lingua === "italiano" ? "Note" : "Notes", 
-      ], 
+      placeholder: ["Nome", "Descrizione", "Totale minimo", "Totale massimo", "Primo giorno", "Ultimo giorno", "Note"], 
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur
@@ -78,8 +49,7 @@ export class SpesaForms {
 
   getCampiSpesaEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {
     const attivitaState = useSelector((state) => state.attivita.value);
-    const lingua = attivitaState.lingua;
-
+    
     const [errori, setErrori] = useState({
       errore_nome: "", 
       errore_descrizione: "", 
@@ -89,11 +59,11 @@ export class SpesaForms {
     }); 
     
     useEffect(() => {
-      controlloSpesa(item, setErrori, lingua);
+      controlloSpesa(item, setErrori);
     }, [item]);
   
     return {
-      header: lingua === "italiano" ? "Spesa" : "Expense", 
+      header: "Spesa", 
       label: [null, null, null, null, null], 
       tipoSelezione: item.tipo_selezione,  
       type: [null, null, "number", "date", null], 
@@ -102,13 +72,7 @@ export class SpesaForms {
       name: ["nome", "descrizione", "totale", "giorno", "note"], 
       id: ["nome_spesa", "descrizione_spesa", "totale_spesa", "giorno_spesa", "note_spesa"], 
       value: [item.nome, item.descrizione, parseFloat(item.totale).toFixed(2), item.giorno, item.note], 
-      placeholder: [
-        lingua === "italiano" ? "Nome*" : "Name*", 
-        lingua === "italiano" ? "Descrizione" : "Description", 
-        lingua === "italiano" ? "Totale*" : "Total*", 
-        lingua === "italiano" ? "Giorno*" : "Day*", 
-        lingua === "italiano" ? "Note" : "Notes"
-      ], 
+      placeholder: ["Nome*", "Descrizione", "Totale*", "Giorno*", "Note"], 
       errore: [errori.errore_nome, errori.errore_descrizione, errori.errore_totale, errori.errore_giorno, errori.errore_note], 
       valoreModificabile: [false, true, true, true, true], 
       options: [null, null, null, null, null], 
@@ -120,21 +84,15 @@ export class SpesaForms {
 
   getCampiFile(item, handleOnChange, handleOnClick, handleOnBlur) {
     return {
-      header: this.lingua === "italiano" ? "File spese" : "Expenses file", 
-      label: [
-        this.lingua === "italiano" ? "Primo giorno" : "First day", 
-        this.lingua === "italiano" ? "Ultimo giorno" : "Last day", 
-      ], 
+      header: "File spese", 
+      label: ["Primo giorno", "Ultimo giorno"], 
       type: ["text", "text"], 
       step: [null, null], 
       min: [null, null], 
       name: ["primo_giorno", "ultimo_giorno"], 
       id: ["file_primo_giorno_spesa", "file_ultimo_giorno_spesa"], 
       value: [item.primo_giorno, item.ultimo_giorno], 
-      placeholder: [
-        this.lingua === "italiano" ? "Primo giorno" : "First day", 
-        this.lingua === "italiano" ? "Ultimo giorno" : "Last day", 
-      ], 
+      placeholder: ["Primo giorno", "Ultimo giorno"], 
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur

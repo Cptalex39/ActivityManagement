@@ -6,8 +6,8 @@ import Col from 'react-bootstrap/esm/Col';
 // Views
 import Header from "../components/Header";
 import { OperazioniForms } from '../forms/OperazioniForms';
+import { inputStyle, buttonActionStyle, hStyle, ulStyle, entrateStyle, usciteStyle, ricaviStyle } from '../stile/Stile';
 // Actions
-import { LavoroActions } from "../../actions/LavoroActions";
 import { SpesaActions } from "../../actions/SpesaActions";
 import { ServizioActions } from "../../actions/ServizioActions";
 import { AttivitaActions } from '../../actions/AttivitaActions';
@@ -18,52 +18,11 @@ import { RowEntrateUscite } from "@gianlucascisciolo/riutilizzoreact";
 import { useAccordionButton } from 'react-bootstrap';
 
 const Attivita = () => {
-  const inputStyle = { 
-    padding: "18px", 
-    borderRadius: "10px", 
-    border: "1px solid #ccc", 
-    color: "black", 
-    fontSize: "20px",
-    width: "100%",
-    boxSizing: "border-box"
-  };
-  const buttonActionStyle = {
-    padding: "20px 35px",
-    borderRadius: "10px",
-    border: "none",
-    cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: "20px",
-    transition: "0.2s opacity"
-  };
-  const hStyle = {
-    textAlign:"center", 
-    backgroundColor:"#000000", 
-    color:"gray", 
-    marginBottom: "50px", 
-  }
-  const ulStyle = {
-    backgroundColor:"#000000", 
-    color:"#FFFFFF", 
-    marginBottom: "100px", 
-  }
-  const entrateStyle = (entrate) => ({
-    color: entrate > 0 ? "#00FF00" : "#FFFFFF"
-  });
-  const usciteStyle = (uscite) => ({
-    color: uscite > 0 ? "#FF0000" : "#FFFFFF"
-  });
-  const ricaviStyle = (ricavi) => ({
-    color: ricavi == 0 ? "#FFFFFF" : (ricavi < 0 ? "#FF0000" : "#00FF00")
-  });
-
   const stileState = useSelector((state) => state.stile.value);
   const attivitaState = useSelector((state) => state.attivita.value);
-  const lavoroActions = new LavoroActions();
   const spesaActions = new SpesaActions();
   const servizioActions = new ServizioActions();
   const attivitaActions = new AttivitaActions();
-  const [entrateLavori, setEntrateLavori] = useState(-1);
   const [usciteSpese, setUsciteSpese] = useState(-1);
   const [entrateServizi, setEntrateServizi] = useState(-1);
   const [aggiornamento, setAggiornamento] = useState(0);
@@ -166,28 +125,8 @@ const Attivita = () => {
       acc[item.nome] = (acc[item.nome] || 0) + (item.totale);
       return acc;
     }, {});
-  } 
-  /*  
-
-
-  const eseguiRicerca = (e) => {
-    e.preventDefault();
-    setEntrateLavori([]);
-    setEntrateServizi([]);
-    setUsciteSpese([]);
-    lavoroActions.handleSearchEntrateLavori(setEntrateLavori, datiRicerca, attivitaState.lingua);
-  };
-
-  useEffect(() => {
-    if(entrateLavori.length > 0) {
-      spesaActions.handleSearchUsciteSpese(setUsciteSpese, datiRicerca);
-      servizioActions.handleSearchEntrateServizi(setEntrateServizi, datiRicerca, attivitaState.lingua); 
-    }
-  }, [entrateLavori]);
-  */
+  }
   
-
-
   return (
     <>
       <Header />

@@ -1,8 +1,8 @@
-export const handleInsert = async (e, actions, nuovoCliente, setNuovoCliente, lingua) => {
+export const handleInsert = async (e, actions, nuovoCliente, setNuovoCliente) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler salvare il cliente?" : "Are you sure you want to save the client?")) {
-    alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
+  if (!confirm("Sei sicuro di voler salvare il cliente?")) {
+    alert("Salvataggio annullato.");
   }
 
   setNuovoCliente(prevState => ({
@@ -13,59 +13,51 @@ export const handleInsert = async (e, actions, nuovoCliente, setNuovoCliente, li
     note_attuale: nuovoCliente.note,
   }));
 
-  const result = await actions.inserimentoCliente(nuovoCliente, setNuovoCliente, lingua);
+  const result = await actions.inserimentoCliente(nuovoCliente, setNuovoCliente);
 
   if(result === null) {
     return;
   }
 
   if(result.isOK) {
-    alert(lingua === "italiano" ? "L\'inserimento del cliente è andato a buon fine." : "Client input was successful.");
+    alert("L\'inserimento del cliente è andato a buon fine.");
   } 
   else {
     if(response.status === 400) {
-      alert(lingua === "italiano" ? "Errore: cliente gia\' presente." : "Error: client already present.")
+      alert("Errore: cliente gia\' presente.")
     }
     else {
-      alert(lingua === "italiano" ? "Errore durante il salvataggio del nuovo cliente, riprova più tardi." : "Error while saving new client, please try again later.");
+      alert("Errore durante il salvataggio del nuovo cliente, riprova più tardi.");
     }
   }
 }
 
-export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, clienti, lingua) => {
+export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, clienti) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare i clienti?" : "Are you sure you want to eliminate clients?")) {
-    alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
+  if (!confirm("Sei sicuro di voler eliminare i clienti?")) {
+    alert("Eliminazione annullata.");
     return;
   }
 
   const result = await actions.eliminaClienti(selectedIdsEliminazione, setSelectedIdsEliminazione, clienti);
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante l\'eliminazione dei clienti, riprova più tardi." : "Error while deleting clients, try again later.");
+    alert("Errore durante l\'eliminazione dei clienti, riprova più tardi.");
     return;
   }
 
-  alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
+  alert("Eliminazione completata con successo.");
 }
 
-export const handleSearch = async (e, actions, datiRicerca, lingua) => {
+export const handleSearch = async (e, actions, datiRicerca) => {
   e.preventDefault();
 
   const result = await actions.ricercaClienti(datiRicerca);
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante la ricerca dei clienti, riprova più tardi." : "Error while customer search, please try again later.");;
+    alert("Errore durante la ricerca dei clienti, riprova più tardi.");;
     return;
-  }
-}
-
-export const handleGetAllClienti = async (actions, setClienti, lingua) => {
-  const result = await actions.getAllItems(setClienti, "cliente");
-  
-  if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante l\'ottenimento dei clienti per l\'inserimento di un nuovo lavoro, riprova più tardi." : "Error while obtaining clients for new job entry, try again later.");
   }
 }
 

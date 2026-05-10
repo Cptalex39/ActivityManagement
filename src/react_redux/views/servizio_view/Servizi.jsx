@@ -51,6 +51,14 @@ const Servizi = () => {
     );
   };
 
+  const operazioneModifica = (item) => {
+    selectOperation("pencil", item);
+  };
+
+  const operazioneElimina = (item) => {
+    selectOperation("trash", item);
+  };
+
   const handleBlurItem = (e, item) => {
     const { name, value } = e.target;
     servizioActions.aggiornaServizio(item.id, name, value);
@@ -84,10 +92,10 @@ const Servizi = () => {
           items: servizioState.servizi, 
           setItems: null, 
           servizi: null, 
-          stileState: stileState, 
-          lavoroActions: null, 
           handleBlurItem: handleBlurItem, 
-          handleInsert: () => servizioActions.inserisciServizio(nuovoServizio, setNuovoServizio, attivitaState.lingua), 
+          operazioneModifica: operazioneModifica,
+          operazioneElimina: operazioneElimina, 
+          handleInsert: () => servizioActions.inserisciServizio(nuovoServizio, setNuovoServizio), 
           handleSearch: () => servizioActions.ricercaServizi(datiRicerca), 
           handleEdit:   () => servizioActions.modificaServizi(servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica), 
           handleDelete: () => servizioActions.eliminaServizi(selectedIdsEliminazione, setSelectedIdsEliminazione, servizioState.servizi), 
@@ -96,7 +104,6 @@ const Servizi = () => {
           campiItemEsistente: servizioForms.getCampiServizioEsistente, 
           indiciNuovoItem: [...Array(campiNuovoServizio.label.length).keys()], 
           indiciRicercaItems: [...Array(campiRicercaServizi.label.length).keys()], 
-          selectOperation: selectOperation, 
           selectedIdsModifica: selectedIdsModifica, 
           selectedIdsEliminazione: selectedIdsEliminazione, 
         }}

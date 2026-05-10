@@ -29,12 +29,11 @@ export class SpesaActions extends Actions {
    * 
    * @param {Object} nuovaSpesa - dati della nuova spesa.
    * @param {Function} setNuovaSpesa - setter dei dati della nuova spesa.
-   * @param {String} lingua - lingua attuale del sistema. 
    * 
    * @returns {Object} risultato response operazione.
    */
-  async inserimentoSpesa(nuovaSpesa, setNuovaSpesa, lingua) {
-    if (controlloSpesa(nuovaSpesa, setNuovaSpesa, lingua) > 0) 
+  async inserimentoSpesa(nuovaSpesa, setNuovaSpesa) {
+    if (controlloSpesa(nuovaSpesa, setNuovaSpesa) > 0) 
       return null;
 
     let nuovaSpesaAggiornata = {
@@ -100,11 +99,10 @@ export class SpesaActions extends Actions {
    * @param {Function} setTipoFile - setter del tipo di file.
    * @param {Object} datiRicerca - dati della ricerca.
    * @param {Function} setSpese - setter delle spese.
-   * @param {String} lingua - lingua attuale del sistema.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese, lingua) {
+  async handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese) {
     setTipoFile(tipoFile);
 
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
@@ -115,10 +113,10 @@ export class SpesaActions extends Actions {
       setSpese(result.items);
 
       if (tipoFile === "pdf") {
-        generaFileSpesePDF(result.items, lingua);
+        generaFileSpesePDF(result.items);
       }
       else {
-        generaFileSpeseExcel(result.items, lingua);
+        generaFileSpeseExcel(result.items);
       }
     }
 
@@ -127,34 +125,6 @@ export class SpesaActions extends Actions {
       responseStatus: response.status, 
     };
   }
-
-  /**
-   * Azione per ottenere le uscite delle spese.
-   * 
-   * @param {Function} setUsciteSpese - setter delle uscite delle spese.
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async handleSearchUsciteSpese(setUsciteSpese, datiRicerca) {
-    const dati = {
-      tipo_item: "spesa", 
-      primo_anno: datiRicerca.primo_anno, 
-      ultimo_anno: datiRicerca.ultimo_anno
-    };
-    
-    const response = await super.getResponse("/VISUALIZZA_USCITE_ITEMS", dati);
-
-    if(response.ok) {    
-      const result = await response.json();
-      setUsciteSpese(result.items);
-    }
-
-    return {
-      isOK: response.ok, 
-      responseStatus: response.status, 
-    };
-  };
 
   /**
    * Azione per selezionare un'operazione sulla spesa.

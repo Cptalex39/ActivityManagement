@@ -116,8 +116,7 @@ const Clienti = () => {
     }
   };
 
-  const campiNuovoCliente = clienteForms.getCampiNuovoCliente(nuovoCliente, (e) => operazioniForms.handleInputChange(e, setNuovoCliente), null, null)
-  const campiRicercaClienti = clienteForms.getCampiRicercaClienti(datiRicerca, (e) => operazioniForms.handleInputChange(e, setDatiRicerca), null, null, attivitaState)
+  const campiRicercaClienti = clienteForms.getCampiRicercaClienti(datiRicerca, (e) => operazioniForms.handleInputChange(e, setDatiRicerca), null, null, attivitaState);
 
   useEffect(() => {
     clienteActions.azzeraLista();
@@ -145,20 +144,18 @@ const Clienti = () => {
               servizi: null,
               // Stati
               stileState: stileState,
-              // Actions
-              lavoroActions: null,
               // Handle operations
               handleBlurItem: handleBlurItem,
+              operazioneModifica: null,
+              operazioneElimina: null, 
               handleInsert: null,
               handleSearch: () => clienteActions.ricercaClienti(datiRicerca),
               handleEdit: null,
               handleDelete: null,
               // Campi
-              campiNuovoItem: campiNuovoCliente,
               campiRicercaItems: campiRicercaClienti,
               campiItemEsistente: clienteForms.getCampiClienteEsistente,
               // Indici
-              indiciNuovoItem: [...Array(campiNuovoCliente.label.length).keys()],
               indiciRicercaItems: [...Array(campiRicercaClienti.label.length).keys()],
               // Selects
               selectOperation: selectOperation,
@@ -174,11 +171,7 @@ const Clienti = () => {
   
         {clientiDaEliminare && clientiDaEliminare.length > 0 && (
           <div className="contenitore-1" style={{ marginTop: "20px" }}>
-          <h2 style={{ marginBottom: "20px", color: "red" }}>
-            {attivitaState.lingua === "italiano"
-              ? "Clienti con richiesta eliminazione profilo"
-              : "Customers with profile deletion request"}
-          </h2>
+          <h2 style={{ marginBottom: "20px", color: "red" }}>Clienti con richiesta eliminazione profilo</h2>
           {clientiDaEliminare.map(cliente => (
             <div key={cliente.id} style={{
               border: "1px solid #ddd",
@@ -194,22 +187,7 @@ const Clienti = () => {
                   <p>Email: {cliente.email} | Contatto: {cliente.contatto}</p>
                 </div>
                 
-                {!cliente.is_eliminabile && (
-                  <button onClick={() => ottieniNumeroPagamentiNonConfermatiCliente(cliente.id)}
-                    style={{
-                      padding: "10px 20px",
-                      backgroundColor: "orange",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontWeight: "bold"
-                    }}
-                  >
-                    {attivitaState.lingua === "italiano" ? "Controllo pagamenti" : "Payment Control"}
-                  </button>
-                )}
-                {cliente.is_eliminabile && (
+                {cliente.is_eliminabile ? (
                   <button onClick={() => eliminaCliente(cliente.username)}
                     style={{
                       padding: "10px 20px",
@@ -221,7 +199,21 @@ const Clienti = () => {
                       fontWeight: "bold"
                     }}
                   >
-                    {attivitaState.lingua === "italiano" ? "Elimina cliente" : "Delete client"}
+                    Elimina cliente
+                  </button>
+                ) : (
+                  <button onClick={() => ottieniNumeroPagamentiNonConfermatiCliente(cliente.id)}
+                    style={{
+                      padding: "10px 20px",
+                      backgroundColor: "orange",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontWeight: "bold"
+                    }}
+                  >
+                    Controllo pagamenti
                   </button>
                 )}
               </div>

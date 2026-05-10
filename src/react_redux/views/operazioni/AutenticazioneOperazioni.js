@@ -1,32 +1,32 @@
-export const handleLogin = async (e, actions, datiLogin, setDatiLogin, navigate, lingua) => {
+export const handleLogin = async (e, actions, datiLogin, setDatiLogin, navigate) => {
   e.preventDefault();
   
-  const result = await actions.login(datiLogin, setDatiLogin, lingua);
+  const result = await actions.login(datiLogin, setDatiLogin);
 
   if(result === null) {
     return;
   }
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante il login, riprova più tardi." : "Error while logging in, please try again later.");
+    alert("Errore durante il login, riprova più tardi.");
   }
   else {
     navigate("/");
   }
 }
 
-export const handleModificaProfilo = async (e, actions, username, ruolo, datiProfilo, setDatiProfilo, lingua) => {
+export const handleModificaProfilo = async (e, actions, username, ruolo, datiProfilo, setDatiProfilo) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler modificare il profilo?" : "Are you sure you want to edit your profile?")) {
-    alert(lingua === "italiano" ? "Modifica annullata." : "Modification cancelled.");
+  if (!confirm("Sei sicuro di voler modificare il profilo?")) {
+    alert("Modifica annullata.");
     return;
   }
 
   const resultLogin = await actions.eseguiLogin(username, "");
   
   if(!resultLogin.isOK) {
-    alert(lingua === "italiano" ? "Errore durante la modifica del profilo, riprova più tardi.": "Error while editing profile, please try again later.");
+    alert("Errore durante la modifica del profilo, riprova più tardi.");
     return;
   }
 
@@ -36,7 +36,7 @@ export const handleModificaProfilo = async (e, actions, username, ruolo, datiPro
     salt_hex_db: resultLogin.salt_hex_db
   }
   
-  const resultModifica = await actions.modificaProfilo(ruolo, datiProfiloAggiornati, setDatiProfilo, lingua);
+  const resultModifica = await actions.modificaProfilo(ruolo, datiProfiloAggiornati, setDatiProfilo);
   
   if(resultModifica === null) {
     return;
@@ -45,10 +45,10 @@ export const handleModificaProfilo = async (e, actions, username, ruolo, datiPro
   setDatiProfilo(datiProfiloAggiornati);
 
   if(!resultModifica.isOK) {
-    alert(lingua === "italiano" ? "Errore durante la modifica del profilo, riprova più tardi." : "Error while editing profile, please try again later.");
+    alert("Errore durante la modifica del profilo, riprova più tardi.");
   }
   else {
-    alert(lingua === "italiano" ? "Il profilo è stato modificato con successo." : "The profile was successfully modified.");
+    alert("Il profilo è stato modificato con successo.");
   }
 }
 

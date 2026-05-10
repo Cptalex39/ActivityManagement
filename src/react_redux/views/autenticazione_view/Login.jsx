@@ -33,6 +33,7 @@ const Login = () => {
     (stileState.vistaForm === "card") ? CardLogin : RowLogin
   )
   const campiLogin = autenticazioneForms.getCampiLogin(datiLogin, (e) => operazioniForms.handleInputChange(e, setDatiLogin), null, null);
+  
   return (
     <>
       <Header />
@@ -44,7 +45,7 @@ const Login = () => {
       <LoginTag 
         campi={campiLogin}
         indici={[...Array(campiLogin.label.length).keys()]}
-        eseguiLogin={(e) => handleLogin(e, autenticazioneActions, datiLogin, setDatiLogin, navigate, attivitaState.lingua)} 
+        eseguiLogin={(e) => handleLogin(e, autenticazioneActions, datiLogin, setDatiLogin, navigate)} 
       />
 
       <br /> <br />

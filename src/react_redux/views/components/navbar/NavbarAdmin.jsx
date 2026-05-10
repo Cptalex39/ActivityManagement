@@ -14,8 +14,6 @@ import legno from "../../img/sfondi/legno.jpg";
 import mongolfiera from "../../img/sfondi/mongolfiera.jpg";
 import montagne from "../../img/sfondi/montagne.jpg";
 import salone from "../../img/sfondi/salone_barbiere.jpg";
-import italiano from "../../img/img_icons/italiano.png";
-import inglese from "../../img/img_icons/inglese.png";
 import logo from "../../img/Logo.png";
 import { 
   StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavDropdown, StyledNavDropdownItem, 
@@ -35,7 +33,6 @@ export const NavbarAdmin = () => {
   const stileState = useSelector((state) => state.stile.value);
   const [dropdownClienti, setDropdownClienti] = useState(false);
   const [dropdownProfessionisti, setDropdownProfessionisti] = useState(false);
-  const [dropdownLavori, setDropdownLavori] = useState(false);
   const [dropdownSpese, setDropdownSpese] = useState(false);
   const [dropdownStile, setDropdownStile] = useState(false);
   const [dropdownSfondo, setDropdownSfondo] = useState(false);
@@ -75,7 +72,7 @@ export const NavbarAdmin = () => {
       document.documentElement.style.maxHeight = '100%';
     } 
     else {
-      alert(attivitaState.lingua === "italiano" ? "Errore." : "Error.");
+      alert("Errore.");
     }
   }
 
@@ -93,10 +90,10 @@ export const NavbarAdmin = () => {
         <StyledNavLeft>
           {(autenticazioneState.isLogged === true) ? (
             <>
-              <StyledNavLink as={NavLink} to="/clienti" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Clienti" : "Clients"}</StyledNavLink>
-              <StyledNavLink as={NavLink} to="/servizi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Servizi" : "Services"}</StyledNavLink>
-              <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Ordini" : "Orders"}</StyledNavLink>
-              <StyledNavLink as={NavLink} to="/spese" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Spese" : "Expenses"}</StyledNavLink>
+              <StyledNavLink as={NavLink} to="/clienti" onContextMenu={handleContextMenu}>Clienti</StyledNavLink>
+              <StyledNavLink as={NavLink} to="/servizi" onContextMenu={handleContextMenu}>Servizi</StyledNavLink>
+              <StyledNavLink as={NavLink} to="/ordini" onContextMenu={handleContextMenu}>Ordini</StyledNavLink>
+              <StyledNavLink as={NavLink} to="/spese" onContextMenu={handleContextMenu}>Spese</StyledNavLink>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               &nbsp;&nbsp;
             </>
@@ -143,18 +140,11 @@ export const NavbarAdmin = () => {
             )}
             {(autenticazioneState.isLogged === true) && (
               <>
-                <StyledNavLink as={NavLink} to="/analisi" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Analisi" : "Analyses"}</StyledNavLink>
-                <StyledNavLink as={NavLink} to="/profilo" onContextMenu={handleContextMenu}>{attivitaState.lingua === "italiano" ? "Profilo" : "Profile"}</StyledNavLink>
+                <StyledNavLink as={NavLink} to="/analisi" onContextMenu={handleContextMenu}>Analisi</StyledNavLink>
+                <StyledNavLink as={NavLink} to="/profilo" onContextMenu={handleContextMenu}>Profilo</StyledNavLink>
                 <StyledNavLink as={NavLink} to="/" onClick={(e) => autenticazioneActions.logout(e, navigate)} onContextMenu={handleContextMenu}>Logout</StyledNavLink>
               </>
             )}
-            <StyledNavLink as={NavLink} to="#" onClick={(e) => attivitaActions.modificaLingua(e)} onContextMenu={handleContextMenu}>
-              {(attivitaState.lingua === "italiano") ? (
-                <img src={italiano} style={{width:"50px", height:"auto"}} alt="Italian" />
-              ) : (
-                <img src={inglese} style={{width:"50px", height:"auto"}} alt="Italian" />
-              )}
-            </StyledNavLink>
           </>
         </StyledNavRight>  
       </Navbar>

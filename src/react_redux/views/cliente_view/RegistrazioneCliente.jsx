@@ -23,7 +23,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
   });
 
   const registra = async () => {
-    const response = await clienteActions.registrazioneCliente(dati, setDati, "italiano");
+    const response = await clienteActions.registrazioneCliente(dati, setDati);
 
     if(response.isOK) {
       alert(`Registrazione completata con successo per ${dati.username}: \nEsegui il login per accedere`);

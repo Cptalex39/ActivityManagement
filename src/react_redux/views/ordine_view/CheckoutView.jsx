@@ -261,7 +261,7 @@ const CheckoutView = () => {
               ))}
               {cartaState.carte.length < 1 && (
                 <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                  <span style={{ fontSize: "24px" }}>Carte non presenti... aggiungine una nel tuo profilo.</span>
+                  <span style={{ fontSize: "24px" }}>Carte non presenti... aggiungine una nella pagina "Carte".</span>
                 </div>
               )}
             </div>

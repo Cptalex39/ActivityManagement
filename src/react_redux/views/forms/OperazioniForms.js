@@ -20,7 +20,7 @@ export class OperazioniForms {
         modificabile = false;
       }
     }
-    else if(["nuove_note_cliente", "nuove_note_servizio", "nuove_note_lavoro", "nuove_note_spesa", "note_profilo"].includes(id)) {
+    else if(["nuove_note_cliente", "nuove_note_servizio", "nuove_note_spesa", "note_profilo"].includes(id)) {
       if(value.length > 200) {
         modificabile = false;
       }
@@ -80,8 +80,6 @@ export class OperazioniForms {
 
   handleInputClick = (e, setItem) => {
     if([
-      "nuovo_giorno_lavoro", "ricerca_primo_giorno_lavoro", "ricerca_ultimo_giorno_lavoro", 
-      "file_primo_giorno_lavoro", "file_ultimo_giorno_lavoro", 
       "nuovo_giorno_spesa", "ricerca_primo_giorno_spesa", "ricerca_ultimo_giorno_spesa", 
       "file_primo_giorno_spesa", "file_ultimo_giorno_spesa" 
     ].includes(e.target.id)) {
@@ -100,8 +98,6 @@ export class OperazioniForms {
 
   handleInputBlur = (e, setItem) => {
     if([
-      "nuovo_giorno_lavoro", "ricerca_primo_giorno_lavoro", "ricerca_ultimo_giorno_lavoro", 
-      "file_primo_giorno_lavoro", "file_ultimo_giorno_lavoro", 
       "nuovo_giorno_spesa", "ricerca_primo_giorno_spesa", "ricerca_ultimo_giorno_spesa", 
       "file_primo_giorno_spesa", "file_ultimo_giorno_spesa" 
     ].includes(e.target.id)) {

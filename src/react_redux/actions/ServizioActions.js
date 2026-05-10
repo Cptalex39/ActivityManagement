@@ -54,12 +54,11 @@ export class ServizioActions extends Actions {
    * 
    * @param {Object} nuovoServizio - dati del nuovo servizio.
    * @param {Function} setNuovoServizio - setter dei dati del nuovo servizio.
-   * @param {String} lingua - lingua del sistema attuale.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async inserisciServizio(nuovoServizio, setNuovoServizio, lingua) {
-    if (controlloServizio(nuovoServizio, setNuovoServizio, lingua) > 0) {
+  async inserisciServizio(nuovoServizio, setNuovoServizio) {
+    if (controlloServizio(nuovoServizio, setNuovoServizio) > 0) {
       return null;
     }
 
@@ -307,32 +306,6 @@ export class ServizioActions extends Actions {
       responseStatus: response.status, 
     };
   }
-
-  /**
-   * Azione per ottenere le entrate dei servizi presenti in un range di 2 date incluse.
-   * 
-   * @param {Function} setEntrateServizi - setter delle entrate dei servizi.
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async handleSearchEntrateServizi(setEntrateServizi, datiRicerca) {
-    const dati = {
-      tipo_item: "servizio", 
-      primo_anno: datiRicerca.primo_anno, 
-      ultimo_anno: datiRicerca.ultimo_anno
-    };
-    
-    const response = await super.getResponse("/VISUALIZZA_ENTRATE_ITEMS", dati);
-    
-    const result = await response.json();
-    setEntrateServizi(result.items);
-
-    return {
-      isOK: response.ok, 
-      responseStatus: response.status, 
-    };
-  };
 }
 
 

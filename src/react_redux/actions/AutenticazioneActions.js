@@ -20,11 +20,10 @@ export class AutenticazioneActions extends Actions {
    * 
    * @param {Object} datiLogin - dati del login.
    * @param {Function} setDatiLogin - setter dei dati del login.
-   * @param {String} lingua - lingua del sistema attuale.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async login(datiLogin, setDatiLogin, lingua) {
+  async login(datiLogin, setDatiLogin) {
     const response = await super.getResponse("/LOGIN", datiLogin);
 
     if(response.ok) {
@@ -41,7 +40,7 @@ export class AutenticazioneActions extends Actions {
           
       setDatiLogin(nuoviDati);
 
-      if (controlloLogin(nuoviDati, setDatiLogin, lingua) > 0) {
+      if (controlloLogin(nuoviDati, setDatiLogin) > 0) {
         return null;
       }
 
@@ -110,13 +109,12 @@ export class AutenticazioneActions extends Actions {
    * @param {String} ruolo - ruolo profilo.
    * @param {Object} datiProfilo - dati del profilo aggiornati.
    * @param {Function} setDatiProfilo - setter dei dati del profilo.
-   * @param {String} lingua - lingua attuale del sistema.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo, lingua) {
+  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo) {
     /*
-    if(controlloProfilo(datiProfilo, setDatiProfilo, lingua) > 0) {
+    if(controlloProfilo(datiProfilo, setDatiProfilo) {
       return null;
     }
     */

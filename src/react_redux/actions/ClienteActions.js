@@ -31,12 +31,11 @@ export class ClienteActions extends Actions {
    * 
    * @param {Object} nuovoCliente - dati del nuovo cliente.
    * @param {Function} setNuovoCliente - setter dei dati del nuovo cliente.
-   * @param {String} lingua - lingua attuale del sistema.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async registrazioneCliente(nuovoCliente, setNuovoCliente, lingua) {
-    if (controlloCliente(nuovoCliente, setNuovoCliente, lingua) > 0) {
+  async registrazioneCliente(nuovoCliente, setNuovoCliente) {
+    if (controlloCliente(nuovoCliente, setNuovoCliente) > 0) {
       return null;
     }
     

@@ -97,8 +97,6 @@ const Ordini = () => {
       if(result.isOK) {
         setPagamentiDaConfermare(result.items);
       }
-      //const result = await response.json();
-      //setPagamentiDaConfermare(result.items);
     }
     else if(tipoBottone === 1 && bottone === "ORDINI_ULTIME_48_ORE" && bottone !== bottone1Selezionato) {
       const result = await ordineActions.ottieniOrdiniUltime48Ore();
@@ -125,13 +123,13 @@ const Ordini = () => {
   const ottieniPDF = (e) => {
     e.preventDefault();
 
-    ordineActions.ottieniFileOrdini("pdf", filtriRicerca, "italiano");
+    ordineActions.ottieniFileOrdini("pdf", filtriRicerca);
   };
 
   const ottieniExcel = (e) => {
     e.preventDefault();
 
-    ordineActions.ottieniFileOrdini("excel", filtriRicerca, "italiano");
+    ordineActions.ottieniFileOrdini("excel", filtriRicerca);
   };
 
   const segnaComeConfermato = async (codice) => {
@@ -144,7 +142,7 @@ const Ordini = () => {
         setOrdiniUltime48Ore(prev => prev.map(o => (o.codice === codice ? { ...o, is_pagato: 1 } : o)));
       }
       else {
-        alert("Annullamento ordine fallito.")
+        alert("Operazione fallita.")
       }
     }
     else {
@@ -152,9 +150,9 @@ const Ordini = () => {
     }
   };
 
-  const annullaOrdine = async (codice) => {
-    if (window.confirm("Sei sicuro di voler annullare questo pagamento?")) {
-      const result = await ordineActions.annullaPagamentoDaConfermare({ codice: codice, });
+  const eliminaOrdine = async (codice) => {
+    if (window.confirm("Sei sicuro di voler eliminare questo pagamento?")) {
+      const result = await ordineActions.eliminaPagamentoDaConfermare({ codice: codice, });
       
       if(result.isOK) {
         alert("Ordine eliminato.");
@@ -162,7 +160,7 @@ const Ordini = () => {
         setOrdiniUltime48Ore(prev => prev.filter(o => o.codice !== codice));
       }
       else {
-        alert("Annullamento ordine fallito.")
+        alert("Operazione fallita.")
       }
     }
     else {
@@ -237,10 +235,10 @@ const Ordini = () => {
                   <li>Totale ordine: € {o.totale.toFixed(2)}</li>
                 </ul>
                 </div>
-                {(bottone1Selezionato === "PAGAMENTI_DA_CONFERMARE" || bottone1Selezionato === "ORDINI_ULTIME_48_ORE" && o.is_pagato === 0) && (
+                {autenticazioneState.ruolo === "Amministratore" && (bottone1Selezionato === "PAGAMENTI_DA_CONFERMARE" || bottone1Selezionato === "ORDINI_ULTIME_48_ORE" && o.is_pagato === 0) && (
                   <div style={{ marginTop: "10px", textAlign: "right" }}>
                     <button onClick={() => segnaComeConfermato(o.codice)} style={{ padding: "5px 10px", backgroundColor: "green", color: "white", border: "none", borderRadius: "3px", cursor: "pointer", marginRight: "10px" }}>Conferma</button>
-                    <button onClick={() => annullaOrdine(o.codice)} style={{ padding: "5px 10px", backgroundColor: "red", color: "white", border: "none", borderRadius: "3px", cursor: "pointer" }}>Annulla</button>
+                    <button onClick={() => eliminaOrdine(o.codice)} style={{ padding: "5px 10px", backgroundColor: "red", color: "white", border: "none", borderRadius: "3px", cursor: "pointer" }}>Elimina</button>
                   </div>
                 )}
               </div>

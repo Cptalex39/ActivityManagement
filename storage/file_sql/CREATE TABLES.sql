@@ -50,7 +50,6 @@ CREATE TABLE `servizio` (
 	`id` INTEGER AUTO_INCREMENT NOT NULL, 
 	`nome` VARCHAR(100) NOT NULL, 
 	`prezzo` DOUBLE NOT NULL, 
-	`tipo` ENUM('servizio', 'prodotto') NOT NULL DEFAULT 'servizio',
     `in_uso` BOOLEAN, 
 	`note` VARCHAR(200), 
     
@@ -86,3 +85,20 @@ INSERT INTO `utente` (
     "Amministratore", 
     "Password attuale: Password10!!"
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

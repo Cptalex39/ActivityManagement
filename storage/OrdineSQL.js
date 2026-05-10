@@ -26,7 +26,7 @@ export class OrdineSQL {
     WHERE ordine.data_creazione >= NOW() - INTERVAL 2 DAY;
   `
 
-  SQL_ANNULLA_PAGAMENTO_DA_CONFERMARE = `
+  SQL_ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE = `
     DELETE 
     FROM ordine 
     WHERE ordine.codice=?
@@ -216,7 +216,7 @@ export class OrdineSQL {
     return paramsOutput;
   }
 
-  params_annulla_pagamento_da_confermare(params) {
+  params_eliminazione_pagamento_da_confermare(params) {
     return [
       params.codice 
     ]

@@ -69,8 +69,8 @@ export class OrdineActions extends Actions {
     }
   }
 
-  async annullaPagamentoDaConfermare(dati) {
-    const response = await super.getResponse("/ANNULLA_PAGAMENTO_DA_CONFERMARE", dati);
+  async eliminaPagamentoDaConfermare(dati) {
+    const response = await super.getResponse("/ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE", dati);
     
     return {
       isOK: response.ok, 
@@ -99,7 +99,7 @@ export class OrdineActions extends Actions {
     }
   }
 
-  async ottieniFileOrdini(tipoFile, datiRicerca, lingua) {
+  async ottieniFileOrdini(tipoFile, datiRicerca) {
     datiRicerca.data_creazione_min = "1111-11-11";
     datiRicerca.data_creazione_max = "9999-01-01";
     datiRicerca.data_prenotazione_min = "1111-11-11";
@@ -110,7 +110,7 @@ export class OrdineActions extends Actions {
     if(response.ok) {
       const result = await response.json();
       
-      tipoFile === "pdf" ? generaFileOrdiniPDF(result.items, lingua) : generaFileOrdiniExcel(result.items, lingua);
+      tipoFile === "pdf" ? generaFileOrdiniPDF(result.items) : generaFileOrdiniExcel(result.items);
     }
 
     return {

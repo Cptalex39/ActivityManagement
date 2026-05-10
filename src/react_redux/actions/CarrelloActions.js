@@ -89,64 +89,6 @@ export class CarrelloActions extends Actions {
   svuotaCarrello() {
     this.dispatch(carrelloSliceActions.svuotaCarrello());
   }
-
-  /**
-   * Azione che crea il lavoro (ordine o prenotazione) sul backend.
-   * 
-   * @param {Object} datiCheckout - dati del checkout.
-   *  
-   * @returns {Object} risultato operazione.
-   */
-  async checkout(datiCheckout) {
-    const body = {
-      tipo_item: "lavoro",
-      cliente: datiCheckout.cliente,
-      id_cliente: datiCheckout.id_cliente || null,
-      tipo_lavoro: datiCheckout.tipo_lavoro,
-      giorno: new Date().toISOString().split('T')[0], // data odierna
-      totale: datiCheckout.totale,
-      stato_pagamento: datiCheckout.metodo_pagamento === "online" ? "pagato_online" : "in_sospeso",
-      metodo_pagamento: datiCheckout.metodo_pagamento,
-      tipo_ritiro: datiCheckout.tipo_ritiro || null,
-      indirizzo_spedizione: datiCheckout.indirizzo_spedizione || null,
-      data_prenotazione: datiCheckout.data_prenotazione || null,
-      ora_prenotazione: datiCheckout.ora_prenotazione || null,
-      note: datiCheckout.note || "",
-      servizi: datiCheckout.items.map(item => ({
-        id: item.id,
-        quantita: item.quantita,
-        prezzo: item.prezzo,
-      })),
-    };
-
-    try {
-      const response = await super.getResponse("/INSERISCI_ORDINE", body);
-
-      if (response.ok) {
-        const result = await response.json();
-        this.svuotaCarrello();
-        return {
-          isOK: response.ok, 
-          responseStatus: response.status, 
-          success: true, 
-          id: result.id
-        };
-      } 
-      else {
-        return {
-          isOK: response.ok, 
-          responseStatus: response.status, 
-          success: false, 
-        };
-      }
-    } 
-    catch (err) {
-      console.error("Errore checkout:", err);
-      return {
-        success: false 
-      };
-    }
-  }
 }
 
 

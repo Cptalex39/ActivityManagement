@@ -6,7 +6,6 @@ const name = "Carrello";
 const initialState = {
   value: {
     items: [],        // Array di { id, nome, prezzo, tipo, note, quantita }
-    tipoLavoro: null, // 'ordine' | 'prenotazione' (scelto al checkout)
   }
 }
 
@@ -73,7 +72,6 @@ const reducers = {
   // Svuota il carrello (dopo checkout completato)
   svuotaCarrello: (state) => {
     state.value.items = [];
-    state.value.tipoLavoro = null;
   }, 
 }
 

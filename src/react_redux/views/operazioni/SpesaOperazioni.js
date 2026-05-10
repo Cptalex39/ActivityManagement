@@ -1,117 +1,117 @@
-export const handleInsert = async (e, actions, nuovaSpesa, setNuovaSpesa, lingua) => {
+export const handleInsert = async (e, actions, nuovaSpesa, setNuovaSpesa) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler salvare la spesa?" : "Are you sure you want to save the expense?")) {
-    alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
+  if (!confirm("Sei sicuro di voler salvare la spesa?")) {
+    alert("Salvataggio annullato.");
     return;
   }
 
-  const result = await actions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa, lingua);
+  const result = await actions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa);
 
   if(result === null) {
     return;
   }
 
   if(result.isOK) {
-    alert(lingua === "italiano" ? "L\'inserimento della spesa è andato a buon fine." : "Expense entry was successful.");
+    alert("L\'inserimento della spesa è andato a buon fine.");
   } 
   else {
     if(result.responseStatus === 400) {
-      alert(lingua === "italiano" ? "Errore: spesa gia\' presente." : "Error: expense already present.")
+      alert("Errore: spesa gia\' presente.")
     }
     else {
-      alert(lingua === "italiano" ? "Errore durante il salvataggio della nuova spesa, riprova più tardi." : "Error while saving new expense, try again later.");
+      alert("Errore durante il salvataggio della nuova spesa, riprova più tardi.");
     }
   }
 }
 
-export const handleSearch = async (e, actions, datiRicerca, lingua) => {
+export const handleSearch = async (e, actions, datiRicerca) => {
   e.preventDefault();
   
   const result = await actions.ricercaSpese(datiRicerca)
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante la ricerca delle spese, riprova più tardi." : "Error while searching expenses, please try again later.");
+    alert("Errore durante la ricerca delle spese, riprova più tardi.");
     return;
   }
 }
 
-export const handleEdit = async (e, actions, spese, selectedIdsModifica, setSelectedIdsModifica, lingua) => {
+export const handleEdit = async (e, actions, spese, selectedIdsModifica, setSelectedIdsModifica) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler modificare le spese?" : "Are you sure you want to edit the expenses?")) {
-    alert(lingua === "italiano" ? "Salvataggio annullato." : "Saving Cancelled.");
+  if (!confirm("Sei sicuro di voler modificare le spese?")) {
+    alert("Salvataggio annullato.");
     return;
   }
 
   const result = await actions.modificaSpese(spese, selectedIdsModifica, setSelectedIdsModifica);
 
-  let esitoModifica = lingua === "italiano" ? "Esito modifica:\n" : "Modification outcome:\n";
+  let esitoModifica = "Esito modifica:\n";
   
   for(let i = 0; i < result.esitiModifiche.length; i++) {
     if(result.esitiModifiche[i][0]) {
-      esitoModifica += lingua === "italiano" ? "Spesa numero " + (i+1) + ": modifica avvenuta con successo.\n" : "Expense number " + (i+1) + ": successful modification.\n";
+      esitoModifica += "Spesa numero " + (i+1) + ": modifica avvenuta con successo.\n";
     }
     else {
       if(result.esitiModifiche[i][1] == 400) {
-        esitoModifica += lingua === "italiano" ? "Spesa numero " + (i+1) + ": errore durante la modifica: spesa gia\' presente.\n" : "Expense number " + (i+1) + ": Error while editing: expense already present.\n";
+        esitoModifica += "Spesa numero " + (i+1) + ": errore durante la modifica: spesa gia\' presente.\n";
       }
       else {
-        esitoModifica += lingua === "italiano" ? "Spesa numero " + (i+1) + ": errore durante la modifica.\n" : "Expense number " + (i+1) + ": error while editing.\n";
+        esitoModifica += "Spesa numero " + (i+1) + ": errore durante la modifica.\n";
       }
     }
   }
   alert(esitoModifica);
 }
 
-export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, spese, lingua) => {
+export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, spese) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare le spese?" : "Are you sure you want to eliminate expenses?")) {
-    alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
+  if (!confirm("Sei sicuro di voler eliminare le spese?")) {
+    alert("Eliminazione annullata.");
     return;
   }
 
   const result = await actions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spese);
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante l\'eliminazione delle spese, riprova più tardi." : "Error while deleting expenses, try again later.");
+    alert("Errore durante l\'eliminazione delle spese, riprova più tardi.");
     return;
   }
-  alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
+  alert("Eliminazione completata con successo.");
 }
 
-export const handleSearchRangeFile = async (e, actions, tipoFile, setTipoFile, datiRicerca, spese, setSpese, lingua) => {
+export const handleSearchRangeFile = async (e, actions, tipoFile, setTipoFile, datiRicerca, spese, setSpese) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler ottenere il file?" : "Are you sure you want to get the file?")) {
-    alert(lingua === "italiano" ? "Operazione annullata." : "Operation canceled.");
+  if (!confirm("Sei sicuro di voler ottenere il file?")) {
+    alert("Operazione annullata.");
     return;
   }
 
-  const result = await actions.handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese, lingua);
+  const result = await actions.handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese);
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante il recupero dei dati." : "Error during data recovery.");
+    alert("Errore durante il recupero dei dati.");
     return;
   }
 }
 
-export const handleDeleteRangeFile = async (e, actions, datiRicerca, lingua) => {
+export const handleDeleteRangeFile = async (e, actions, datiRicerca) => {
   e.preventDefault();
 
-  if (!confirm(lingua === "italiano" ? "Sei sicuro di voler eliminare le spese?" : "Are you sure you want to eliminate expenses?")) {
-    alert(lingua === "italiano" ? "Eliminazione annullata." : "Elimination cancelled.");
+  if (!confirm("Sei sicuro di voler eliminare le spese?")) {
+    alert("Eliminazione annullata.");
     return;
   }
 
   const result = await actions.handleDeleteSpeseRangeFile(datiRicerca);
 
   if(!result.isOK) {
-    alert(lingua === "italiano" ? "Errore durante l\'eliminazione delle spese, riprova più tardi." : "Error while deleting expenses, try again later."); 
+    alert("Errore durante l\'eliminazione delle spese, riprova più tardi."); 
     return;
   }
-  alert(lingua === "italiano" ? "Eliminazione completata con successo." : "Elimination completed successfully.");
+  alert("Eliminazione completata con successo.");
 }
 
 

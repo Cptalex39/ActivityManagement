@@ -17,13 +17,12 @@ export class CartaActions extends Actions {
    * 
    * @param {Object} nuovaCarta - dati della nuova carta. 
    * @param {Function} setNuovaCarta - setter dei dati della nuova carta.
-   * @param {String} lingua - lingua attuale del sistema.
    * 
    * @returns {Object} risultato response operazione.
    */
   async inserimentoCarta(nuovaCarta, setNuovaCarta) {
     /*
-    if (controlloCarta(nuovaCarta, setNuovaCarta, lingua) > 0) { 
+    if (controlloCarta(nuovaCarta, setNuovaCarta) > 0) { 
       return null;
     }
     */

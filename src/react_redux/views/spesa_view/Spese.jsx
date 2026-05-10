@@ -58,6 +58,14 @@ const Spese = () => {
     );
   }
 
+  const operazioneModifica = (item) => {
+    selectOperation("pencil", item);
+  };
+
+  const operazioneElimina = (item) => {
+    selectOperation("trash", item);
+  };
+
   const handleBlurItem = (e, item) => {
     const { name, value } = e.target;
     spesaActions.aggiornaSpesa(item.id, name, value);
@@ -72,7 +80,7 @@ const Spese = () => {
       for(let spesa of spesaState.spese) {
         totaleSpese += parseFloat(spesa.totale);
       }
-      return "Total: " + parseFloat(totaleSpese).toFixed(2) + " €";
+      return "Totale: " + parseFloat(totaleSpese).toFixed(2) + " €";
     }
     else {
       return "";
@@ -117,17 +125,16 @@ const Spese = () => {
             setItems: null, 
             servizi: null, 
             // Stati
-            stileState: stileState, 
-            // Actions
-            lavoroActions: null, 
             // Handle operations
             handleBlurItem: handleBlurItem, 
-            handleInsert: () => spesaActions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa, attivitaState.lingua), 
+            operazioneModifica: operazioneModifica,
+            operazioneElimina: operazioneElimina, 
+            handleInsert: () => spesaActions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa), 
             handleSearch: () => spesaActions.ricercaSpese(datiRicerca), 
             handleEdit:   () => spesaActions.modificaSpese(spesaState.spese, selectedIdsModifica, setSelectedIdsModifica),  
             handleDelete: () => spesaActions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese), 
-            handleSearchRangeFilePDF: () => spesaActions.handleSearchSpeseRangeFile("pdf", setTipoFile, datiRicerca, setSpese, attivitaState.lingua),
-            handleSearchRangeFileExcel: () => spesaActions.handleSearchSpeseRangeFile("excel", setTipoFile, datiRicerca, setSpese, attivitaState.lingua),
+            handleSearchRangeFilePDF: () => spesaActions.handleSearchSpeseRangeFile("pdf", setTipoFile, datiRicerca, setSpese),
+            handleSearchRangeFileExcel: () => spesaActions.handleSearchSpeseRangeFile("excel", setTipoFile, datiRicerca, setSpese),
             handleDeleteRangeFile: () => spesaActions.handleDeleteSpeseRangeFile(datiRicerca),
             // Campi
             campiNuovoItem: campiNuovaSpesa, 
@@ -139,7 +146,6 @@ const Spese = () => {
             indiciRicercaItems: [...Array(campiRicercaSpese.label.length).keys()], 
             indiciFile: [...Array(campiFile.label.length).keys()], 
             // Selects
-            selectOperation: selectOperation, 
             selectedIdsModifica: selectedIdsModifica, 
             selectedIdsEliminazione: selectedIdsEliminazione, 
             // Informazioni
