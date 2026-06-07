@@ -26,8 +26,6 @@ const Clienti = () => {
   const [selectedIdsModifica, setSelectedIdsModifica] = useState([]);
   const [clientiDaEliminare, setClientiDaEliminare] = useState([]);
 
-  //const clientiEliminazione = clienteState.clienti?.filter(c => c.profilo_eliminato === true) || [];
-  // Possibili clienti da eliminare
   const clientiEliminazione = [
     {
       nome: "Mario", 
@@ -50,6 +48,20 @@ const Clienti = () => {
     link.click();
   };
 
+  const riattivaCliente = async (username) => {
+    if(!confirm(`Sei sicuro di voler riattivare il cliente ${username}?`)) {
+      alert("Riattivazione annullata.");
+      return;
+    }
+    
+    const response = await clienteActions.riattivaCliente(username)
+
+    if(response.isOK) {
+      alert("La riattivazione del cliente è avvenuta con successo.");
+      setClientiDaEliminare(prevState => prevState.filter(cliente => cliente.username !== username));
+    }
+  };
+
   const eliminaCliente = async (username) => {
     if(!confirm(`Sei sicuro di voler eliminare il cliente ${username}?`)) {
       alert("Eliminazione annullata.");
@@ -59,8 +71,7 @@ const Clienti = () => {
     const response = await clienteActions.eliminaCliente(username)
 
     if(response.isOK) {
-      alert("L\'eliminazione del cliente e\' avvenuta con successo.");
-      //clienteActions.ottieniClientiDaEliminare();
+      alert("L\'eliminazione del cliente è avvenuta con successo.");
       setClientiDaEliminare(prevState => prevState.filter(cliente => cliente.username !== username));
     }
   };
@@ -104,7 +115,6 @@ const Clienti = () => {
   const ottieniNumeroPagamentiNonConfermatiCliente = async (idCliente) => {
     const result = await ordineActions.ottieniNumeroPagamentiNonConfermatiCliente({ id_cliente: idCliente, });
     
-    //alert(idCliente);
     if(result.isOK) {
       alert(`Il cliente ha ${result.numero_pagamenti_non_confermati} pagamento/i da confermare: ${result.numero_pagamenti_non_confermati!==0 ? "non puo\' essere eliminato." : "puo\' essere eliminato."}`);
       if(result.numero_pagamenti_non_confermati === 0) {
@@ -149,7 +159,7 @@ const Clienti = () => {
               operazioneModifica: null,
               operazioneElimina: null, 
               handleInsert: null,
-              handleSearch: () => clienteActions.ricercaClienti(datiRicerca),
+              handleSearch: () => clienteActions.ricercaClienti(datiRicerca, setDatiRicerca),
               handleEdit: null,
               handleDelete: null,
               // Campi
@@ -187,6 +197,20 @@ const Clienti = () => {
                   <p>Email: {cliente.email} | Contatto: {cliente.contatto}</p>
                 </div>
                 
+                <button onClick={() => riattivaCliente(cliente.username)}
+                  style={{
+                    padding: "10px 20px",
+                    backgroundColor: "#008000",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontWeight: "bold"
+                  }}
+                >
+                  Riattiva cliente
+                </button>
+
                 {cliente.is_eliminabile ? (
                   <button onClick={() => eliminaCliente(cliente.username)}
                     style={{

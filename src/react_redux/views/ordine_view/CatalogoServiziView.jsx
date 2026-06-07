@@ -67,37 +67,30 @@ const CatalogoServiziView = () => {
         campi={campiRicercaServizi} 
         indici={[...Array(campiRicercaServizi.label.length).keys()]} 
         handleSearch={async () => {
-          const result = await servizioActions.ricercaServizi(datiRicerca); 
+          const result = await servizioActions.ricercaServizi(datiRicerca, setDatiRicerca); 
           if(result.isOK) {
             setServizi(result.servizi);
           }
         }} 
       />
 
-      <button>{servizi.length}</button>
-
       <div
         style={{
-          display: "grid", // layout a griglia
-          gridTemplateColumns: "repeat(auto-fill, 250px)", // crea colonne da 250px adattandosi allo spazio disponibile
-          gap: "20px", // spazio tra le card
-          marginTop: "50px", // margine superiore
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fill, 250px)", 
+          gap: "20px", 
+          marginTop: "50px", 
           marginLeft: "50px", 
         }}
       >
           
 
-        {/* Ciclo su tutti i servizi ottenuti dalla ricerca */}
+        
         {servizi.map((servizio) => (
           <Card key={servizio.id} style={{ width: "250px" }}>
             <Card.Body>
-              {/* Nome del servizio o prodotto */}
               <Card.Title>  {servizio.nome}</Card.Title>
-              {/* Prezzo del servizioo */}
               <Card.Text>Prezzo: €{servizio.prezzo}</Card.Text>
-              {/* Tipo del servizio */}
-              {/* Se il tipo è "Servizio" viene mostrato servizio in struttura */}
-              {/* altrimenti prodotto spedibile */}
               <Card.Text>
                 <span style={{fontWeight:"bold"}}>Tipo:</span> {servizio.tipo === "Servizio" ? "Servizio in struttura" : "Prodotto spedibile"}
                 <br />
@@ -105,8 +98,6 @@ const CatalogoServiziView = () => {
                 <br />
                 <span style={{fontWeight:"bold"}}>Note:</span> {servizio.note}
               </Card.Text>
-              {/* Pulsante che aggiunge il servizio al carrello */}
-              {/* Quando viene cliccato richiama la funzione aggiungiAlCarrello */}
               <h4 style={{textAlign:"center"}}>Quantità</h4>
               <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
                 <div style={{ display: "flex", gap: "20px", }}>

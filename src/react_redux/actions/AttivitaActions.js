@@ -23,6 +23,28 @@ export class AttivitaActions extends Actions {
       responseStatus: response.status,
     };
   }
+
+  async ottieniDatiAttivita() {
+    const response = await super.getResponse("/OTTIENI_DATI_ATTIVITA", {});
+    let primo_intervallo = null;
+    let secondo_intervallo = null;
+    let numero_clienti = null;
+
+    if(response.ok){
+      let result = (await response.json()).result[0]
+      primo_intervallo = result.primo_intervallo;
+      secondo_intervallo = result.secondo_intervallo;
+      numero_clienti = result.numero_clienti;
+    }
+
+    return {
+      primo_intervallo: primo_intervallo,
+      secondo_intervallo: secondo_intervallo,
+      numero_clienti: numero_clienti,
+      isOK: response.ok,
+      responseStatus: response.status,
+    };
+  }
 }
 
 

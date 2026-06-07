@@ -25,7 +25,8 @@ import Carte from "./react_redux/views/carta_view/Carte.jsx";
 
 const Root = () => {
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
-
+  const carrelloState = useSelector((state) => state.carrello.value);
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -49,7 +50,9 @@ const Root = () => {
             <Route path="/spese" element={<Spese />} />
             <Route path="/analisi" element={<Attivita />} />
             <Route path="/carrello" element={<CarrelloView />} />
-            <Route path="/checkout" element={<CheckoutView />} />
+            {carrelloState.items && carrelloState.items.length >= 1 && (
+              <Route path="/checkout" element={<CheckoutView />} />
+            )}
             <Route path="/conferma-ordine" element={<ConfermaOrdine />} />
             <Route path="/carte" element={<Carte />} />
           </>

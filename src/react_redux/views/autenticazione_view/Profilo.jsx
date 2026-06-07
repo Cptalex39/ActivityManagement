@@ -11,8 +11,10 @@ import { AutenticazioneActions } from "../../actions/AutenticazioneActions"
 import { FormProfilo } from '@gianlucascisciolo/riutilizzoreact';
 import { CardProfilo } from '@gianlucascisciolo/riutilizzoreact';
 import { RowProfilo } from '@gianlucascisciolo/riutilizzoreact';
+import { useNavigate } from 'react-router-dom';
 
 const Profilo = () => {
+  const navigate = useNavigate();
   const stileState = useSelector((state) => state.stile.value);
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
   const attivitaState = useSelector((state) => state.attivita.value);
@@ -22,15 +24,18 @@ const Profilo = () => {
   const [datiProfilo, setDatiProfilo] = useState({
     username_attuale: autenticazioneState.username, 
     nuovo_username: autenticazioneState.username, 
-    note: (autenticazioneState.note) ? autenticazioneState.note : "", 
     password_attuale: "",
     nuova_password: "", 
     conferma_nuova_password: "", 
+    primo_intervallo: autenticazioneState.primo_intervallo, 
+    secondo_intervallo: autenticazioneState.secondo_intervallo, 
+    numero_clienti: autenticazioneState.numero_clienti, 
     errore_nuovo_username: "", 
-    errore_note: "", 
     errore_password_attuale: "", 
-    errore_nuova_password: "", 
-    errore_conferma_nuova_password: "",   
+    errore_nuova_password: "",
+    errore_primo_intervallo: "",
+    errore_secondo_intervallo: "",
+    errore_numero_clienti: "",   
   });
   
   const ProfiloTag = (stileState.vistaForm === "form") ? FormProfilo : (
@@ -47,7 +52,7 @@ const Profilo = () => {
       <ProfiloTag  
         campi={campiProfilo} 
         indici={[...Array(campiProfilo.label.length).keys()]} 
-        eseguiModificaProfilo={() => autenticazioneActions.modificaProfilo(autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo)} 
+        eseguiModificaProfilo={() => autenticazioneActions.modificaProfilo(autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, navigate)} 
       />
     </>
   )

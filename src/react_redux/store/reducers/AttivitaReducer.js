@@ -44,7 +44,7 @@ const getColor = (tipoVisualizzazione) => {
     return BC_VIEW;
   }
   else(
-    console.log(tipoVisualizzazione)
+    console.log("Tipo visualizzazione non valido.")
   )
 }
 

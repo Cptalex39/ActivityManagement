@@ -1,8 +1,6 @@
 // React e Redux
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from "react";
-// Utils
-import { controlloCliente } from "../../../utils/Controlli";
 
 export class ClienteForms {
   attivitaState = useSelector((state) => state.attivita.value);
@@ -22,6 +20,7 @@ export class ClienteForms {
       id: ["ricerca_nome_cliente", "ricerca_cognome_cliente", "ricerca_contatto_cliente", "ricerca_email_cliente"], 
       value: [item.nome, item.cognome, item.contatto, item.email], 
       placeholder: ["Nome", "Cognome", "Telefono / cellulare", "Email"], 
+      errore: [item.errore_nome, item.errore_cognome, item.errore_contatto, item.errore_email],
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur
@@ -34,10 +33,6 @@ export class ClienteForms {
       errore_contatto: "", 
       errore_email: "", 
     });
-
-    useEffect(() => {
-      controlloCliente(item, setErrori);
-    }, [item]);
 
     return {
       header: "Cliente", 

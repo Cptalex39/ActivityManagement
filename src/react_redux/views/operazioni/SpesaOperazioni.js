@@ -64,22 +64,7 @@ export const handleEdit = async (e, actions, spese, selectedIdsModifica, setSele
   alert(esitoModifica);
 }
 
-export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, spese) => {
-  e.preventDefault();
 
-  if (!confirm("Sei sicuro di voler eliminare le spese?")) {
-    alert("Eliminazione annullata.");
-    return;
-  }
-
-  const result = await actions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spese);
-
-  if(!result.isOK) {
-    alert("Errore durante l\'eliminazione delle spese, riprova più tardi.");
-    return;
-  }
-  alert("Eliminazione completata con successo.");
-}
 
 export const handleSearchRangeFile = async (e, actions, tipoFile, setTipoFile, datiRicerca, spese, setSpese) => {
   e.preventDefault();
@@ -97,22 +82,7 @@ export const handleSearchRangeFile = async (e, actions, tipoFile, setTipoFile, d
   }
 }
 
-export const handleDeleteRangeFile = async (e, actions, datiRicerca) => {
-  e.preventDefault();
 
-  if (!confirm("Sei sicuro di voler eliminare le spese?")) {
-    alert("Eliminazione annullata.");
-    return;
-  }
-
-  const result = await actions.handleDeleteSpeseRangeFile(datiRicerca);
-
-  if(!result.isOK) {
-    alert("Errore durante l\'eliminazione delle spese, riprova più tardi."); 
-    return;
-  }
-  alert("Eliminazione completata con successo.");
-}
 
 
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { controlloServizio } from "../../../utils/Controlli";
-// servizio form
+
 export class ServizioForms {
   attivitaState = useSelector((state) => state.attivita.value);
   
@@ -9,7 +9,7 @@ export class ServizioForms {
     return {
       header: "Nuovo prodotto/servizio",
       label: ["Nome*", "Tipo*", "Prezzo*", "Descrizione", "Note"],
-      type: [null, null, "text", null, null],
+      type: [null, null, "number", null, null],
       step: [null, null, null, null, null],
       min: [null, null, null, null, null],
       name: ["nome", "tipo", "prezzo", "descrizione", "note"],
@@ -28,7 +28,7 @@ export class ServizioForms {
     return {
       header: "Ricerca prodotti/servizi", 
       label: ["Nome", "Tipo", "Prezzo min", "Prezzo max", "In uso"], 
-      type: [null, null, "text", "text", "text"], 
+      type: [null, null, "number", "number", "text"], 
       step: [null, null, null, null, null], 
       min: [null, null, null, null, null], 
       name: ["nome", "tipo", "prezzo_min", "prezzo_max", "in_uso"], 
@@ -36,6 +36,7 @@ export class ServizioForms {
       value: [item.nome, item.tipo, item.prezzo_min, item.prezzo_max, item.in_uso], 
       placeholder: ["Nome", "Tipo", "Prezzo min", "Prezzo max", "In uso"], 
       options: [null, null, null, null, null],
+      errore: [item.errore_nome, item.errore_tipo, null, item.errore_prezzi, item.errore_in_uso], 
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur
@@ -48,19 +49,29 @@ export class ServizioForms {
       errore_nome: "", 
       errore_tipo: "", 
       errore_prezzo: "", 
-      errore_note: "", 
-      errore_in_uso: ""
+      errore_descrizione: "",
+      errore_note: "",
+      errore_in_uso: "",
     }); 
   
     useEffect(() => {
-      controlloServizio(item, setErrori);
+      const risultatoControllo = controlloServizio(item, false);
+      setErrori(prevState => ({
+        ...prevState, 
+        errore_nome: risultatoControllo.errore_nome, 
+        errore_tipo: risultatoControllo.errore_tipo, 
+        errore_prezzo: risultatoControllo.errore_prezzo, 
+        errore_descrizione: risultatoControllo.errore_descrizione, 
+        errore_note: risultatoControllo.errore_note, 
+        errore_in_uso: risultatoControllo.errore_in_uso
+      }))
     }, [item]);
   
     return {
       header: "Prodotto/Servizio", 
       label: [null, null, null, null, null, null], 
       tipoSelezione: item.tipo_selezione,  
-      type: [null, null, "text", null, null, "text"], 
+      type: [null, null, "number", null, null, "text"], 
       step: [null, null, null, null, null, null], 
       min: [null, null, null, null, null, null], 
       name: ["nome", "tipo", "prezzo", "descrizione", "note", "in_uso"], 

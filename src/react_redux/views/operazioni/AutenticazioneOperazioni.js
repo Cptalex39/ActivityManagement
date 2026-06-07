@@ -1,9 +1,25 @@
+import { controlloLogin } from "../../../utils/Controlli";
+import { passwordIsCorrect } from "../../../utils/Sicurezza";
+
 export const handleLogin = async (e, actions, datiLogin, setDatiLogin, navigate) => {
   e.preventDefault();
+
+  const risultatoControllo = controlloLogin(datiLogin);
+  setDatiLogin(risultatoControllo);
+
+  if(risultatoControllo.num_errori > 0) {
+    return;
+  }
   
   const result = await actions.login(datiLogin, setDatiLogin);
 
   if(result === null) {
+    setDatiLogin(prevState => ({
+      ...datiLogin, 
+      errore_username: null, 
+      errore_password: null, 
+      errore_login: "Username e/o password errati."
+    }));
     return;
   }
 
@@ -11,7 +27,15 @@ export const handleLogin = async (e, actions, datiLogin, setDatiLogin, navigate)
     alert("Errore durante il login, riprova più tardi.");
   }
   else {
-    navigate("/");
+    if(result.is_active) {
+      navigate("/");
+    }
+    else {
+      setDatiLogin(prevState => ({
+        ...datiLogin, 
+        errore_login: "Errore, l'account risulta non attivo."
+      }));
+    }
   }
 }
 

@@ -6,8 +6,9 @@ import { OrdineActions } from "../../actions/OrdineActions";
 import { CarrelloActions } from "../../actions/CarrelloActions";
 import { CartaActions } from "../../actions/CartaActions";
 import { AutenticazioneActions } from "../../actions/AutenticazioneActions";
+import { AttivitaActions } from "../../actions/AttivitaActions";
+import { controlloOrdine, controlloCarta } from "../../../utils/Controlli";
 
-// Componente CheckoutView - VERSIONE FULL XXL
 const CheckoutView = () => {
   const navigate = useNavigate();
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
@@ -17,8 +18,24 @@ const CheckoutView = () => {
   const ordineActions = new OrdineActions();
   const carrelloActions = new CarrelloActions();
   const cartaActions = new CartaActions();
+  const attivitaActions = new AttivitaActions();
+
+  const dataAttuale = new Date();
   
   const [idCartaSelezionata, setIdCartaSelezionata] = useState(0);
+
+  const [nuovaCartaSelezionata, setNuovaCartaSelezionata] = useState(false);
+
+  const [numeroOrdini, setNumeroOrdini] = useState(null); 
+
+  const [indiceTrattinoInt1, setIndiceTrattinoInt1] = useState(-1);
+  const [indiceTrattinoInt2, setIndiceTrattinoInt2] = useState(-1);
+  const [minInt1, setMinInt1] = useState(-1);
+  const [maxInt1, setMaxInt1] = useState(-1);
+  const [minInt2, setMinInt2] = useState(-1);
+  const [maxInt2, setMaxInt2] = useState(-1);
+  const [numeroClienti, setNumeroClienti] = useState(-1);
+
 
   const [nuovoOrdine, setNuovoOrdine] = useState({
     tipo_item: "ordine", 
@@ -34,6 +51,45 @@ const CheckoutView = () => {
     id_cliente: autenticazioneState.id_utente, 
   })
 
+  const [datiNuovaCarta, setDatiNuovaCarta] = useState({
+    tipo_item: "carta",
+    numero: "", 
+    mese_scadenza: "",
+    anno_scadenza: "",  
+    cvv_cvs: "", 
+    nome_titolare: "", 
+    is_visa: false, 
+    is_mastercard: false,
+    id_cliente: autenticazioneState.id_utente, 
+    errore_data_scadenza: null,
+    errore_circuito: null,
+    errore_numero: null,
+    errore_cvv_cvs: null,
+    errore_nome_titolare: null,
+  });
+
+  const [isButtonVisaSelected, setIsButtonVisaSelected] = useState(false);
+  const [isButtonMastercardSelected, setIsButtonMastercardSelected] = useState(false);
+
+  const isVisa = () => {
+    setIsButtonVisaSelected(!isButtonVisaSelected);
+    setIsButtonMastercardSelected(false);
+    setDatiNuovaCarta(prevState => ({
+      ...prevState, 
+      is_visa: !isButtonVisaSelected,
+      is_mastercard: false, 
+    }));
+  };
+  const isMastercard = () => {
+    setIsButtonMastercardSelected(!isButtonMastercardSelected);
+    setIsButtonVisaSelected(false);
+    setDatiNuovaCarta(prevState => ({
+      ...prevState, 
+      is_visa: false,
+      is_mastercard: !isButtonMastercardSelected, 
+    }));  
+  }
+
   // Calcolo del totale
   const totale = carrelloState.items.reduce((sum, item) => sum + (item.prezzo * item.quantita), 0);
 
@@ -46,31 +102,16 @@ const CheckoutView = () => {
 
   // Funzione di conferma ordine con validazioni
   const confermaOrdine = async () => {
-    if (!nuovoOrdine.metodo_pagamento) {
-      alert("Seleziona un metodo di pagamento!");
-      return;
-    }
-
-    if (nuovoOrdine.metodo_pagamento === "Struttura") {
-      if (!nuovoOrdine.data_prenotazione || !nuovoOrdine.ora_prenotazione) {
-        alert("Seleziona data e orario per la prenotazione.");
+    if(nuovaCartaSelezionata) {
+      const risultatoControllo = controlloCarta(datiNuovaCarta);
+      setDatiNuovaCarta(risultatoControllo);
+      
+      if(risultatoControllo.num_errori > 0) {
         return;
       }
     }
 
-    if (nuovoOrdine.metodo_pagamento === "Spedizione") {
-      if (!nuovoOrdine.indirizzo) {
-        alert("Inserisci l'indirizzo per la spedizione.");
-        return;
-      }
-      if (!nuovoOrdine.numero_carta) {
-        alert("Seleziona una carta.");
-        return;
-      }
-    }
-
-    if (nuovoOrdine.metodo_pagamento === "Corriere" && !nuovoOrdine.indirizzo) {
-      alert("Inserisci l'indirizzo per la consegna.");
+    if(!controlloOrdine(nuovoOrdine)) {
       return;
     }
     
@@ -78,17 +119,25 @@ const CheckoutView = () => {
       ...nuovoOrdine,
       items: JSON.stringify(carrelloState.items.map(item => ({ ...item }))),
       totale: totale, 
+      numero_clienti: numeroClienti
     };
 
-    const result = await ordineActions.inserimentoOrdine(ordineCompleto);
-
-    if(result.isOK && ordineCompleto.indirizzo !== ordineCompleto.indirizzo_attuale) {
+    const response = await ordineActions.inserimentoOrdine(ordineCompleto);
+   
+    if(response.isOK && response.problema) {
+      alert("Errore, l'orario selezionato non è più disponibile. Selezionare un altro orario.");
+      return;
+    }
+     
+    if(response.isOK && ordineCompleto.indirizzo !== ordineCompleto.indirizzo_attuale) {
       autenticazioneActions.aggiornaIndirizzo(nuovoOrdine.indirizzo);
     }
-    
+       
     await carrelloActions.svuotaCarrello();
-
+       
     navigate("/conferma-ordine");
+    /*
+    */
   };
 
   const tornaPaginaNuovoOrdine = () => {
@@ -96,14 +145,14 @@ const CheckoutView = () => {
   }
 
   const selezionaCarta = (idCarta, numeroCarta) => {
+    setNuovaCartaSelezionata(false);
     setIdCartaSelezionata(idCarta === idCartaSelezionata ? 0 : idCarta);
     setNuovoOrdine(prevState => ({
       ...prevState, 
-      numero_carta: idCarta === idCartaSelezionata ? "" : numeroCarta.slice(-4), 
+      numero_carta: idCarta === idCartaSelezionata ? "" : numeroCarta.slice(-4)
     }));
   }
 
-  // --- STILI XXL ---
   const labelStyle = {
     display: "block",
     fontSize: "28px",
@@ -148,7 +197,33 @@ const CheckoutView = () => {
   useEffect(() => {
     cartaActions.ottenimentoCarteCliente(autenticazioneState.id_utente);
   }, []);
-  
+
+useEffect(() => {
+  const caricaDati = async () => {
+    try {
+      let result = await attivitaActions.ottieniDatiAttivita();
+      
+      // Calcoliamo gli indici localmente per usarli subito
+      const idx1 = result.primo_intervallo ? result.primo_intervallo.indexOf('-') : -1;
+      const idx2 = result.secondo_intervallo ? result.secondo_intervallo.indexOf('-') : -1;
+
+      setIndiceTrattinoInt1(idx1);
+      setIndiceTrattinoInt2(idx2);
+
+      setMinInt1(result.primo_intervallo && idx1 !== -1 ? result.primo_intervallo.slice(0, idx1) : -1);
+      setMaxInt1(result.primo_intervallo && idx1 !== -1 ? result.primo_intervallo.slice(idx1 + 1) : -1);
+      setMinInt2(result.secondo_intervallo && idx2 !== -1 ? result.secondo_intervallo.slice(0, idx2) : -1);
+      setMaxInt2(result.secondo_intervallo && idx2 !== -1 ? result.secondo_intervallo.slice(idx2 + 1) : -1);
+      setNumeroClienti(result.numero_clienti)
+    } 
+    catch (error) {
+      console.error("Errore nel caricamento:", error);
+    }
+  };
+
+  caricaDati();
+}, []);
+
   return (
     <>
       <Header />      
@@ -160,9 +235,8 @@ const CheckoutView = () => {
           Checkout
         </h3>
 
-        {/* RIEPILOGO ARTICOLI XXL */}
         <div style={{ ...sectionStyle, background: "white", color: "black" }}>
-          <h4 style={{ fontSize: "42px", marginTop: 0, borderBottom: "4px solid #eee", paddingBottom: "20px" }}>Riepilogo Articoli</h4>
+          <h4 style={{ fontSize: "42px", marginTop: 0, borderBottom: "4px solid #eee", paddingBottom: "20px" }}>Riepilogo ordine</h4>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {carrelloState.items.map((item, idx) => (
               <li key={idx} style={{ padding: "25px 0", borderBottom: "2px solid #f0f0f0" }}>
@@ -182,7 +256,6 @@ const CheckoutView = () => {
             ))}
           </ul>
 
-          {/* TOTALE */}
           <div style={{ marginTop: "35px", textAlign: "right", padding: "30px", background: "#f8f9fa", borderRadius: "20px", border: "2px solid #eee" }}>
             <span style={{ fontSize: "32px", color: "#555", fontWeight: "bold" }}>TOTALE DA PAGARE:</span>
             <div style={{ fontSize: "85px", color: "#28a745", fontWeight: "900", lineHeight: "1" }}>
@@ -191,7 +264,6 @@ const CheckoutView = () => {
           </div>
         </div>
 
-        {/* SEZIONE INPUT E PAGAMENTO */}
         <div style={{ maxWidth: "850px" }}>
           <p style={{ fontSize: "28px", marginBottom: "50px", color: "#4ade80", fontWeight: "bold" }}>
             🏪 I Servizi verranno eseguiti presso la nostra struttura.
@@ -210,24 +282,80 @@ const CheckoutView = () => {
             <option value="Corriere">Pagamento alla Consegna (Corriere)</option>
           </select>
 
-          {/* LOGICA SEZIONI DINAMICHE */}
           {nuovoOrdine.metodo_pagamento === "Struttura" && (
             <div style={sectionStyle}>
               <h4 style={{ fontSize: "36px", marginTop: 0, color: "#007bff" }}>Appuntamento</h4>
-              <label style={labelStyle}>Data</label>
+              <label style={labelStyle}>Giorno</label>
               <input type="date" value={nuovoOrdine.data_prenotazione} style={inputStyle} 
                 onChange={(e) => setNuovoOrdine(prevState => ({
                   ...prevState, 
                   data_prenotazione: e.target.value, 
                 }))}
+                onBlur={async (e) => {
+                  e.preventDefault();
+                  const risultato = await ordineActions.ottieniNumeroOrdiniDataPerOrario({data_prenotazione: nuovoOrdine.data_prenotazione});
+                  setNumeroOrdini(risultato.numero_ordini);
+                }}
               />
-              <label style={labelStyle}>Orario</label>
-              <input type="time" value={nuovoOrdine.ora_prenotazione} style={inputStyle} 
-                onChange={(e) => setNuovoOrdine(prevState => ({
-                  ...prevState, 
-                  ora_prenotazione: e.target.value, 
-                }))}
-              />
+              {(numeroOrdini) && (
+                <>
+                  <label style={labelStyle}>Orari</label>
+                  {(parseInt(minInt1) > -1 && parseInt(maxInt1) > -1) && Array.from({ length: parseInt(maxInt1) - parseInt(minInt1) + 1 }, (_, index) => parseInt(minInt1) + index).map((i) => {
+                    const orario = ("0" + i).slice(-2) + ":00";
+                    console.log(orario+": "+numeroOrdini[orario]);
+                    const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
+                    return ordiniAttuali < parseInt(numeroClienti) ? (
+                      <button 
+                        key={orario} 
+                        style={{ 
+                          backgroundColor: (orario === nuovoOrdine.ora_prenotazione ? "#007bff" : "#FFFFFF"), 
+                          color: "#000000",
+                          padding: "10px 20px",
+                          borderRadius: "20px",
+                          margin: "5px",
+                          border: "1px solid #ccc",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => {
+                          setNuovoOrdine(prevState => ({
+                            ...prevState, 
+                            ora_prenotazione: orario !== nuovoOrdine.ora_prenotazione ? orario : null,
+                          }));
+                        }}
+                      >
+                        {orario}
+                      </button>
+                    ) : null;
+                  })}
+                  {(parseInt(minInt2) > -1 && parseInt(maxInt2) > -1) && Array.from({ length: parseInt(maxInt2) - parseInt(minInt2) + 1 }, (_, index) => parseInt(minInt2) + index).map((i) => {
+                    const orario = ("0" + i).slice(-2) + ":00";
+                    const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
+                    console.log(orario+": "+numeroOrdini[orario]);
+                    return ordiniAttuali < parseInt(numeroClienti) ? (
+                      <button 
+                        key={orario} 
+                        style={{ 
+                          backgroundColor: (orario === nuovoOrdine.ora_prenotazione ? "#007bff" : "#FFFFFF"), 
+                          color: "#000000",
+                          padding: "10px 20px",
+                          borderRadius: "20px",
+                          margin: "5px",
+                          border: "1px solid #ccc",
+                          cursor: "pointer"
+                        }}
+                        onClick={() => {
+                          setNuovoOrdine(prevState => ({
+                            ...prevState, 
+                            ora_prenotazione: orario !== nuovoOrdine.ora_prenotazione ? orario : null,
+                          }));
+                        }}
+                      >
+                        {orario}
+                      </button>
+                    ) : null;
+                  })}
+                </>
+              )}
             </div>
           )}
 
@@ -242,28 +370,129 @@ const CheckoutView = () => {
                 }))}
               />
               <label style={labelStyle}>Seleziona una carta</label>
-              {cartaState.carte.map((carta, i) => (
-                <>
-                  <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                    <span style={{ fontSize: "24px" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}>(Scad: {carta.mese_scadenza+"/"+carta.anno_scadenza})</small></span>
-                    <button onClick={() => selezionaCarta(carta.id, carta.numero)} 
-                      style={{ 
-                        ...buttonActionStyle, 
-                        backgroundColor: carta.id === idCartaSelezionata ? "#007BFF" : "#FFFFFF", 
-                        color: "black", 
-                        padding: "10px 20px", 
-                        fontSize: "16px" 
-                      }}>
-                        {carta.id === idCartaSelezionata ? "Deseleziona" : "Seleziona"}
-                      </button>
-                  </div>
-                </>
-              ))}
+              {cartaState.carte.map((carta, i) => {
+                const dataScadenza = new Date(parseInt(carta.anno_scadenza), parseInt(carta.mese_scadenza), 1);
+                return (
+                  <>
+                    <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                      {dataScadenza < dataAttuale ? (
+                        <span style={{ fontSize: "24px", color:"#FF0000", fontWeight:"bold"}}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>CARTA SCADUTA IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
+                      ) : (
+                        <>
+                          <span style={{ fontSize: "24px", color:"#FFFFFF", fontWeight:"bold" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>LA CARTA SCADE IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
+                          <button onClick={() => selezionaCarta(carta.id, carta.numero)} 
+                            style={{ 
+                              ...buttonActionStyle, 
+                              backgroundColor: carta.id === idCartaSelezionata ? "#007BFF" : "#FFFFFF", 
+                              color: "black", 
+                              padding: "10px 20px", 
+                              fontSize: "16px" 
+                            }}
+                          >
+                            {carta.id === idCartaSelezionata ? "Deseleziona" : "Seleziona"}
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </>
+                );
+              })}
               {cartaState.carte.length < 1 && (
                 <div style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
                   <span style={{ fontSize: "24px" }}>Carte non presenti... aggiungine una nella pagina "Carte".</span>
                 </div>
               )}
+              <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
+                <input type="text" placeholder="Numero carta (13/16 cifre)" value={datiNuovaCarta.numero} minLength={1} maxLength={16} style={inputStyle} 
+                  onChange={(e) => {
+                    setNuovaCartaSelezionata(false);
+                    setDatiNuovaCarta(prevState => ({
+                      ...prevState, 
+                      numero: e.target.value
+                    }));
+                  }}  
+                />
+                {datiNuovaCarta.errore_numero && (
+                  <label style={{padding:"10px", color: "#FF0000", backgroundColor:"#000000"}}>{datiNuovaCarta.errore_numero}</label>  
+                )}
+                <div style={{ display: "flex", gap: "20px" }}>
+                  <div style={{ display: "flex", gap: "20px" }}>
+                    <select 
+                      value={datiNuovaCarta.mese_scadenza} 
+                      style={inputStyle}
+                      onChange={(e) => setDatiNuovaCarta(prevState => ({
+                        ...prevState, 
+                        mese_scadenza: e.target.value 
+                      }))}
+                    >
+                      <option value="">MM</option>
+                      {Array.from({ length: 12 }, (_, i) => {
+                        const mese = i + 1;
+                        const valoreFormattato = mese < 10 ? `0${mese}` : `${mese}`;
+                        
+                        return (
+                          <option key={mese} value={valoreFormattato}>
+                            {valoreFormattato}
+                          </option>
+                        );
+                      })}
+                    </select>   
+                    <input type="number" placeholder="AAAA" value={datiNuovaCarta.anno_scadenza} style={inputStyle} 
+                      onChange={(e) => setDatiNuovaCarta(prevState => ({
+                        ...prevState, 
+                        anno_scadenza: e.target.value
+                      }))}  
+                    />
+                  </div>
+                  <input type="text" placeholder="CVV / CVS" value={datiNuovaCarta.cvv_cvs} minLength={1} maxLength={3} style={inputStyle} 
+                    onChange={(e) => setDatiNuovaCarta(prevState => ({
+                      ...prevState, 
+                      cvv_cvs: e.target.value
+                    }))}  
+                  />
+                </div>
+                {datiNuovaCarta.errore_data_scadenza && (
+                  <label style={{padding:"10px", color: "#FF0000", backgroundColor:"#000000"}}>{datiNuovaCarta.errore_data_scadenza}</label>  
+                )}
+                {datiNuovaCarta.errore_cvv_cvs && (
+                  <label style={{padding:"10px", color: "#FF0000", backgroundColor:"#000000"}}>{datiNuovaCarta.errore_cvv_cvs}</label>  
+                )}
+                <input type="text" placeholder="Nome titolare" value={datiNuovaCarta.nome_titolare} minLength={1} maxLength={60} style={inputStyle} 
+                  onChange={(e) => setDatiNuovaCarta(prevState => ({
+                    ...prevState, 
+                    nome_titolare: e.target.value
+                  }))}  
+                />
+                {datiNuovaCarta.errore_nome_titolare && (
+                  <label style={{padding:"10px", color: "#FF0000", backgroundColor:"#000000"}}>{datiNuovaCarta.errore_nome_titolare}</label>  
+                )}
+                <div style={{ display: "flex", gap: "20px", justifyContent: "space-between", }}>
+                  <button onClick={isVisa} style={{ backgroundColor:(isButtonVisaSelected ? "#007bff" : "#FFFFFF"), color:"#000000" }}>
+                    VISA
+                  </button>
+                  <button onClick={isMastercard} style={{ backgroundColor:(isButtonMastercardSelected ? "#007bff" : "#FFFFFF"), color:"#000000"}}>
+                    MASTERCARD
+                  </button>
+                </div>
+                {datiNuovaCarta.errore_circuito && (
+                  <label style={{padding:"10px", color: "#FF0000", backgroundColor:"#000000"}}>{datiNuovaCarta.errore_circuito}</label>  
+                )}
+                <button 
+                  style={{ ...buttonActionStyle, backgroundColor: nuovaCartaSelezionata ? "#007bff" : "#FFFFFF", color: "#000000" }}
+                  onClick={() => {
+                    if(!nuovaCartaSelezionata) {
+                      setNuovoOrdine(prevState => ({
+                        ...prevState, 
+                        numero_carta: datiNuovaCarta.numero.slice(-4)
+                      }));
+                    }
+                    setNuovaCartaSelezionata(!nuovaCartaSelezionata);
+                    setIdCartaSelezionata(0);
+                  }} 
+                >
+                  {nuovaCartaSelezionata ? "Deseleziona" : "Seleziona"}
+                </button>
+              </div>
             </div>
           )}
 
@@ -280,7 +509,6 @@ const CheckoutView = () => {
             </div>
           )}
 
-          {/* BOTTONE CONFERMA FINALEe XXL */}
           <button
             onClick={confermaOrdine}
             style={{

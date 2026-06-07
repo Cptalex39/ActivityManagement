@@ -5,7 +5,7 @@ import { servizioSliceActions } from '../store/reducers/ServizioReducer';
 // Actions
 import { Actions } from "./Actions";
 // Utils
-import { controlloServizio } from "../../utils/Controlli";
+import { controlloServizio, controlloRicercaServizi } from "../../utils/Controlli";
 
 export class ServizioActions extends Actions {
   dispatch = useDispatch();
@@ -23,13 +23,6 @@ export class ServizioActions extends Actions {
     }));
   }
 
-  /**
-   * Azione per ottenere il catalogo (servizi e prodotti in uso) per la vista cliente.
-   * 
-   * @param {*} filtroTipo - filtro del tipo (servizi/prodotti).
-   * 
-   * @returns {Object} risultato response operazione.
-   */
   async getCatalogo(filtroTipo) {
     const dati = {
       filtro_tipo: filtroTipo
@@ -58,17 +51,33 @@ export class ServizioActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async inserisciServizio(nuovoServizio, setNuovoServizio) {
-    if (controlloServizio(nuovoServizio, setNuovoServizio) > 0) {
-      return null;
-    }
+    const risultatoControllo = controlloServizio(nuovoServizio, true);
+    
+    let nuovoServizioAggiornato = risultatoControllo; 
+    setNuovoServizio(risultatoControllo);
 
-    const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizio);
+    if(risultatoControllo.num_errori > 0) {
+      return null;
+    };
+
+    nuovoServizioAggiornato = {
+      ...nuovoServizioAggiornato, 
+      nome_attuale: nuovoServizioAggiornato.nome,
+      tipo_attuale: nuovoServizioAggiornato.tipo,
+      prezzo_attuale: nuovoServizioAggiornato.prezzo,
+      descrizione_attuale: nuovoServizioAggiornato.descrizione,
+      note_attuale: nuovoServizioAggiornato.note,
+      in_uso: "Si",
+      in_uso_attuale: "Si",
+    };
+
+    const response = await super.getResponse("/INSERISCI_ITEM", nuovoServizioAggiornato);
 
     if(response.ok) {
       const result = await response.json();
 
-      let nuovoServizioAggiornato = {
-        ...nuovoServizio, 
+      nuovoServizioAggiornato = {
+        ...nuovoServizioAggiornato, 
         id: result.id, 
       };
 
@@ -85,14 +94,14 @@ export class ServizioActions extends Actions {
     };
   };
 
-  /**
-   * Azione per eseguire la ricerca dei servizi.
-   * 
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async ricercaServizi(datiRicerca) {
+  async ricercaServizi(datiRicerca, setDatiRicerca) {
+    const risultatoControllo = controlloRicercaServizi(datiRicerca);
+    setDatiRicerca(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
     const result = await response.json();
@@ -102,7 +111,6 @@ export class ServizioActions extends Actions {
         servizi: result.items, 
       }));
     }
-    console.log(result.items);
 
     return {
       servizi: response.ok ? result.items : [],  
@@ -198,7 +206,23 @@ export class ServizioActions extends Actions {
     let idServiziNonModificati = [];
     let idServiziModificati = [];
     let esitiModifiche = [];
-        
+
+    for(let i = 0; i < serviziDaModificare.length; i++) {
+      const risultatoControllo = controlloServizio(serviziDaModificare[i], false);
+
+      if(risultatoControllo.num_errori > 0) {
+        alert(
+          "Errore servizio numero " + (i+1) + ":\n" +
+          (risultatoControllo.errore_nome ? "- " + risultatoControllo.errore_nome + "\n" : "") +
+          (risultatoControllo.errore_tipo ? "- " + risultatoControllo.errore_tipo + "\n" : "") +
+          (risultatoControllo.errore_prezzo ? "- " + risultatoControllo.errore_prezzo + "\n" : "") + 
+          (risultatoControllo.errore_descrizione ? "- " + risultatoControllo.errore_descrizione + "\n" : "") + 
+          (risultatoControllo.errore_note ? "- " + risultatoControllo.errore_note : "")
+        );
+        return null;
+      }
+    }
+
     for(let i = 0; i < serviziDaModificare.length; i++) {
       const dati = {
         tipo_item: "servizio", 
@@ -209,17 +233,6 @@ export class ServizioActions extends Actions {
 
       if(response.ok) {
         esitiModifiche[i] = [true, response.status];
-
-        if(serviziDaModificare[i].prezzo !== serviziDaModificare[i].prezzo_attuale) {
-          const result = await response.json();
-          let nuovoServizio = { ...serviziDaModificare[i] };
-          nuovoServizio["id"] = result.id;
-          
-          this.dispatch(servizioSliceActions.inserimentoServizio({
-            nuovoServizio: nuovoServizio
-          }))
-        }
-
         idServiziModificati.push(serviziDaModificare[i].id);
       }
       else {
@@ -261,13 +274,6 @@ export class ServizioActions extends Actions {
     };
   }
 
-  /**
-   * Azione per aggiornare un attributo di un servizio.
-   * 
-   * @param {number} id_servizio - id del servizio da aggiornare.
-   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
-   * @param {*} nuovo_valore - nuovo valore dell'attributo.
-   */
   aggiornaServizio(id_servizio, nome_attributo, nuovo_valore) {
     this.dispatch(servizioSliceActions.aggiornaServizio({
       id_servizio: id_servizio,

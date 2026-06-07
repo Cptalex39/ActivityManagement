@@ -33,69 +33,7 @@ const Attivita = () => {
   const [entrateAnno, setEntrateAnno] = useState([]);
   const [usciteAnno, setUsciteAnno] = useState([]);
 
-  const datiAnno = {
-    entrate_gennaio: 10, 
-    entrate_febbraio: 20, 
-    entrate_marzo: 30, 
-    entrate_aprile: 40, 
-    entrate_maggio: 50, 
-    entrate_giugno: 60, 
-    entrate_luglio: 70, 
-    entrate_agosto: 80, 
-    entrate_settembre: 90, 
-    entrate_ottobre: 100, 
-    entrate_novembre: 110, 
-    entrate_dicembre: 120, 
-
-    uscite_gennaio: 120, 
-    uscite_febbraio: 110, 
-    uscite_marzo: 100, 
-    uscite_aprile: 90, 
-    uscite_maggio: 80, 
-    uscite_giugno: 70, 
-    uscite_luglio: 70, 
-    uscite_agosto: 60, 
-    uscite_settembre: 50, 
-    uscite_ottobre: 40, 
-    uscite_novembre: 30, 
-    uscite_dicembre: 20, 
-
-    spese_gennaio: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_febbraio: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_marzo: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_aprile: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_maggio: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_giugno: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_luglio: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_agosto: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_settembre: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_ottobre: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_novembre: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y",
-    spese_dicembre: "Voglio ottenere, per ogni spesa del mese gdi gennaio (vedi nome), il nome + il totale pagato, quindi, avere una cosa del genere: Nome spesa x: € y", 
-
-    items_ordini_gennaio: "Lista degli items", 
-    items_ordini_febbraio: "Lista degli items", 
-    items_ordini_marzo: "Lista degli items", 
-    items_ordini_aprile: "Lista degli items", 
-    items_ordini_maggio: "Lista degli items", 
-    items_ordini_giugno: "Lista degli items", 
-    items_ordini_luglio: "Lista degli items", 
-    items_ordini_agosto: "Lista degli items", 
-    items_ordini_settembre: "Lista degli items", 
-    items_ordini_ottobre: "Lista degli items", 
-    items_ordini_novembre: "Lista degli items", 
-    items_ordini_dicembre: "Lista degli items", 
-  };
-
-  const itemsOrdini = [
-    JSON.parse('[{"id":2,"nome":"Pizza Margherita","prezzo":12.5,"tipo":"Prodotto","note":"Note prodotto 1.","quantita":1}]'), 
-    JSON.parse('[{"id":1,"nome":"Taglio capelli","prezzo":10,"tipo":"Servizio","note":"Note servizio 1.","quantita":2},{"id":2,"nome":"Pizza Margherita","prezzo":12.5,"tipo":"Prodotto","note":"Note prodotto 1.","quantita":2},{"id":3,"nome":"Penna nera","prezzo":0.5,"tipo":"Prodotto","note":"Note prodotto 2.","quantita":2}]'), 
-    JSON.parse('[{"id":2,"nome":"Pizza Margherita","prezzo":12.5,"tipo":"Prodotto","note":"Note prodotto 1.","quantita":6},{"id":1,"nome":"Taglio capelli","prezzo":10,"tipo":"Servizio","note":"Note servizio 1.","quantita":6},{"id":3,"nome":"Penna nera","prezzo":0.5,"tipo":"Prodotto","note":"Note prodotto 2.","quantita":6}]'), 
-    JSON.parse('[{"id":2,"nome":"Pizza Margherita","prezzo":12.5,"tipo":"Prodotto","note":"Note prodotto 1.","quantita":2},{"id":3,"nome":"Penna nera","prezzo":0.5,"tipo":"Prodotto","note":"Note prodotto 2.","quantita":2}]')
-  ];
-
   const getRicavi = (entrate, uscite) => {
-    //return entrate - uscite;
     const ricavi = entrate - uscite;
     return (
       <>
@@ -115,7 +53,6 @@ const Attivita = () => {
       setAnnoSelezionato(datiRicerca.anno);
       setUsciteAnno(result.uscite_anno);
       setEntrateAnno(result.entrate_anno);
-      //alert(result.entrate_anno.length)
     }
   }
   const [annoSelezionato, setAnnoSelezionato] = useState(-1);

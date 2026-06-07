@@ -103,7 +103,6 @@ export class ServizioSQL {
         nome LIKE ? AND (prezzo BETWEEN ? AND ?)
     `;
   
-    // CR: Filtro per tipo (servizio/prodotto)
     if(params.tipo && params.tipo !== "" && params.tipo !== "tutti") {
       sql += " AND tipo = '" + params.tipo + "' ";
     }

@@ -26,7 +26,7 @@ import { StileActions } from '../../../actions/StileActions';
 import { AttivitaActions } from '../../../actions/AttivitaActions';
 import { AutenticazioneActions } from '../../../actions/AutenticazioneActions';
 
-/*** Styled Components aggiuntivi per il carrello badge ***/
+/** Styled Components aggiuntivi per il carrello badge **/
 
 const CarrelloBadgeContainer = styled.div`
   position: relative;

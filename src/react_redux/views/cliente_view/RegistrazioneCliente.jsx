@@ -3,12 +3,15 @@ import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import Header from "../components/Header";
 import { ClienteActions } from "../../actions/ClienteActions";
+import { controlloRegistrazione } from "../../../utils/Controlli";
 
-//registazioe
 const RegistrazioneCliente = ({ chiudi }) => {
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
   const navigate = useNavigate();
   const clienteActions = new ClienteActions();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [dati, setDati] = useState({
     nome: "",
@@ -20,9 +23,22 @@ const RegistrazioneCliente = ({ chiudi }) => {
     contatto: "",
     note: "",
     tipo_item: "cliente",
+    errore_nome: null,
+    errore_cognome: null,
+    errore_username: null,
+    errore_email: null,  
+    errore_password: null,
+    errore_contatto: null,  
   });
 
   const registra = async () => {
+    const risultatoControllo = controlloRegistrazione(dati);
+    setDati(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+
     const response = await clienteActions.registrazioneCliente(dati, setDati);
 
     if(response.isOK) {
@@ -57,6 +73,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
                 setDati({ ...dati, nome: e.target.value })
               }
             />
+            {dati.errore_nome && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_nome}</label></>)}
 
             <br /><br />
 
@@ -68,9 +85,9 @@ const RegistrazioneCliente = ({ chiudi }) => {
                 setDati({ ...dati, cognome: e.target.value })
               }
             />
+            {dati.errore_cognome && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_cognome}</label></>)}
 
             <br /><br />
-
 
             <input
               type="text"
@@ -80,6 +97,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
                 setDati({ ...dati, username: e.target.value })
               }
             />
+            {dati.errore_username && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_username}</label></>)}
             <br /><br />
 
             <input
@@ -90,30 +108,48 @@ const RegistrazioneCliente = ({ chiudi }) => {
                 setDati({ ...dati, email: e.target.value })
               }
             />
+            {dati.errore_email && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_email}</label></>)}
 
             <br /><br />
 
             <input
-              type="text"
+              type={showPassword ? "text" : "password"}
               placeholder="Password"
               value={dati.password}
               onChange={(e) =>
                 setDati({ ...dati, password: e.target.value })
               }
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Nascondi" : "Mostra"}
+            </button>
+
             <br /><br />
+            
 
             <input
-              type="text"
+              type={showConfirmPassword ? "text" : "password"}
               placeholder="Conferma Password"
               value={dati.conferma_password}
               onChange={(e) =>
                 setDati({ ...dati, conferma_password: e.target.value })
               }
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? "Nascondi" : "Mostra"}
+            </button>
+
+            {dati.errore_password && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_password}</label></>)}
+            
             <br /><br />
 
-             <input
+            <input
               type="text"
               placeholder="Contatto"
               value={dati.contatto}
@@ -121,7 +157,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
                 setDati({ ...dati, contatto: e.target.value })
               }
             />
-
+            {dati.errore_contatto && (<><br /><label style={{color:"#FF0000", fontWeight: "bold"}}>{dati.errore_contatto}</label></>)}
 
             <br /><br />
 

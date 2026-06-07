@@ -13,7 +13,7 @@ export class ClienteSQL {
 
   SQL_SELEZIONE_CLIENTE = ` 
     SELECT 
-      \`id\`, \`username\`, "cliente" AS \`ruolo\`, \`nome\`, \`cognome\`, \`email\`, \`contatto\`, \`indirizzo\`, \`password\`, \`salt_hex\` 
+      \`id\`, \`username\`, "cliente" AS \`ruolo\`, \`nome\`, \`cognome\`, \`email\`, \`contatto\`, \`indirizzo\`, \`password\`, \`salt_hex\`, \`is_active\` 
     FROM 
       \`cliente\` 
     WHERE 
@@ -34,6 +34,15 @@ export class ClienteSQL {
       cliente 
     SET 
       is_active = 0 
+    WHERE 
+      username = ?; 
+  `;
+
+  SQL_RIATTIVA_CLIENTE = `
+    UPDATE 
+      cliente 
+    SET 
+      is_active = 1 
     WHERE 
       username = ?; 
   `;
@@ -153,6 +162,12 @@ export class ClienteSQL {
   }
 
   params_richiesta_eliminazione(params) {
+    return [
+      `${params.username}`, 
+    ];
+  }
+
+  params_riattiva_cliente(params) {
     return [
       `${params.username}`, 
     ];

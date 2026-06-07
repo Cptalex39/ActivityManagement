@@ -7,7 +7,7 @@ import { autenticazioneReducer } from "./reducers/AutenticazioneReducer";
 import { clienteReducer } from "./reducers/ClienteReducer";
 import { servizioReducer } from "./reducers/ServizioReducer";
 import { spesaReducer } from "./reducers/SpesaReducer";
-import { carrelloReducer } from "./reducers/CarrelloReducer";  // CR: Carrello
+import { carrelloReducer } from "./reducers/CarrelloReducer";
 import { cartaReducer } from "./reducers/CartaReducer";
 import { ordineReducer } from "./reducers/OrdineReducer";
 
@@ -19,7 +19,7 @@ const store = configureStore({
     cliente: clienteReducer, 
     servizio: servizioReducer, 
     spesa: spesaReducer, 
-    carrello: carrelloReducer,  // CR: Carrello
+    carrello: carrelloReducer,
     carta: cartaReducer, 
     ordine: ordineReducer
   },

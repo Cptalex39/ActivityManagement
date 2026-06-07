@@ -140,9 +140,9 @@
 }
 
 .custom-checkbox-rounded {
-  -webkit-appearance: none; /* Rimuove lo stile predefinito */
-  appearance: none; /* Compatibilità con altri browser */
-  border-radius: 100%; /* Rende la checkbox rotonda */
+  -webkit-appearance: none; 
+  appearance: none; 
+  border-radius: 100%; 
 }
 
 .dragging {
@@ -173,35 +173,32 @@
 }
 
 
-/* Questo trasforma tutti i pulsanti blu (btn-primary) */
 .btn-primary {
-  background-color: #0050EF !important; /* Il blu della tua casella */
-  border: 5px solid #000000 !important;   /* Il bordo nero spesso */
-  border-radius: 40px !important;        /* La forma arrotondata a pillola */
-  min-height: 60px !important;           /* Altezza minima */
-  padding: 10px 40px !important;         /* Spazio ai lati del testo */
-  font-size: 25px !important;            /* Testo grande come il resto del sito */
-  color: #FFFFFF !important;             /* Testo bianco */
+  background-color: #0050EF !important; 
+  border: 5px solid #000000 !important; 
+  border-radius: 40px !important; 
+  min-height: 60px !important; 
+  padding: 10px 40px !important;
+  font-size: 25px !important; 
+  color: #FFFFFF !important; 
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
   text-align: center;
-  transition: all 0.3s ease;             /* Movimento fluido al click */
+  transition: all 0.3s ease; 
 }
 
-/* Effetto quando passi il mouse sopra */
 .btn-primary:hover {
-  background-color: #003dbb !important; /* Diventa un blu leggermente più scuro */
-  transform: scale(1.02);               /* Si ingrandisce appena appena */
+  background-color: #003dbb !important; 
+  transform: scale(1.02); 
 }
 
-/* TRASFORMA TUTTI I PULSANTI DEL SITO */
 button, .btn {
-  border-radius: 40px !important;      /* Forma a pillola */
-  border: 5px solid #000000 !important; /* Bordo nero spesso */
-  min-height: 60px !important;         /* Altezza minima */
-  padding: 10px 40px !important;       /* Spazio interno */
-  font-size: 25px !important;          /* Testo grande */
+  border-radius: 40px !important; 
+  border: 5px solid #000000 !important; 
+  min-height: 60px !important; 
+  padding: 10px 40px !important;
+  font-size: 25px !important; 
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
@@ -209,15 +206,10 @@ button, .btn {
   cursor: pointer;
 }
 
-/* Se vuoi che i pulsanti "primari" rimangano blu */
 .btn-primary {
   background-color: #0050EF !important;
   color: #FFFFFF !important;
 }
-
-/* Se hai pulsanti "success" (verdi) o altri, rimarranno del loro colore 
-   ma prenderanno la forma a pillola e il bordo nero */
-
 
 input {
   border-radius: 40px;
@@ -228,6 +220,7 @@ input {
   width: 80%;
   text-align: center;
 }
+
 
 
 

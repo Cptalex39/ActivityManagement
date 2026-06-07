@@ -15,7 +15,7 @@ export class SpesaForms {
     return {
       header: "Nuova spesa",  
       label: ["Nome*", "Descrizione", "Totale*", "Giorno*", "Note"],  
-      type: [null, null, "text", "text", null], 
+      type: [null, null, "number", "date", null], 
       step: [null, null, null, null, null], 
       min: [null, null, null, null, null], 
       name: ["nome", "descrizione", "totale", "giorno", "note"], 
@@ -34,13 +34,14 @@ export class SpesaForms {
     return {
       header: "Ricerca spese", 
       label: ["Nome", "Descrizione", "Totale minimo", "Totale massimo", "Primo giorno", "Ultimo giorno", "Note"], 
-      type: [null, null, "text", "text", "text", "text", null], 
+      type: [null, null, "number", "number", "date", "date", null], 
       step: [null, null, null, null, null, null, null], 
       min: [null, null, null, null, null, null, null], 
       name: ["nome", "descrizione", "totale_min", "totale_max", "primo_giorno", "ultimo_giorno", "note"], 
       id: ["ricerca_nome_spesa", "ricerca_descrizione_spesa", "ricerca_totale_min_spesa", "ricerca_totale_max_spesa", "ricerca_primo_giorno_spesa", "ricerca_ultimo_giorno_spesa", "ricerca_note_spesa"], 
       value: [item.nome, item.descrizione, item.totale_min, item.totale_max, item.primo_giorno, item.ultimo_giorno, item.note], 
       placeholder: ["Nome", "Descrizione", "Totale minimo", "Totale massimo", "Primo giorno", "Ultimo giorno", "Note"], 
+      errore: [item.errore_nome, item.errore_descrizione, null, item.errore_totali, null, item.errore_giorni, item.errore_note], 
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur
@@ -59,7 +60,15 @@ export class SpesaForms {
     }); 
     
     useEffect(() => {
-      controlloSpesa(item, setErrori);
+      const risultatoControllo = controlloSpesa(item);
+      setErrori(prevState => ({
+        ...prevState, 
+        errore_nome: risultatoControllo.errore_nome, 
+        errore_descrizione: risultatoControllo.errore_descrizione, 
+        errore_totale: risultatoControllo.errore_totale, 
+        errore_giorno: risultatoControllo.errore_giorno, 
+        errore_note: risultatoControllo.errore_note
+      }))
     }, [item]);
   
     return {
@@ -86,13 +95,14 @@ export class SpesaForms {
     return {
       header: "File spese", 
       label: ["Primo giorno", "Ultimo giorno"], 
-      type: ["text", "text"], 
+      type: ["date", "date"], 
       step: [null, null], 
       min: [null, null], 
       name: ["primo_giorno", "ultimo_giorno"], 
       id: ["file_primo_giorno_spesa", "file_ultimo_giorno_spesa"], 
       value: [item.primo_giorno, item.ultimo_giorno], 
       placeholder: ["Primo giorno", "Ultimo giorno"], 
+      errore: [null, item.errore_giorni], 
       onChange: handleOnChange, 
       onClick: handleOnClick, 
       onBlur: handleOnBlur

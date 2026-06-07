@@ -5,7 +5,7 @@ import { spesaSliceActions } from '../store/reducers/SpesaReducer';
 // Actions
 import { Actions } from "./Actions";
 // Utils
-import { controlloSpesa } from "../../utils/Controlli";
+import { controlloRicercaSpese, controlloSpesa } from "../../utils/Controlli";
 import { generaFileSpesePDF, generaFileSpeseExcel } from "../../utils/File"
 
 export class SpesaActions extends Actions {
@@ -33,16 +33,22 @@ export class SpesaActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async inserimentoSpesa(nuovaSpesa, setNuovaSpesa) {
-    if (controlloSpesa(nuovaSpesa, setNuovaSpesa) > 0) 
-      return null;
+    const risultatoControllo = controlloSpesa(nuovaSpesa);
 
-    let nuovaSpesaAggiornata = {
-      ...nuovaSpesa, 
-      nome_attuale: nuovaSpesa.nome,
-      descrizione_attuale: nuovaSpesa.descrizione,
-      totale_attuale: nuovaSpesa.totale,
-      giorno_attuale: nuovaSpesa.giorno,
-      note_attuale: nuovaSpesa.note,
+    let nuovaSpesaAggiornata = risultatoControllo;
+    setNuovaSpesa(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return null;
+    }
+
+    nuovaSpesaAggiornata = {
+      ...nuovaSpesaAggiornata, 
+      nome_attuale: nuovaSpesaAggiornata.nome,
+      descrizione_attuale: nuovaSpesaAggiornata.descrizione,
+      totale_attuale: nuovaSpesaAggiornata.totale,
+      giorno_attuale: nuovaSpesaAggiornata.giorno,
+      note_attuale: nuovaSpesaAggiornata.note,
     };
 
     const response = await super.getResponse("/INSERISCI_ITEM", nuovaSpesaAggiornata);
@@ -68,14 +74,14 @@ export class SpesaActions extends Actions {
     };
   };
 
-  /**
-   * Azione per eseguire la ricerca delle spese.
-   * 
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async ricercaSpese(datiRicerca) {        
+  async ricercaSpese(datiRicerca, setDatiRicerca) {       
+    const risultatoControllo = controlloRicercaSpese(datiRicerca);
+    setDatiRicerca(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+    
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
     if(response.ok) {
@@ -92,17 +98,14 @@ export class SpesaActions extends Actions {
     };
   }
   
-  /**
-   * Azione per ottenere un file con le spese.
-   * 
-   * @param {String} tipoFile - tipo del file (.pdf o .xlsx).
-   * @param {Function} setTipoFile - setter del tipo di file.
-   * @param {Object} datiRicerca - dati della ricerca.
-   * @param {Function} setSpese - setter delle spese.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setSpese) {
+  async handleSearchSpeseRangeFile(tipoFile, setTipoFile, datiRicerca, setDatiRicerca, setSpese) {
+    const risultatoControllo = controlloRicercaSpese(datiRicerca);
+    setDatiRicerca(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+
     setTipoFile(tipoFile);
 
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
@@ -207,6 +210,7 @@ export class SpesaActions extends Actions {
    * 
    * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
    */
+  
   async modificaSpese(spese, selectedIdsModifica, setSelectedIdsModifica) {
     let speseDaModificare = spese.filter(spesa => selectedIdsModifica.includes(spesa.id)); 
     let idSpeseNonModificate = [];
@@ -214,11 +218,27 @@ export class SpesaActions extends Actions {
     let esitiModifiche = [];
     
     for(let i = 0; i < speseDaModificare.length; i++) {
+      const risultatoControllo = controlloSpesa(speseDaModificare[i]);
+
+      if(risultatoControllo.num_errori > 0) {
+        alert(
+          "Errore spesa numero " + (i+1) + ":\n" +
+          (risultatoControllo.errore_nome ? "- " + risultatoControllo.errore_nome + "\n" : "") +
+          (risultatoControllo.errore_descrizione ? "- " + risultatoControllo.errore_descrizione + "\n" : "") +
+          (risultatoControllo.errore_totale ? "- " + risultatoControllo.errore_totale + "\n" : "") + 
+          (risultatoControllo.errore_giorno ? "- " + risultatoControllo.errore_giorno + "\n" : "") + 
+          (risultatoControllo.errore_note ? "- " + risultatoControllo.errore_note : "")
+        );
+        return null;
+      }
+    }
+
+    for(let i = 0; i < speseDaModificare.length; i++) {
       const dati = {
         tipo_item: "spesa", 
         item: speseDaModificare[i] 
       }
-      
+
       const response = await super.getResponse("/MODIFICA_ITEM", dati);
 
       if(response.ok) {
@@ -264,13 +284,6 @@ export class SpesaActions extends Actions {
     };
   };
 
-  /**
-   * Azione per eseguire l'aggiornamento di un attributo di una spesa.
-   * 
-   * @param {number} id_spesa - id della spesa da aggiornare.
-   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
-   * @param {*} nuovo_valore - nuovo valore dell'attributo da aggiornare.
-   */
   aggiornaSpesa(id_spesa, nome_attributo, nuovo_valore) {
     this.dispatch(spesaSliceActions.aggiornaSpesa({
       id_spesa: id_spesa,

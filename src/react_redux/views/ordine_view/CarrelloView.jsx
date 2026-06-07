@@ -29,7 +29,6 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
 
   const totale = carrelloState.items.reduce((sum, item) => sum + (item.prezzo * item.quantita), 0);
   
-  // --- STILI OTTIMIZZATI ---
   const titleStyle = {
     color: "white",
     fontSize: "56px", 
@@ -40,9 +39,9 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
   const itemBoxStyle = {
     background: "white",
     color: "black",
-    padding: "30px", // Ridotto padding per box più piccoli
+    padding: "30px", 
     marginBottom: "25px",
-    maxWidth: "700px", // Box più stretto e centrato
+    maxWidth: "700px", 
     borderRadius: "20px",
     boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
   };
@@ -88,7 +87,7 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
         {carrelloState.items.map((item, index) => (
           <div key={index} style={itemBoxStyle}>
             
-            {/* Nome e Prezzoo */}
+            {/* Nome e Prezzo */}
             <div style={{ marginBottom: "15px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
               <strong style={{ fontSize: "42px" }}>{item.nome}</strong>
               <span style={{ fontSize: "38px", color: "black", fontWeight: "900" }}>
@@ -96,7 +95,6 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
               </span>
             </div>
 
-            {/* Info e Categoria */}
             <div style={{ marginBottom: "25px", borderBottom: "2px solid #eee", paddingBottom: "15px" }}>
               <p style={{ fontSize: "24px", margin: "5px 0", color: "#110909" }}>
                 Prezzo: €{item.prezzo.toFixed(2)} | Qtà: <strong>{item.quantita}</strong>
@@ -115,7 +113,6 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
               </div>
             </div>
 
-            {/* Azioni */}
             <h4 style={{textAlign:"center"}}>Quantità</h4>
             <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
               <div style={{ display: "flex", gap: "20px", }}>
@@ -129,7 +126,6 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
           </div>
         ))}
 
-        {/* Totale finale compatto ma visibile */}
         <div style={{ 
           marginTop: "60px", 
           padding: "30px", 
@@ -150,19 +146,19 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
       {totale > 0 && (
         <button
           style={{     
-            padding: "25px 50px",       // Padding molto più grande
-            backgroundColor: "blue",    // Mantenuto il tuo colore blu
+            padding: "25px 50px",       
+            backgroundColor: "blue",    
             color: "white",
             border: "none",
-            borderRadius: "15px",       // Arrotondamento più marcato per box grandi
+            borderRadius: "15px",       
             cursor: "pointer",
-            fontSize: "86px",           // Scritta gigante
-            fontWeight: "900",          // Super grassetto
-            width: "100%",              // Prende tutta la larghezza del box
-            maxWidth: "700px",          // Maa si ferma alla larghezza dei box prodotti
-            textTransform: "uppercase", // Tutto maiuscolo per massima visibilità
-            boxShadow: "0 10px 20px rgba(0, 0, 255, 0.3)", // Ombra blu coerente
-            display: "block"            // Per centrarlo correttamente
+            fontSize: "86px",          
+            fontWeight: "900",          
+            width: "100%",              
+            maxWidth: "700px",          
+            textTransform: "uppercase", 
+            boxShadow: "0 10px 20px rgba(0, 0, 255, 0.3)", 
+            display: "block"            
           }}
 
           onClick={vaiAlCheckout}

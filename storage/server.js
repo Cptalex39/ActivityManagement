@@ -11,6 +11,7 @@ import { SpesaSQL } from './SpesaSQL.js';
 import { AutenticazioneSQL } from './AutenticazioneSQL.js';
 import { CartaSQL } from './CartaSQL.js';
 import { OrdineSQL } from './OrdineSQL.js';
+import { AttivitaSQL } from './AttivitaSQL.js';
 
 
 const app = express();
@@ -100,12 +101,10 @@ app.post("/LOGIN", async (req, res) => {
     let params = [];
     switch(req.body.tipo_utente) {
       case "utente":
-        console.log("UTENTE")
         sql = autenticazioneSQL.SQL_SELEZIONE_UTENTE;
         params = autenticazioneSQL.params_selezione_utente(req.body);
         break;
       case "cliente":
-        console.log("CLIENTE");
         sql = clienteSQL.SQL_SELEZIONE_CLIENTE;
         params = clienteSQL.params_selezione_cliente(req.body);
         break;
@@ -129,9 +128,10 @@ app.post("/MODIFICA_PROFILO_UTENTE", async (req, res) => {
   const autenticazioneSQL = new AutenticazioneSQL();
   try {
     await beginTransaction();
-    const response = await executeQuery(autenticazioneSQL.sql_modifica_utente(req.body), autenticazioneSQL.params_modifica_utente(req.body));
+    let response = await executeQuery(autenticazioneSQL.sql_modifica_utente(req.body), autenticazioneSQL.params_modifica_utente(req.body));
+    response = await executeQuery(autenticazioneSQL.SQL_MODIFICA_ATTIVITA, autenticazioneSQL.params_modifica_attivita(req.body));
     await commitTransaction();
-    return res.status(200).json({ result: response });
+    return res.status(200).json({ response: response });
   } 
   catch (err) {
     await rollbackTransaction();
@@ -175,12 +175,10 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
       break;
     case "servizio":
       sql = servizioSQL.SQL_INSERIMENTO_SERVIZIO;
-      req.body["prezzo"] = req.body["prezzo"].substring(0, req.body["prezzo"].indexOf('€')).trim();
       params = servizioSQL.params_inserimento_servizio(req.body);
       break;
     case "spesa":
       sql = spesaSQL.SQL_INSERIMENTO_SPESA;
-      req.body["totale"] = req.body["totale"].substring(0, req.body["totale"].indexOf('€')).trim();
       params = spesaSQL.params_inserimento_spesa(req.body);
       break;
     case "carta":
@@ -188,8 +186,7 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
       params = cartaSQL.params_inserimento_carta(req.body);
       break;
     default:
-      //alert("Errore, riprova piu\' tardi (Error, please try again later.)");
-      console.log("Errore, riprova piu\' tardi (Error, please try again later.)");
+      console.log("Errore, riprova piu\' tardi.");
       return;
   }
 
@@ -216,22 +213,33 @@ app.post("/INSERISCI_ITEM", async(req, res) => {
 app.post("/INSERISCI_ORDINE", async(req, res) => {
   const ordineSQL = new OrdineSQL();
   const clienteSQL = new ClienteSQL();
+  let problema = false;
 
   try {
     await beginTransaction();
 
-    // Inserimento ordine con i nuovi campi
-    await executeQuery(ordineSQL.SQL_INSERIMENTO_ORDINE, ordineSQL.params_inserimento_ordine(req.body));
-    if(req.body.indirizzo !== req.body.indirizzo_attuale) {
-      const dati = {
-        indirizzo: req.body.indirizzo, 
-        id: req.body.id_cliente, 
+    const result = await executeQuery(ordineSQL.SQL_OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO, ordineSQL.params_ottieni_numero_ordini_data_per_orario(req.body));
+    const numero_ordini = result[0];
+    
+    if(numero_ordini[req.body.ora_prenotazione] >= parseInt(req.body.numero_clienti)) {
+      //alert("Errore, orario non più disponibile, selezionare un alto orario.");
+      
+      problema = true;
+    }
+    else {
+      problema = false;
+      await executeQuery(ordineSQL.SQL_INSERIMENTO_ORDINE, ordineSQL.params_inserimento_ordine(req.body));
+      if(req.body.indirizzo !== req.body.indirizzo_attuale) {
+        const dati = {
+          indirizzo: req.body.indirizzo, 
+          id: req.body.id_cliente, 
+        }
+        await executeQuery(clienteSQL.SQL_MODIFICA_INDIRIZZO, clienteSQL.params_modifica_indirizzo(dati));
       }
-      await executeQuery(clienteSQL.SQL_MODIFICA_INDIRIZZO, clienteSQL.params_modifica_indirizzo(dati));
     }
 
     await commitTransaction();
-    return res.status(200).json({});
+    return res.status(200).json({problema : problema});
   }
   catch (err) {
     console.log("Errore inserimento ordine: ", err);
@@ -262,7 +270,6 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
       params = spesaSQL.params_selezione_spese(req.body);
       break;
     case "ordine":
-      console.log(req.body.metodo_pagamento);
       sql = ordineSQL.sql_selezione_ordini(req.body);
       params = ordineSQL.params_selezione_ordini(req.body);
       break;
@@ -287,7 +294,6 @@ app.post("/VISUALIZZA_ITEMS", async(req, res) => {
 
 /************************************************** CR: Catalogo **************************************************/
 
-// CR: Endpoint per ottenere il catalogo completo (servizi + prodotti in uso)
 app.post("/VISUALIZZA_CATALOGO", async(req, res) => {
   const servizioSQL = new ServizioSQL();
   let sql = "";
@@ -301,7 +307,6 @@ app.post("/VISUALIZZA_CATALOGO", async(req, res) => {
       sql = servizioSQL.SQL_SELEZIONE_CATALOGO_SERVIZI;
       break;
     default:
-      // tutti
       sql = servizioSQL.SQL_SELEZIONE_CATALOGO;
       break;
   }
@@ -346,6 +351,25 @@ app.post("/OTTIENI_TUTTI_GLI_ITEMS", async(req, res) => {
   }
 });
 
+app.post("/RIATTIVA_CLIENTE", async(req, res) => {
+  const clienteSQL = new ClienteSQL();
+  let sql = clienteSQL.SQL_RIATTIVA_CLIENTE;
+  let params = clienteSQL.params_riattiva_cliente(req.body);
+
+  try {
+    await beginTransaction();
+
+    const result = await executeQuery(sql, params);
+
+    await commitTransaction();
+    return res.status(200).json({});
+  } 
+  catch (err) {
+    console.log(err);
+    return res.status(500).json();
+  }
+});
+
 app.post("/ELIMINA_ITEM", async(req, res) => {
   const clienteSQL = new ClienteSQL();
   const cartaSQL = new CartaSQL();
@@ -361,12 +385,6 @@ app.post("/ELIMINA_ITEM", async(req, res) => {
       sql = cartaSQL.SQL_ELIMINAZIONE_COLLEGAMENTO_CARTA_CLIENTE;
       params = cartaSQL.params_eliminazione_collegamento_carta_cliente(req.body);
       break;
-    /*
-    case "carta":
-      sql = cartaSQL.SQL_ELIMINAZIONE_CARTA;
-      params = cartaSQL.params_eliminazione_carta(req.body);
-      break;
-    */
     default:
       return res.status(500).json();
   }
@@ -447,14 +465,8 @@ app.post("/MODIFICA_ITEM", async(req, res) => {
       break;
     case "servizio":
       req.body.item["in_uso"] = (req.body.item.in_uso.toLowerCase() === "si");
-      if(req.body.item.prezzo_attuale === req.body.item.prezzo) {
-        sql = servizioSQL.SQL_MODIFICA_SERVIZIO;
-        params = servizioSQL.params_modifica_servizio(req.body.item);
-      }
-      else {
-        sql = servizioSQL.SQL_INSERIMENTO_SERVIZIO;
-        params = servizioSQL.params_inserimento_servizio(req.body.item);
-      }
+      sql = servizioSQL.SQL_MODIFICA_SERVIZIO;
+      params = servizioSQL.params_modifica_servizio(req.body.item);
       break;
     case "spesa":
       sql = spesaSQL.SQL_MODIFICA_SPESA;
@@ -503,7 +515,12 @@ app.post("/RICHIESTA_ELIMINAZIONE", async(req, res) => {
   params = clienteSQL.params_richiesta_eliminazione(req.body);
 
   try {
+    await beginTransaction();
+
     const result = await executeQuery(sql, params);
+
+    await commitTransaction();
+    return res.status(200).json({});
   } 
   catch (err) {
     console.log(err);
@@ -620,7 +637,7 @@ app.post("/OTTIENI_ORDINI_ULTIME_48_ORE", async(req, res) => {
   const ordineSQL = new OrdineSQL();
   
   try {
-    const result = await executeQuery(ordineSQL.SQL_OTTIENI_ORDINI_ULTIME_48_ORE, ordineSQL.params_ottieni_ordini_ultime_48_ore());
+    const result = await executeQuery(ordineSQL.sql_ottieni_ordini_ultime_48_ore(req.body), ordineSQL.params_ottieni_ordini_ultime_48_ore(req.body));
     return res.status(200).json({ items: result });
   } 
   catch (err) {
@@ -715,6 +732,41 @@ app.post("/ESEGUI_ANALISI", async(req, res) => {
   }
 });
 
+app.post("/OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO", async(req, res) => {
+  const ordineSQL = new OrdineSQL();
+
+  try {
+    await beginTransaction();
+
+    const result = await executeQuery(ordineSQL.SQL_OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO, ordineSQL.params_ottieni_numero_ordini_data_per_orario(req.body));
+    
+    await commitTransaction();
+    return res.status(200).json({ numero_ordini: result[0] });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
+
+app.post("/OTTIENI_DATI_ATTIVITA", async(req, res) => {
+  const attivitaSQL = new AttivitaSQL();
+
+  try {
+    await beginTransaction();
+
+    let result = await executeQuery(attivitaSQL.SQL_OTTIENI_DATI_ATTIVITA, attivitaSQL.params_ottieni_dati_attivita(req.body));
+
+    await commitTransaction();
+    return res.status(200).json({ result : result });
+  } 
+  catch (err) {
+    console.log(err);
+    await rollbackTransaction();
+    return res.status(500).json();
+  }
+});
 
 
 

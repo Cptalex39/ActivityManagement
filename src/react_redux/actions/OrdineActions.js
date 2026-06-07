@@ -24,11 +24,16 @@ export class OrdineActions extends Actions {
   }
 
   async inserimentoOrdine(nuovoOrdine) { 
-    //console.log("Nuovo ordine:")
-    //console.log(nuovoOrdine);
     const response = await super.getResponse("/INSERISCI_ORDINE", nuovoOrdine);
 
+    let problema = false;
+    if(response.ok) {
+      const result = await response.json();
+      problema = result.problema;
+    }
+
     return {
+      problema: problema, 
       isOK: response.ok, 
       responseStatus: response.status, 
     };
@@ -51,7 +56,6 @@ export class OrdineActions extends Actions {
     datiRicerca.data_prenotazione_max = "9999-01-01";
     datiRicerca.azione = "Ricerca";
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
-    //console.log(response.ok ? (await response.json()).items : [])
     return {
       items: response.ok ? (await response.json()).items : [], 
       isOK: response.ok, 
@@ -59,8 +63,8 @@ export class OrdineActions extends Actions {
     }
   }
 
-  async ottieniOrdiniUltime48Ore() {    
-    const response = await super.getResponse("/OTTIENI_ORDINI_ULTIME_48_ORE", {});
+  async ottieniOrdiniUltime48Ore(dati) {    
+    const response = await super.getResponse("/OTTIENI_ORDINI_ULTIME_48_ORE", dati);
 
     return {
       items: response.ok ? (await response.json()).items : [], 
@@ -90,8 +94,6 @@ export class OrdineActions extends Actions {
   async ottieniNumeroPagamentiNonConfermatiCliente(dati) {
     const response = await super.getResponse("/OTTIENI_NUMERO_PAGAMENTI_NON_CONFERMATI_CLIENTE", dati);
     
-    //console.log(response.ok ? (await response.json()).result : []);
-
     return {
       numero_pagamenti_non_confermati: response.ok ? (await response.json()).result[0].numero_pagamenti_non_confermati : -1, 
       isOK: response.ok, 
@@ -116,6 +118,24 @@ export class OrdineActions extends Actions {
     return {
       isOK: response.ok, 
       responseStatus: response.status, 
+    };
+  }
+
+  async ottieniNumeroOrdiniDataPerOrario(dati) {
+    const response = await super.getResponse("/OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO", dati);
+
+    let numeroOrdini = null;
+    
+    if(response.ok) {
+      const result = await response.json();
+      
+      numeroOrdini = result.numero_ordini;
+    }
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+      numero_ordini: numeroOrdini, 
     };
   }
 }

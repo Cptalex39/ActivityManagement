@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
-// ====================== NAV LEFT ======================
 export const StyledNavLeft = styled(Nav)`
   background-color: transparent;
   margin-right: auto;
@@ -13,10 +12,9 @@ export const StyledNavLeft = styled(Nav)`
   align-items: center;
 `;
 
-// ====================== NAV CENTER ======================
 export const StyledNavCenter = styled(Nav)`
   background-color: transparent;
-  position: absolute;      // logo centrato
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -25,18 +23,16 @@ export const StyledNavCenter = styled(Nav)`
   z-index: 1;
 `;
 
-// ====================== NAV RIGHT ======================
 export const StyledNavRight = styled(Nav)`
   background-color: transparent;
   display: flex;
   align-items: center;
-  justify-content: flex-end; // elementi allineati a destra
-  flex: 1;                    // occupa tutto lo spazio a destra
+  justify-content: flex-end; 
+  flex: 1;  
   height: 100%;
-  gap: 20px;                  // distanza uniforme tra link
+  gap: 20px;
 `;
 
-// ====================== NAV DROPDOWN ======================
 export const StyledNavDropdown = styled(NavDropdown)`
   .dropdown-menu {
     background-color: #000000;
@@ -70,7 +66,6 @@ export const StyledNavDropdownItem = styled(NavDropdown.Item)`
   }
 `;
 
-// ====================== CONTAINERS ======================
 export const StyledDropdownContainer = styled.div`
   display: flex;
   text-align: center;
@@ -82,7 +77,6 @@ export const StyledSubMenuContainer = styled.div`
   text-align: center;
 `;
 
-// ====================== NAV LINKS ======================
 export const StyledNavLink = styled(Nav.Link)`
   color: #FFFFFF;
   font-weight: bold;

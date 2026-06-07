@@ -46,6 +46,9 @@ const reducers = {
       state.value.contatto = action.payload.contatto;
       state.value.indirizzo = action.payload.indirizzo;
     }
+    state.value.primo_intervallo = action.payload.primo_intervallo;
+    state.value.secondo_intervallo = action.payload.secondo_intervallo;
+    state.value.numero_clienti = action.payload.numero_clienti;
     saveToLocalStorage(state);
   },
   logout: (state) => {
@@ -57,6 +60,9 @@ const reducers = {
       state.value.contatto = null;
       state.value.indirizzo = null;
     }
+    state.value.primo_intervallo = null;
+    state.value.secondo_intervallo = null;
+    state.value.numero_clienti = null;
     state.value.username = null;
     state.value.ruolo = "guest";
     state.value.isLogged = false;
@@ -84,8 +90,7 @@ const autenticazioneSlice = createSlice({
 export const autenticazioneSliceActions = {
   login: autenticazioneSlice.actions.login,
   logout: autenticazioneSlice.actions.logout, 
-  aggiornaIndirizzo: autenticazioneSlice.actions.aggiornaIndirizzo, 
-  //aggiornaProfiloCliente: autenticazioneSlice.aggiornaProfiloCliente, 
+  aggiornaIndirizzo: autenticazioneSlice.actions.aggiornaIndirizzo,  
   aggiornaProfiloCliente: autenticazioneSlice.actions.aggiornaProfiloCliente,
 };
 

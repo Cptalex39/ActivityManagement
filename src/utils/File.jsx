@@ -1,6 +1,6 @@
 // React e Redux
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
-import ExcelJS from 'exceljs';
+import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import ReactDOMServer from 'react-dom/server';
 // Utils
@@ -57,116 +57,6 @@ const getDettagliOrdine = (items) => {
     dettagliOrdine += `\n`
   }
   return dettagliOrdine;
-};
-
-export const generaFileSpesePDFOLD = async (spese) => {
-  const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([600, 800]);
-  const timesRomanFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-
-  let y = 750;
-  const startX = 50;
-
-  // Funzione per avvolgere il testo
-  const wrapText = (text, maxWidth) => {
-    const words = text.split(' ');
-    let lines = [];
-    let line = '';
-
-    words.forEach((word) => {
-      const potentialLine = line.length === 0 ? word : line + ' ' + word;
-      if (potentialLine.length <= maxWidth) {
-        line = potentialLine;
-      } else {
-        lines.push(line);
-        line = word;
-      }
-    });
-    if (line) {
-      lines.push(line);
-    }
-    return lines;
-  };
-
-  // Colore per intestazioni
-  const headerColor = rgb(0.8, 0.8, 1); // Celeste
-
-  // Disegna sfondo per intestazioni
-  page.drawRectangle({
-    x: startX,
-    y: y - 20,
-    width: 500,
-    height: 20,
-    color: headerColor,
-  });
-
-  // Intestazione della tabella
-  const headers = ['Nome', 'Giorno', 'Descrizione', 'Totale (€)', 'Note'];
-  headers.forEach((header, index) => {
-    page.drawText(header, {
-      x: startX + index * 100,
-      y: y - 15,
-      size: 12,
-      font: timesRomanFont,
-      color: rgb(0, 0, 0), // Testo nero
-    });
-  });
-  y -= 40;
-
-  // Colori alternati per le righe
-  const rowColor1 = rgb(1, 1, 1); // Bianco
-  const rowColor2 = rgb(0.9, 0.9, 0.9); // Grigio chiaro
-
-  // Contenuto della tabella
-  if (spese.length > 0) {
-    spese.forEach((spesa, rowIndex) => {
-      const rowColor = rowIndex % 2 === 0 ? rowColor1 : rowColor2;
-
-      // Disegna sfondo della riga
-      page.drawRectangle({
-        x: startX,
-        y: y - 20,
-        width: 500,
-        height: 20,
-        color: rowColor,
-      });
-
-      // Testo della riga con avvolgimento
-      const values = [
-        spesa.nome,
-        spesa.giorno,
-        spesa.descrizione,
-        spesa.totale,
-        spesa.note,
-      ];
-      values.forEach((value, index) => {
-        const lines = wrapText(String(value), 15); // Limite di caratteri per colonna
-        lines.forEach((line, lineIndex) => {
-          page.drawText(line, {
-            x: startX + index * 100,
-            y: y - 15 - (lineIndex * 12), // Spazio tra righe avvolte
-            size: 12,
-            font: timesRomanFont,
-            color: rgb(0, 0, 0), // Testo nero
-          });
-        });
-      });
-      y -= 20 + (wrapText(values.join(''), 15).length * 12); // Adatta altezza
-    });
-  } else {
-    page.drawText('Nessuna spesa trovata.', { x: startX, y, size: 12, font: timesRomanFont });
-  }
-
-  const pdfBytes = await pdfDoc.save();
-
-  // Creazione del blob e download del file
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'spese.pdf';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 };
 
 export const generaFileSpesePDF = async (ordini) => {
@@ -286,83 +176,106 @@ export const generaFileOrdiniPDF = async (ordini) => {
 };   
 
 export const generaFileSpeseExcel = async (spese) => {
-  const workbook = new ExcelJS.Workbook();
-  const speseSheet = workbook.addWorksheet('Spese');
+  // Creiamo un nuovo foglio di lavoro (Workbook)
+  const workbook = XLSX.utils.book_new();
+  let dataToExport = [];
 
-  // Aggiunge i dati al foglio speseSheet
   if (spese.length > 0) {
-    speseSheet.columns = [
-      { header: "Nome", key: 'nome', width: 20 },  
-      { header: "Giorno", key: 'giorno', width: 20 }, 
-      { header: "Descrizione", key: 'descrizione', width: 30 }, 
-      { header: "Totale", key: 'totale', width: 10 }, 
-      { header: "Note", key: 'note', width: 30 }
-    ];
-    spese.forEach(spesa => {
-      speseSheet.addRow({
-        nome: spesa.nome, 
-        giorno: formatoDate(spesa.giorno, "GG-MM-AAAA"), 
-        descrizione: spesa.descrizione, 
-        totale: spesa.totale + " €", 
-        note: spesa.note 
-      });
-    });
-  } 
-  else {
-    speseSheet.addRow(['Nessuna spesa trovata.']);
+    // Mappiamo i dati nel formato corretto (incluso l'header come chiavi dell'oggetto)
+    dataToExport = spese.map(spesa => ({
+      'Nome': spesa.nome,
+      'Giorno': formatoDate(spesa.giorno, "GG-MM-AAAA"),
+      'Descrizione': spesa.descrizione,
+      'Totale': spesa.totale + " €",
+      'Note': spesa.note
+    }));
+  } else {
+    // Caso in cui non ci siano spese
+    dataToExport = [{ 'Messaggio': 'Nessuna spesa trovata.' }];
   }
 
-  // Genera il file Excel come blob
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  // Trasformiamo l'array di oggetti in un foglio di calcolo (Worksheet)
+  const speseSheet = XLSX.utils.json_to_sheet(dataToExport);
 
-  // Salva il file usando FileSaver.js
-  saveAs(blob, 'Spese.xlsx');
+  // Impostiamo la larghezza delle colonne
+  if (spese.length > 0) {
+    speseSheet['!cols'] = [
+      { wch: 20 }, // Nome
+      { wch: 20 }, // Giorno
+      { wch: 30 }, // Descrizione
+      { wch: 10 }, // Totale
+      { wch: 30 }  // Note
+    ];
+  }
+
+  // Appendiamo il foglio al workbook con il nome 'Spese'
+  XLSX.utils.book_append_sheet(workbook, speseSheet, 'Spese');
+
+  // Generiamo il file e avviamo il download direttamente
+  XLSX.writeFile(workbook, 'Spese.xlsx');
+  
   console.log('File Excel generato con successo.');
 };
 
 export const generaFileOrdiniExcel = async (ordini) => {
-  const workbook = new ExcelJS.Workbook();
-  const ordiniSheet = workbook.addWorksheet('Ordini');
+  const workbook = XLSX.utils.book_new();
+  let dataToExport = [];
 
-  // Aggiunge i dati al foglio ordiniSheet
+  // Aggiungiamo i dati al foglio ordiniSheet
   if (ordini.length > 0) {
-    ordiniSheet.columns = [
-      { header: "Cliente", key: 'cliente', width: 30 },  
-      { header: "Data creazione", key: 'data_creazione', width: 30 }, 
-      { header: "Totale", key: 'totale', width: 10 }, 
-      { header: "Metodo di pagamento", key: 'metodo_pagamento', width: 30 }, 
-      { header: "Pagamento confermato", key: 'pagamento_confermato', width: 30 }, 
-      { header: "Dettagli di prenotazione", key: 'dettagli_prenotazione', width: 50 },
-      { header: "Dettagli di spedizione", key: 'dettagli_spedizione', width: 50 },
-      { header: "Dettagli corriere", key: 'dettagli_corriere', width: 50 }, 
-      { header: "Dettagli ordine", key: 'dettagli_ordine', width: 50 }
-    ];
-    ordini.forEach(ordine => {
+    dataToExport = ordini.map(ordine => {
       const data = new Date(ordine.data_creazione);
-      ordiniSheet.addRow({
-        cliente: ordine.cognome_cliente + " " + ordine.nome_cliente,
-        data_creazione: ("00"+data.getDate()).slice(-2)+"/"+("00"+(data.getMonth()+1)).slice(-2)+"/"+(data.getFullYear()+" "+("00"+data.getHours()).slice(-2)+":"+("00"+data.getMinutes()).slice(-2)+":"+("00"+data.getSeconds()).slice(-2)), 
-        totale: ordine.totale, 
-        metodo_pagamento: ordine.metodo_pagamento,
-        pagamento_confermato: ordine.is_pagato ? "Si" : "No", 
-        dettagli_prenotazione: ordine.metodo_pagamento === "Struttura" ? getDettagliPrenotazione(ordine.data_prenotazione, ordine.ora_prenotazione) : "Dettagli non presenti.", 
-        dettagli_spedizione: ordine.metodo_pagamento === "Spedizione" ? getDettagliSpedizione(ordine.indirizzo, ordine.numero_carta) : "Dettagli non presenti.", 
-        dettagli_corriere: ordine.metodo_pagamento === "Corriere" ? getDettagliCorriere(ordine.indirizzo) : "Dettagli non presenti.", 
-        dettagli_ordine: getDettagliOrdine(JSON.parse(ordine.items))
-      });
+      
+      // Manteniamo la tua formattazione manuale della data
+      const dataFormattata = ("00" + data.getDate()).slice(-2) + "/" + 
+                             ("00" + (data.getMonth() + 1)).slice(-2) + "/" + 
+                             (data.getFullYear() + " " + 
+                             ("00" + data.getHours()).slice(-2) + ":" + 
+                             ("00" + data.getMinutes()).slice(-2) + ":" + 
+                             ("00" + data.getSeconds()).slice(-2));
+
+      return {
+        "Cliente": ordine.cognome_cliente + " " + ordine.nome_cliente,
+        "Data creazione": dataFormattata,
+        "Totale": ordine.totale,
+        "Metodo di pagamento": ordine.metodo_pagamento,
+        "Pagamento confermato": ordine.is_pagato ? "Si" : "No",
+        "Dettagli di prenotazione": ordine.metodo_pagamento === "Struttura" ? getDettagliPrenotazione(ordine.data_prenotazione, ordine.ora_prenotazione) : "Dettagli non presenti.",
+        "Dettagli di spedizione": ordine.metodo_pagamento === "Spedizione" ? getDettagliSpedizione(ordine.indirizzo, ordine.numero_carta) : "Dettagli non presenti.",
+        "Dettagli corriere": ordine.metodo_pagamento === "Corriere" ? getDettagliCorriere(ordine.indirizzo) : "Dettagli non presenti.",
+        "Dettagli ordine": getDettagliOrdine(JSON.parse(ordine.items))
+      };
     });
   } 
   else {
-    ordiniSheet.addRow(['Nessun ordine trovato.']);
+    // Caso in cui non ci siano ordini
+    dataToExport = [{ "Messaggio": 'Nessun ordine trovato.' }];
   }
 
-  // Genera il file Excel come blob
-  const buffer = await workbook.xlsx.writeBuffer();
-  const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  // Trasformiamo l'array di oggetti nel foglio di calcolo
+  const ordiniSheet = XLSX.utils.json_to_sheet(dataToExport);
 
-  // Salva il file usando FileSaver.js
-  saveAs(blob, 'Ordini.xlsx');
+  // Impostiamo le larghezze delle colonne
+  if (ordini.length > 0) {
+    ordiniSheet['!cols'] = [
+      { wch: 30 }, // Cliente
+      { wch: 30 }, // Data creazione
+      { wch: 10 }, // Totale
+      { wch: 30 }, // Metodo di pagamento
+      { wch: 30 }, // Pagamento confermato
+      { wch: 50 }, // Dettagli di prenotazione
+      { wch: 50 }, // Dettagli di spedizione
+      { wch: 50 }, // Dettagli corriere
+      { wch: 50 }  // Dettagli ordine
+    ];
+  }
+
+  // Appendiamo il foglio al workbook
+  XLSX.utils.book_append_sheet(workbook, ordiniSheet, 'Ordini');
+
+  // Scriviamo il file e avviamo il download
+  XLSX.writeFile(workbook, 'Ordini.xlsx');
+  
   console.log('File Excel generato con successo.');
 };
 

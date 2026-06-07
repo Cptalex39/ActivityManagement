@@ -4,28 +4,6 @@ export class OrdineSQL {
     VALUES (DATE_FORMAT(NOW(3), '%Y-%m-%d_%H:%i:%s:%f'), NOW(), ?, ?, ?, ?, ?, ?, ?, ?); 
   `;
 
-  SQL_OTTIENI_ORDINI_ULTIME_48_ORE = `
-    SELECT 
-      ordine.codice AS codice, 
-      ordine.data_creazione AS data_creazione, 
-      ordine.items AS items, 
-      ordine.metodo_pagamento AS metodo_pagamento, 
-      ordine.data_prenotazione AS data_prenotazione, 
-      ordine.ora_prenotazione AS ora_prenotazione, 
-      ordine.indirizzo AS indirizzo, 
-      ordine.numero_carta AS numero_carta, 
-      ordine.totale AS totale, 
-      ordine.is_pagato AS is_pagato, 
-      cliente.username AS username_cliente, 
-      cliente.nome AS nome_cliente, 
-      cliente.cognome AS cognome_cliente, 
-      cliente.contatto AS contatto_cliente, 
-      cliente.email AS email_cliente 
-    FROM ordine INNER JOIN cliente 
-    ON ordine.id_cliente = cliente.id 
-    WHERE ordine.data_creazione >= NOW() - INTERVAL 2 DAY;
-  `
-
   SQL_ELIMINAZIONE_PAGAMENTO_DA_CONFERMARE = `
     DELETE 
     FROM ordine 
@@ -84,7 +62,37 @@ export class OrdineSQL {
     ) i ON i.mese = m.num_mese
     GROUP BY m.num_mese 
     ORDER BY m.num_mese;   
-  `
+  `;
+
+  SQL_OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO = `
+    SELECT 
+      SUM(CASE WHEN ora_prenotazione = '00:00:00' THEN 1 ELSE 0 END) AS "00:00", 
+      SUM(CASE WHEN ora_prenotazione = '01:00:00' THEN 1 ELSE 0 END) AS "01:00", 
+      SUM(CASE WHEN ora_prenotazione = '02:00:00' THEN 1 ELSE 0 END) AS "02:00", 
+      SUM(CASE WHEN ora_prenotazione = '03:00:00' THEN 1 ELSE 0 END) AS "03:00", 
+      SUM(CASE WHEN ora_prenotazione = '04:00:00' THEN 1 ELSE 0 END) AS "04:00", 
+      SUM(CASE WHEN ora_prenotazione = '05:00:00' THEN 1 ELSE 0 END) AS "05:00", 
+      SUM(CASE WHEN ora_prenotazione = '06:00:00' THEN 1 ELSE 0 END) AS "06:00", 
+      SUM(CASE WHEN ora_prenotazione = '07:00:00' THEN 1 ELSE 0 END) AS "07:00", 
+      SUM(CASE WHEN ora_prenotazione = '08:00:00' THEN 1 ELSE 0 END) AS "08:00", 
+      SUM(CASE WHEN ora_prenotazione = '09:00:00' THEN 1 ELSE 0 END) AS "09:00", 
+      SUM(CASE WHEN ora_prenotazione = '10:00:00' THEN 1 ELSE 0 END) AS "10:00", 
+      SUM(CASE WHEN ora_prenotazione = '11:00:00' THEN 1 ELSE 0 END) AS "11:00", 
+      SUM(CASE WHEN ora_prenotazione = '12:00:00' THEN 1 ELSE 0 END) AS "12:00", 
+      SUM(CASE WHEN ora_prenotazione = '13:00:00' THEN 1 ELSE 0 END) AS "13:00", 
+      SUM(CASE WHEN ora_prenotazione = '14:00:00' THEN 1 ELSE 0 END) AS "14:00", 
+      SUM(CASE WHEN ora_prenotazione = '15:00:00' THEN 1 ELSE 0 END) AS "15:00", 
+      SUM(CASE WHEN ora_prenotazione = '16:00:00' THEN 1 ELSE 0 END) AS "16:00", 
+      SUM(CASE WHEN ora_prenotazione = '17:00:00' THEN 1 ELSE 0 END) AS "17:00", 
+      SUM(CASE WHEN ora_prenotazione = '18:00:00' THEN 1 ELSE 0 END) AS "18:00", 
+      SUM(CASE WHEN ora_prenotazione = '19:00:00' THEN 1 ELSE 0 END) AS "19:00", 
+      SUM(CASE WHEN ora_prenotazione = '20:00:00' THEN 1 ELSE 0 END) AS "20:00", 
+      SUM(CASE WHEN ora_prenotazione = '21:00:00' THEN 1 ELSE 0 END) AS "21:00", 
+      SUM(CASE WHEN ora_prenotazione = '22:00:00' THEN 1 ELSE 0 END) AS "22:00", 
+      SUM(CASE WHEN ora_prenotazione = '23:00:00' THEN 1 ELSE 0 END) AS "23:00" 
+    FROM ordine 
+    WHERE data_prenotazione = ? AND metodo_pagamento = "Struttura";
+  `;   
 
   constructor() {
     
@@ -110,6 +118,32 @@ export class OrdineSQL {
       FROM ordine INNER JOIN cliente 
       ON ordine.id_cliente = cliente.id 
       WHERE is_pagato = 0
+    `;
+    sql += params.id_cliente > 0 ? ` AND ordine.id_cliente = ?;` : `;`;
+    return sql;
+  }
+
+  sql_ottieni_ordini_ultime_48_ore(params) {
+    let sql = `
+      SELECT 
+        ordine.codice AS codice, 
+        ordine.data_creazione AS data_creazione, 
+        ordine.items AS items, 
+        ordine.metodo_pagamento AS metodo_pagamento, 
+        ordine.data_prenotazione AS data_prenotazione, 
+        ordine.ora_prenotazione AS ora_prenotazione, 
+        ordine.indirizzo AS indirizzo, 
+        ordine.numero_carta AS numero_carta, 
+        ordine.totale AS totale, 
+        ordine.is_pagato AS is_pagato, 
+        cliente.username AS username_cliente, 
+        cliente.nome AS nome_cliente, 
+        cliente.cognome AS cognome_cliente, 
+        cliente.contatto AS contatto_cliente, 
+        cliente.email AS email_cliente 
+      FROM ordine INNER JOIN cliente 
+      ON ordine.id_cliente = cliente.id 
+      WHERE ordine.data_creazione >= NOW() - INTERVAL 2 DAY
     `;
     sql += params.id_cliente > 0 ? ` AND ordine.id_cliente = ?;` : `;`;
     return sql;
@@ -155,10 +189,10 @@ export class OrdineSQL {
     return [  
       params.items, 
       params.metodo_pagamento, 
-      params.data_prenotazione || null, 
-      params.ora_prenotazione || null, 
-      `${params.indirizzo}`, 
-      params.numero_carta || null, 
+      params.metodo_pagamento === "Struttura" ? params.data_prenotazione : null, 
+      params.metodo_pagamento === "Struttura" ? params.ora_prenotazione  : null, 
+      ["Spedizione", "Corriere"].includes(params.metodo_pagamento) ? `${params.indirizzo}` : null, 
+      params.metodo_pagamento === "Spedizione" ? params.numero_carta : null, 
       params.totale, 
       params.id_cliente  
     ];
@@ -170,8 +204,10 @@ export class OrdineSQL {
     ] : [];
   }
 
-  params_ottieni_ordini_ultime_48_ore() {
-    return [];
+  params_ottieni_ordini_ultime_48_ore(params) {
+    return params.id_cliente > 0 ? [
+      params.id_cliente
+    ] : [];
   }
 
   params_selezione_ordini(params) {
@@ -238,6 +274,12 @@ export class OrdineSQL {
     return [
       params.anno, 
       params.anno
+    ];
+  }
+
+  params_ottieni_numero_ordini_data_per_orario(params) {
+    return [
+      params.data_prenotazione 
     ];
   }
 }

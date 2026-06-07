@@ -5,7 +5,7 @@ const name = "Carrello";
 
 const initialState = {
   value: {
-    items: [],        // Array di { id, nome, prezzo, tipo, note, quantita }
+    items: [],
   }
 }
 

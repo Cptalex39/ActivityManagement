@@ -6,6 +6,8 @@ ALTER TABLE `cliente`
     ADD COLUMN `salt_hex` VARCHAR(32) NOT NULL AFTER `password`, 
     ADD COLUMN `indirizzo` VARCHAR(100) AFTER `salt_hex`, 
     ADD COLUMN `is_active` BOOLEAN NOT NULL AFTER `salt_hex`,
+    MODIFY `contatto` VARCHAR(22) NOT NULL,
+    MODIFY `email` VARCHAR(254) NOT NULL,
     DROP COLUMN `note`; 
     
 CREATE TABLE `carta` (
@@ -57,9 +59,21 @@ CREATE TABLE `ordine` (
 ALTER TABLE `utente` 
 	DROP COLUMN `note`; 
     
+CREATE TABLE `attivita` (
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`primo_intervallo` VARCHAR(5) DEFAULT "0-23", 
+	`secondo_intervallo` VARCHAR(5),  
+    `numero_clienti` INTEGER NOT NULL DEFAULT 1,
+    
+    PRIMARY KEY(id)
+);
+    
 DROP TABLE `collegamento`;
 
 DROP TABLE `lavoro`;
+
+INSERT INTO `attivita` (`id`, `primo_intervallo`, `secondo_intervallo`, `numero_clienti`) 
+VALUES (1,"0-23",null,1);
 
 
 

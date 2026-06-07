@@ -77,23 +77,7 @@ export const handleEdit = async (e, actions, servizi, selectedIdsModifica, setSe
   alert(esitoModifica);
 }
 
-export const handleDelete = async (e, actions, selectedIdsEliminazione, setSelectedIdsEliminazione, servizi) => {
-  e.preventDefault();
 
-  if (!confirm("Sei sicuro di voler eliminare i servizi?")) {
-    alert("Eliminazione annullata.");
-    return;
-  }
-
-  const result = await actions.eliminaServizi(selectedIdsEliminazione, setSelectedIdsEliminazione, servizi);
-
-  if(!result.isOK) {
-    alert("Errore durante l\'eliminazione dei servizi, riprova più tardi.");
-    return;
-  }
-
-  alert("Eliminazione completata con successo.");
-}
 
 
 

@@ -8,7 +8,6 @@ const ConfermaOrdine = () => {
     navigate("/nuovo-ordine")
   }
 
-  // Schermata di conferma post-ordine
   return (
     <>
       <Header />      

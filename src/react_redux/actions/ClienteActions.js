@@ -6,7 +6,7 @@ import { autenticazioneSliceActions } from '../store/reducers/AutenticazioneRedu
 // Actions
 import { Actions } from "./Actions";
 // Utils
-import { controlloCliente } from '../../utils/Controlli';
+import { controlloRicercaClienti, controlloModificaProfiloCliente } from '../../utils/Controlli';
 import { encryptPassword, generateRandomString, passwordIsCorrect, PEPPER_HEX } from '../../utils/Sicurezza';
 
 export class ClienteActions extends Actions {
@@ -34,11 +34,7 @@ export class ClienteActions extends Actions {
    * 
    * @returns {Object} risultato response operazione.
    */
-  async registrazioneCliente(nuovoCliente, setNuovoCliente) {
-    if (controlloCliente(nuovoCliente, setNuovoCliente) > 0) {
-      return null;
-    }
-    
+  async registrazioneCliente(nuovoCliente, setNuovoCliente) {    
     nuovoCliente.salt_hex = generateRandomString(32);
     nuovoCliente.password = encryptPassword(nuovoCliente.password, nuovoCliente.salt_hex, PEPPER_HEX);
 
@@ -50,14 +46,14 @@ export class ClienteActions extends Actions {
     }
   }
 
-  /**
-   * Azione per eseguire la ricerca dei clienti.
-   * 
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async ricercaClienti(datiRicerca) {    
+  async ricercaClienti(datiRicerca, setDatiRicerca) {
+    const risultatoControllo = controlloRicercaClienti(datiRicerca);
+    setDatiRicerca(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
     if(response.ok) {
@@ -113,13 +109,6 @@ export class ClienteActions extends Actions {
     }
   }
 
-  /**
-   * Azione per aggiornare un attributo di un cliente.
-   * 
-   * @param {number} id_cliente - id del cliente da aggiornare. 
-   * @param {String} nome_attributo - nome dell'attributo da aggiornare.
-   * @param {*} nuovo_valore - valore dell'attributo aggiornato.
-   */
   aggiornaCliente(id_cliente, nome_attributo, nuovo_valore) {
     this.dispatch(clienteSliceActions.aggiornaCliente({
       id_cliente: id_cliente,
@@ -128,15 +117,6 @@ export class ClienteActions extends Actions {
     }))
   }
 
-  /**
-   * Azione per eliminare i clienti selezionati.
-   * 
-   * @param {Array<number>} selectedIdsEliminazione - id dei clienti selezionati per l'eliminazione.
-   * @param {Function} setSelectedIdsEliminazione - setter degli id dei clienti selezionati per l'eliminazione.
-   * @param {Array<Object>} clienti - lista dei clienti.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
   async eliminaCliente(username) {
     const dati = {
       username: username,
@@ -171,6 +151,19 @@ export class ClienteActions extends Actions {
     }
   }
 
+  async riattivaCliente(username) {
+    const dati = {
+      username: username
+    }
+
+    const response = await super.getResponse("RIATTIVA_CLIENTE", dati);
+
+    return {
+      isOK: response.ok, 
+      responseStatus: response.status, 
+    }
+  }
+
   async ottieniClientiDaEliminare() {
     const response = await super.getResponse("/OTTIENI_CLIENTI_DA_ELIMINARE", {});
 
@@ -187,7 +180,6 @@ export class ClienteActions extends Actions {
     let response = await super.getResponse("/OTTIENI_PASSWORD", dati)
     if(response.ok) {
       let result = (await response.json()).result[0];
-      console.log(`id: ${dati.id}`);
       isPasswordCorrect = passwordIsCorrect(dati.password_attuale, result.password, result.salt_hex);
     }
     // se entrambe le password combaciano allora procediamo con le modifiche

@@ -9,6 +9,8 @@ import { SpesaForms } from "../forms/SpesaForms";
 import { SpesaActions } from "../../actions/SpesaActions";
 // Riutilizzabile
 import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
+// Utils
+import { controlloRicercaSpese } from "../../../utils/Controlli.js";
 
 const Spese = () => {
   const spesaActions = new SpesaActions();
@@ -51,6 +53,12 @@ const Spese = () => {
     note: ""
   });
 
+  /**
+   * Funzione che ci permette di selezionare un'operazione: modifica (pencil) o eliminazione (trash).
+   * 
+   * @param {string} icon - stringa rappresentante l'operazione selezionata (pencil o trash).
+   * @param {Object} item - oggetto in cui selezioniamo l'operazione 
+   */
   const selectOperation = (icon, item) => {
     spesaActions.selezioneOperazioneSpesa(
       icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, setSelectedIdsEliminazione, 
@@ -58,14 +66,30 @@ const Spese = () => {
     );
   }
 
+  /**
+   * Funzione che ci permette di selezionare la matita (operazione di modifica).
+   * 
+   * @param {Object} item - oggetto in cui selezioniamo l'operazione di modifica (pencil)
+   */
   const operazioneModifica = (item) => {
     selectOperation("pencil", item);
   };
 
+  /**
+   * Funzione che ci permette di selezionare il cestino (operazione di eliminazione).
+   * 
+   * @param {Object} item - oggetto in cui selezioniamo l'operazione di eliminazione (trash) 
+   */
   const operazioneElimina = (item) => {
     selectOperation("trash", item);
   };
 
+  /**
+   * Funzione che ci permette di eseguire delle operazioni quando un elemento dell'oggetto item perde il focus.
+   * 
+   * @param {Event} e - Evento con target specifico.
+   * @param {Object} item - Oggetto coinvolto.
+   */
   const handleBlurItem = (e, item) => {
     const { name, value } = e.target;
     spesaActions.aggiornaSpesa(item.id, name, value);
@@ -74,6 +98,13 @@ const Spese = () => {
     }
   };
 
+  /**
+   * Funzione che calcola il totale delle spese presenti
+   * 
+   * @returns {string} 
+   * - Una stringa rappresentante il totale delle spese, seguito dal simbolo € se è presente almeno una spesa. 
+   * - Una stringa vuota ("") nel caso in cui non sono presenti delle spese.
+   */
   const getTotaleSpese = () => {
     let totaleSpese = 0;
     if(spesaState.spese && spesaState.spese.length > 0) {
@@ -86,11 +117,7 @@ const Spese = () => {
       return "";
     }
   }
-
-  useEffect(() => {
-    spesaActions.azzeraLista();
-  }, []);
-
+  
   const campiNuovaSpesa = spesaForms.getCampiNuovaSpesa(
     nuovaSpesa, 
     (e) => operazioniForms.handleInputChange(e, setNuovaSpesa), 
@@ -101,7 +128,7 @@ const Spese = () => {
     datiRicerca, 
     (e) => operazioniForms.handleInputChange(e, setDatiRicerca), 
     (e) => operazioniForms.handleInputClick(e, setDatiRicerca), 
-    (e) => operazioniForms.handleInputBlur(e, setDatiRicerca) 
+    (e) => operazioniForms.handleInputBlur(e, setDatiRicerca)
   );
   const campiFile = spesaForms.getCampiFile(
     datiRicerca, 
@@ -109,6 +136,63 @@ const Spese = () => {
     (e) => operazioniForms.handleInputClick(e), 
     (e) => operazioniForms.handleInputBlur(e) 
   );
+
+  /**
+   * Funzione che esegue l'eliminazione delle spese selezionate.
+   * 
+   * @param {Event} e - Evento coinvolto.
+   * @returns {void}
+   */
+  const handleDelete = async (e) => {
+    e.preventDefault();
+
+    if (!confirm("Sei sicuro di voler eliminare le spese?")) {
+      alert("Eliminazione annullata.");
+      return;
+    }
+
+    const result = await spesaActions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese);
+
+    if(!result.isOK) {
+      alert("Errore durante l\'eliminazione delle spese, riprova più tardi.");
+      return;
+    }
+    alert("Eliminazione completata con successo.");
+  }
+
+  /**
+   * Funzione che esegue l'eliminazione delle spese presenti nel range di 2 date definite nel form (estreme incluse).
+   * 
+   * @param {Event} e - Evento coinvolto.
+   * @returns {void}
+   */
+  const handleDeleteRangeFile = async (e) => {
+    e.preventDefault();
+
+    if (!confirm("Sei sicuro di voler eliminare le spese?")) {
+      alert("Eliminazione annullata.");
+      return;
+    }
+
+    const risultatoControllo = controlloRicercaSpese(datiRicerca);
+    setDatiRicerca(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
+    }
+
+    const result = await spesaActions.handleDeleteSpeseRangeFile(datiRicerca);
+
+    if(!result.isOK) {
+      alert("Errore durante l\'eliminazione delle spese, riprova più tardi."); 
+      return;
+    }
+    alert("Eliminazione completata con successo.");
+  }
+
+  useEffect(() => {
+    spesaActions.azzeraLista();
+  }, []);
 
   return (
     <>
@@ -124,18 +208,17 @@ const Spese = () => {
             items: spesaState.spese,  
             setItems: null, 
             servizi: null, 
-            // Stati
             // Handle operations
             handleBlurItem: handleBlurItem, 
             operazioneModifica: operazioneModifica,
             operazioneElimina: operazioneElimina, 
             handleInsert: () => spesaActions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa), 
-            handleSearch: () => spesaActions.ricercaSpese(datiRicerca), 
+            handleSearch: () => spesaActions.ricercaSpese(datiRicerca, setDatiRicerca), 
             handleEdit:   () => spesaActions.modificaSpese(spesaState.spese, selectedIdsModifica, setSelectedIdsModifica),  
-            handleDelete: () => spesaActions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese), 
-            handleSearchRangeFilePDF: () => spesaActions.handleSearchSpeseRangeFile("pdf", setTipoFile, datiRicerca, setSpese),
-            handleSearchRangeFileExcel: () => spesaActions.handleSearchSpeseRangeFile("excel", setTipoFile, datiRicerca, setSpese),
-            handleDeleteRangeFile: () => spesaActions.handleDeleteSpeseRangeFile(datiRicerca),
+            handleDelete: handleDelete, 
+            handleSearchRangeFilePDF: () => spesaActions.handleSearchSpeseRangeFile("pdf", setTipoFile, datiRicerca, setDatiRicerca, setSpese),
+            handleSearchRangeFileExcel: () => spesaActions.handleSearchSpeseRangeFile("excel", setTipoFile, datiRicerca, setDatiRicerca, setSpese),
+            handleDeleteRangeFile: handleDeleteRangeFile,
             // Campi
             campiNuovoItem: campiNuovaSpesa, 
             campiRicercaItems: campiRicercaSpese,

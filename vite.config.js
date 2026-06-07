@@ -37,6 +37,9 @@ export default defineConfig({
       '/OTTIENI_PASSWORD_UTENTE': 'http://localhost:3000', 
       '/ESEGUI_ANALISI': 'http://localhost:3000', 
       '/OTTIENI_ENTRATE_ORDINI': 'http://localhost:3000', 
+      '/RIATTIVA_CLIENTE': 'http://localhost:3000', 
+      '/OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO': 'http://localhost:3000', 
+      '/OTTIENI_DATI_ATTIVITA': 'http://localhost:3000', 
     }
   }
 });

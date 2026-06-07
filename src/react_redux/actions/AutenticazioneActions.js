@@ -5,7 +5,7 @@ import { autenticazioneSliceActions } from '../store/reducers/AutenticazioneRedu
 // Actions
 import { Actions } from "./Actions";
 // Utils
-import { controlloLogin, controlloProfilo } from "../../utils/Controlli";
+import { controlloLogin, controlloModificaProfiloUtente } from "../../utils/Controlli";
 import { passwordIsCorrect, generateRandomString, encryptPassword, PEPPER_HEX } from '../../utils/Sicurezza';
 
 export class AutenticazioneActions extends Actions {
@@ -26,6 +26,8 @@ export class AutenticazioneActions extends Actions {
   async login(datiLogin, setDatiLogin) {
     const response = await super.getResponse("/LOGIN", datiLogin);
 
+    let isActive = 0;
+
     if(response.ok) {
       const result = await response.json();
 
@@ -34,21 +36,25 @@ export class AutenticazioneActions extends Actions {
         num_utenti: result.utente ? 1 : 0,
         password_db: result.utente ? result.utente.password : null,
         salt_hex_db: result.utente ? result.utente.salt_hex : null,
-        ruolo: result.utente.ruolo, 
-        indirizzo: result.utente.indirizzo, 
+        ruolo: result.utente ? result.utente.ruolo : null, 
+        indirizzo: result.utente ? result.utente.indirizzo : null, 
       };
-          
-      setDatiLogin(nuoviDati);
-
-      if (controlloLogin(nuoviDati, setDatiLogin) > 0) {
+      
+      if (nuoviDati.num_utenti === 0 || !passwordIsCorrect(datiLogin.password, nuoviDati.password_db, nuoviDati.salt_hex_db)) {
         return null;
       }
 
       let payload = {
         username: datiLogin.username,
-        ruolo: result.utente.ruolo, 
-        indirizzo: result.utente.indirizzo, 
+        ruolo: result.utente ? result.utente.ruolo : null, 
+        indirizzo: result.utente ? result.utente.indirizzo : null, 
       };
+
+      if (result.utente.ruolo === "Amministratore") {
+        payload.primo_intervallo = result.utente.primo_intervallo;
+        payload.secondo_intervallo = result.utente.secondo_intervallo;
+        payload.numero_clienti = result.utente.numero_clienti;
+      }
 
       if (result.utente.ruolo === "cliente") {
         payload.id = result.utente.id;
@@ -60,11 +66,17 @@ export class AutenticazioneActions extends Actions {
       }
 
       this.dispatch(autenticazioneSliceActions.login(payload));
+
+      isActive = result.utente.is_active || result.utente.ruolo === "Amministratore" ? 1 : 0;
+      if(!isActive) {
+        this.dispatch(autenticazioneSliceActions.logout())
+      }
     }
     
     return {
       isOK: response.ok, 
       responseStatus: response.status, 
+      is_active: isActive
     }
   }
 
@@ -103,26 +115,20 @@ export class AutenticazioneActions extends Actions {
     }
   }
 
-  /**
-   * Azione per modificare il profilo.
-   * 
-   * @param {String} ruolo - ruolo profilo.
-   * @param {Object} datiProfilo - dati del profilo aggiornati.
-   * @param {Function} setDatiProfilo - setter dei dati del profilo.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
-  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo) {
-    /*
-    if(controlloProfilo(datiProfilo, setDatiProfilo) {
-      return null;
+  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo, navigate) {
+    const risultatoControllo = controlloModificaProfiloUtente(datiProfilo);
+    setDatiProfilo(risultatoControllo);
+
+    if(risultatoControllo.num_errori > 0) {
+      return;
     }
-    */
+
     let isPasswordCorrect = false;
     // otteniamo la password attuale e la confrontiamo con la password attuale inserita in input
     let response = await super.getResponse("/OTTIENI_PASSWORD_UTENTE", datiProfilo)
     if(response.ok) { 
       let result = (await response.json()).result[0];
+
       isPasswordCorrect = passwordIsCorrect(datiProfilo.password_attuale, result.password, result.salt_hex);
       if(isPasswordCorrect) {
         datiProfilo.password_attuale = result.password;
@@ -139,14 +145,23 @@ export class AutenticazioneActions extends Actions {
         this.dispatch(autenticazioneSliceActions.login({
           username: datiProfilo.nuovo_username,
           ruolo: ruolo, 
+          primo_intervallo: datiProfilo.primo_intervallo,
+          secondo_intervallo: datiProfilo.secondo_intervallo,
+          numero_clienti: datiProfilo.numero_clienti,
         }));
+        alert("Profilo modificato con successo.");
+        navigate("/");
+      }
+      else {
+        alert("Modifica profilo fallita.");  
       }
     }
-
-    return {
-      isPasswordCorrect: isPasswordCorrect, 
-      isOK: response.ok, 
-      responseStatus: response.status, 
+    // le password non combaciano
+    else {
+      setDatiProfilo(prevState => ({
+        ...prevState, 
+        errore_password_attuale: "La password non è corretta."
+      }))
     }
   }
 

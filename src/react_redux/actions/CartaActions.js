@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 import { cartaSliceActions } from '../store/reducers/CartaReducer';
 // Actions
 import { Actions } from "./Actions";
+// Utils
+import { controlloCarta } from '../../utils/Controlli';
 
 export class CartaActions extends Actions {
   dispatch = useDispatch();
@@ -21,11 +23,9 @@ export class CartaActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async inserimentoCarta(nuovaCarta, setNuovaCarta) {
-    /*
-    if (controlloCarta(nuovaCarta, setNuovaCarta) > 0) { 
+    if (controlloCarta(nuovaCarta) > 0) { 
       return null;
     }
-    */
 
     nuovaCarta.circuito = nuovaCarta.is_visa ? "VISA" : "MASTERCARD";
 
@@ -50,18 +50,8 @@ export class CartaActions extends Actions {
       isOK: response.ok, 
       responseStatus: response.status, 
     };
-    
-    //console.log("NuovaCarta:");
-    //console.log(nuovaCarta);
   };
 
-  /**
-   * Azione per ottenere le carte di un cliente.
-   * 
-   * @param {Object} datiRicerca - dati della ricerca.
-   * 
-   * @returns {Object} risultato response operazione.
-   */
   async ottenimentoCarteCliente(id_cliente) {
     const dati = {
       id_cliente: id_cliente
@@ -83,14 +73,6 @@ export class CartaActions extends Actions {
     };
   }
 
-  /**
-   * Azione per eliminare le carte selezionate.
-   * 
-   * @param {Array<number>} selectedIdsEliminazione - id delle carte selezionate.
-   * @param {Function} setSelectedIdsEliminazione - setter degli id delle carte selezionate.
-   * @param {Array<Object>} carte - elenco delle carte di un cliente.
-   * @returns risultato response operazione.
-   */
   async eliminazioneCarta(id_carta, id_cliente) {
     const dati = {
       id_carta: id_carta, 
@@ -109,9 +91,6 @@ export class CartaActions extends Actions {
       isOK: response.ok, 
       responseStatus: response.status, 
     };
-
-    //console.log("USERNAME CLIENTE: " + usernameCliente);
-    //console.log("CODICE CARTA: " + codiceCarta);
   }
 }
 

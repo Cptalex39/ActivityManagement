@@ -24,12 +24,27 @@ const encryptPassword = (password, saltHex, pepperHex) => {
 export class AutenticazioneSQL {
   SQL_SELEZIONE_UTENTE = ` 
     SELECT 
-      \`username\`, \`ruolo\`, \`password\`, \`salt_hex\` 
+      u.\`username\` AS \`username\`, 
+      u.\`ruolo\` AS \`ruolo\`, 
+      u.\`password\` AS \`password\`, 
+      u.\`salt_hex\` AS \`salt_hex\`, 
+      a.\`primo_intervallo\` AS \`primo_intervallo\`, 
+      a.\`secondo_intervallo\` AS \`secondo_intervallo\`, 
+      a.\`numero_clienti\` AS \`numero_clienti\` 
     FROM 
-      \`utente\` 
+      \`utente\` u 
+    CROSS JOIN 
+      \`attivita\` a 
     WHERE 
-      \`username\` = ?; 
+      u.\`username\` = ? 
+      AND a.\`id\` = 1; 
   `;
+
+  SQL_MODIFICA_ATTIVITA = `
+    UPDATE attivita 
+    SET primo_intervallo = ?, secondo_intervallo = ?, numero_clienti = ? 
+    WHERE id = 1;
+  `
 
   SQL_OTTIENI_PASSWORD = `
     SELECT \`password\`, salt_hex 
@@ -73,6 +88,14 @@ export class AutenticazioneSQL {
     paramsOutput.push(params.password_attuale);
 
     return paramsOutput;
+  }
+
+  params_modifica_attivita(params) {
+    return [
+      params.primo_intervallo, 
+      params.secondo_intervallo, 
+      params.numero_clienti
+    ];
   }
 
   params_ottieni_password(params) {
