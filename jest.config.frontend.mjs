@@ -10,6 +10,9 @@ export default {
   transform: {
     '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
   },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(msw|rettime|@mswjs)/)',
+  ],
   collectCoverage: true,
   coverageDirectory: '<rootDir>/coverage-frontend',
 };
