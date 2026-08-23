@@ -8,7 +8,7 @@ export default {
     '\\.(css|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
   },
   transform: {
-    '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
+    '^.+\\.(js|jsx|mjs|ts|tsx)$': ['babel-jest', { presets: [['@babel/preset-react', { runtime: 'automatic' }]] }],
   },
   transformIgnorePatterns: [
     '/node_modules/(?!(msw|rettime|until-async|@mswjs|@open-draft)/)',
