@@ -1,10 +1,6 @@
 export default {
   rootDir: '.',
-  testEnvironment: 'jsdom',
-  testEnvironmentOptions: {
-    customExportConditions: [''],
-  },
-  setupFiles: ['<rootDir>/src/jest-polyfills.js'],
+  testEnvironment: 'jest-fixed-jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests-frontend.js'],
   testMatch: ['**/src/test-frontend/**/*.test.js'],
   moduleNameMapper: {
