@@ -4,6 +4,7 @@ export default {
   testEnvironmentOptions: {
     customExportConditions: [''],
   },
+  setupFiles: ['<rootDir>/src/jest-polyfills.js'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests-frontend.js'],
   testMatch: ['**/src/test-frontend/**/*.test.js'],
   moduleNameMapper: {
@@ -14,9 +15,5 @@ export default {
     '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
   },
   collectCoverage: true,
-  collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-  ],
   coverageDirectory: '<rootDir>/coverage-frontend',
 };
