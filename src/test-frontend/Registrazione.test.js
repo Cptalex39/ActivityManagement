@@ -24,17 +24,17 @@ describe('RegistrazioneCliente Component', () => {
     // Inserimento dati
     // NOTA: Poiché i campi non hanno label associate, uso getByPlaceholderText. 
     // Se desideri usare getByRole, aggiungi l'attributo aria-label o data-testid nel componente React.
-    await user.type(screen.getByPlaceholderText(/Nome/i), 'Mario');
-    await user.type(screen.getByPlaceholderText(/Cognome/i), 'Rossi');
-    await user.type(screen.getByPlaceholderText(/Username/i), 'mario.rossi');
-    await user.type(screen.getByPlaceholderText(/Email/i), 'mario@example.com');
-    await user.type(screen.getByPlaceholderText(/Password/i), 'Password123!');
-    await user.type(screen.getByPlaceholderText(/Conferma Password/i), 'Password123!');
-    await user.type(screen.getByPlaceholderText(/Contatto/i), '3331234567');
+    await user.type(screen.getByPlaceholderText("Nome"), 'Mario');
+    await user.type(screen.getByPlaceholderText("Cognome"), 'Rossi');
+    await user.type(screen.getByPlaceholderText("Username"), 'mario.rossi');
+    await user.type(screen.getByPlaceholderText("Email"), 'mario@example.com');
+    await user.type(screen.getByPlaceholderText("Password"), 'Password123!');
+    await user.type(screen.getByPlaceholderText("Conferma Password"), 'Password123!');
+    await user.type(screen.getByPlaceholderText("Contatto"), '3331234567');
 
     // Clic sul pulsante di registrazione
     // Il pulsante contiene un h2 "Registrati", cerchiamo il pulsante per ruolo
-    const submitBtn = screen.getByRole('button', { name: /Registrati/i });
+    const submitBtn = screen.getByRole('button', { name: "Registrati" });
     await user.click(submitBtn);
 
     // Verifica che l'alert di successo sia stato chiamato
@@ -48,7 +48,7 @@ describe('RegistrazioneCliente Component', () => {
     const user = userEvent.setup();
     renderWithProviders(<RegistrazioneCliente />);
 
-    const submitBtn = screen.getByRole('button', { name: /Registrati/i });
+    const submitBtn = screen.getByRole('button', { name: "Registrati" });
     await user.click(submitBtn);
 
     // Verifica che non avvenga il redirect e che non appaia l'alert di successo
