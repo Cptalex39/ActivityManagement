@@ -1,17 +1,18 @@
 import { TextEncoder, TextDecoder } from 'node:util';
 
-global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder;
+// Iniezione globale nativa prima di caricare MSW
+globalThis.TextEncoder = TextEncoder;
+globalThis.TextDecoder = TextDecoder;
 
-// Se fetch/Request/Response non sono definiti in questo JSDOM, li mappiamo o li gestiamo in sicurezza
-if (typeof global.fetch === 'undefined') {
-  global.fetch = globalThis.fetch;
-  global.Request = globalThis.Request;
-  global.Response = globalThis.Response;
-  global.Headers = globalThis.Headers;
+const nativeFetch = globalThis.fetch;
+if (nativeFetch) {
+  globalThis.Request = globalThis.Request || Request;
+  globalThis.Response = globalThis.Response || Response;
+  globalThis.Headers = globalThis.Headers || Headers;
 }
 
-// Utilizziamo require per evitare l'hoisting dell'import e assicurarci che i polyfill siano attivi
+// Utilizziamo require invece di import per evitare l'hoisting.
+// Questo assicura che le classi globali sopra definite siano presenti quando MSW viene caricato.
 const { server } = require('./mocks/server');
 
 beforeAll(() => server.listen());
