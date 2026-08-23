@@ -52,7 +52,7 @@ describe('RegistrazioneCliente Component', () => {
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/login');
   });
 
-  test('Errore: Registrazione con campi obbligatori vuoti', async () => {
+  test('TC_FRONT_REG_002 - Errore: Registrazione con campi obbligatori vuoti', async () => {
     const user = userEvent.setup();
     renderWithProviders(<RegistrazioneCliente />);
 
