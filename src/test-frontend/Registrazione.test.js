@@ -3,6 +3,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../test-utils';
 import RegistrazioneCliente from '../react_redux/views/cliente_view/RegistrazioneCliente';
+import { http, HttpResponse } from 'msw'; // Aggiunto
+import { server } from '../mocks/server'; // Aggiunto
 
 // Mock di useNavigate da react-router-dom
 const mockedUsedNavigate = jest.fn();
@@ -18,12 +20,17 @@ describe('RegistrazioneCliente Component', () => {
   });
 
   test('TC_FRONT_REG_001 - Successo: Registrazione con dati validi', async () => {
+    // Configurazione MSW per intercettare la rotta di registrazione
+    server.use(
+      http.post('/INSERISCI_ITEM', () => {
+        return HttpResponse.json({ id: 1, isOK: true }, { status: 200 });
+      })
+    );
+
     const user = userEvent.setup();
     renderWithProviders(<RegistrazioneCliente />);
 
     // Inserimento dati
-    // NOTA: Poiché i campi non hanno label associate, uso getByPlaceholderText. 
-    // Se desideri usare getByRole, aggiungi l'attributo aria-label o data-testid nel componente React.
     await user.type(screen.getByPlaceholderText("Nome"), 'Mario');
     await user.type(screen.getByPlaceholderText("Cognome"), 'Rossi');
     await user.type(screen.getByPlaceholderText("Username"), 'mario.rossi');
@@ -33,7 +40,6 @@ describe('RegistrazioneCliente Component', () => {
     await user.type(screen.getByPlaceholderText("Contatto"), '3331234567');
 
     // Clic sul pulsante di registrazione
-    // Il pulsante contiene un h2 "Registrati", cerchiamo il pulsante per ruolo
     const submitBtn = screen.getByRole('button', { name: "Registrati" });
     await user.click(submitBtn);
 
@@ -55,9 +61,8 @@ describe('RegistrazioneCliente Component', () => {
     expect(mockedUsedNavigate).not.toHaveBeenCalled();
     expect(window.alert).not.toHaveBeenCalled();
     
-    // Verifica la presenza di almeno un messaggio di errore (es. Nome)
-    // NOTA: Se i messaggi di errore non sono catturabili, inserire data-testid="errore-nome" nel componente React.
-    const erroreNome = screen.getByText(/Nome/i); 
+    // Corretto selettore con stringa esatta del messaggio di errore
+    const erroreNome = screen.getByText("Errore, il nome non è stato inserito."); 
     expect(erroreNome).toBeInTheDocument();
   });
 });
