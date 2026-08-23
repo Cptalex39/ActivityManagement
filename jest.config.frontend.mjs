@@ -1,6 +1,9 @@
 export default {
   rootDir: '.',
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests-frontend.js'],
   testMatch: ['**/src/test-frontend/**/*.test.js'],
   moduleNameMapper: {
