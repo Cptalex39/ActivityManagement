@@ -11,7 +11,7 @@ export default {
     '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(msw|rettime|@mswjs)/)',
+    '/node_modules/(?!(msw|rettime|until-async|@mswjs|@open-draft)/)',
   ],
   collectCoverage: true,
   coverageDirectory: '<rootDir>/coverage-frontend',
