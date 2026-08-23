@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../test-utils';
 import RegistrazioneCliente from '../react_redux/views/cliente_view/RegistrazioneCliente';
@@ -43,8 +43,10 @@ describe('RegistrazioneCliente Component', () => {
     const submitBtn = screen.getByRole('button', { name: "Registrati" });
     await user.click(submitBtn);
 
-    // Verifica che l'alert di successo sia stato chiamato
-    expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Registrazione completata con successo'));
+    // Verifica che l'alert di successo sia stato chiamato utilizzando waitFor per l'asincronia
+    await waitFor(() => {
+      expect(window.alert).toHaveBeenCalledWith(expect.stringContaining('Registrazione completata con successo'));
+    });
     
     // Verifica il redirect alla pagina di login
     expect(mockedUsedNavigate).toHaveBeenCalledWith('/login');
