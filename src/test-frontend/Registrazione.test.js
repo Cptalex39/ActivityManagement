@@ -33,7 +33,7 @@ describe('RegistrazioneCliente Component', () => {
     // Inserimento dati
     await user.type(screen.getByPlaceholderText("Nome"), 'Mario');
     await user.type(screen.getByPlaceholderText("Cognome"), 'Rossi');
-    await user.type(screen.getByPlaceholderText("Username"), 'mario.rossi');
+    await user.type(screen.getByPlaceholderText("Username"), 'mario');
     await user.type(screen.getByPlaceholderText("Email"), 'mario@example.com');
     await user.type(screen.getByPlaceholderText("Password"), 'Password123!');
     await user.type(screen.getByPlaceholderText("Conferma Password"), 'Password123!');
