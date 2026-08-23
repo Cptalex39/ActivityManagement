@@ -5,7 +5,7 @@ export default {
   testMatch: ['**/src/test-frontend/**/*.test.js'],
   moduleNameMapper: {
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/__mocks__/fileMock.js',
-    '\\.(css|scss|sass)$': 'identity-obj-proxy',
+    '\\.(css|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
   },
   transform: {
     '^.+\\.(js|jsx|mjs|ts|tsx)$': 'babel-jest',
