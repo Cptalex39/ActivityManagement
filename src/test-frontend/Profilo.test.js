@@ -10,7 +10,8 @@ jest.mock('../react_redux/actions/AutenticazioneActions', () => {
     AutenticazioneActions: jest.fn().mockImplementation(() => {
       return {
         modificaProfilo: jest.fn((username, ruolo, datiProfilo, setDatiProfilo, navigate) => {
-          window.alert("Profilo modificato con successo.");
+          // Uso di globalThis accettato da Babel nello scope iniziale
+          globalThis.alert("Profilo modificato con successo.");
         })
       };
     })
