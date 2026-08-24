@@ -7,6 +7,11 @@ import Clienti from '../react_redux/views/cliente_view/Clienti';
 
 describe('Clienti View Functional Tests', () => {
   
+  beforeEach(() => {
+    window.alert = jest.fn();
+    window.confirm = jest.fn(() => true); // Mock per i confirm() presenti in Clienti.jsx
+  });
+
   test('TC_FRONT_CLI_001 - Successo: Ricerca clienti', async () => {
     const user = userEvent.setup();
     
@@ -34,7 +39,7 @@ describe('Clienti View Functional Tests', () => {
     const inputNome = screen.getByPlaceholderText('Nome'); 
     await user.type(inputNome, 'Mario');
     
-    const btnRicerca = screen.getByRole('button', { name: 'Ricerca' });
+    const btnRicerca = document.querySelector('.lucide-search');
     await user.click(btnRicerca);
 
     await waitFor(() => {
