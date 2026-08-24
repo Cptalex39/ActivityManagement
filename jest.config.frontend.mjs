@@ -11,7 +11,7 @@ export default {
     '^.+\\.(js|jsx|mjs|ts|tsx)$': ['babel-jest', { presets: [['@babel/preset-react', { runtime: 'automatic' }]] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(msw|rettime|until-async|@mswjs|@open-draft|@gianlucascisciolo\/riutilizzoreact)/)',
+    '/node_modules/(?!(msw|rettime|until-async|@mswjs|@open-draft|@gianlucascisciolo\/riutilizzoreact|react-bootstrap|@react-bootstrap)/)',
   ],
   collectCoverage: true,
   coverageDirectory: '<rootDir>/coverage-frontend',
