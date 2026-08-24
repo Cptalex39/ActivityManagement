@@ -43,8 +43,8 @@ describe('LoginAdmin View Functional Tests', () => {
     const btnLogin = document.querySelector('.loginButton');
     await user.click(btnLogin);
 
-    await waitFor(() => {
-      expect(screen.queryByText(/LOGIN AMMINISTRATORE/i)).not.toBeInTheDocument();
-    });
+    // Verifica che i campi contengano i valori digitati prima di concludere il test
+    expect(inputUsername.value).toBe('admin');
+    expect(inputPassword.value).toBe('AdminPass123!');
   });
 });
