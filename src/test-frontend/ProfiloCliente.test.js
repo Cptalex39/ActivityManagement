@@ -6,11 +6,20 @@ import ProfiloCliente from '../react_redux/views/cliente_view/ProfiloCliente';
 import { http, HttpResponse } from 'msw';
 import { server } from '../mocks/server';
 
+// Mock di useNavigate da react-router-dom
 const mockedUsedNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate,
 }));
+
+// Mock di passwordIsCorrect per bypassare il calcolo crittografico nei test UI
+jest.mock('../../utils/Sicurezza', () => ({
+  ...jest.requireActual('../../utils/Sicurezza'),
+  passwordIsCorrect: jest.fn(),
+}));
+
+import { passwordIsCorrect } from '../../utils/Sicurezza';
 
 describe('ProfiloCliente Component', () => {
   const mockUser = {
@@ -39,12 +48,15 @@ describe('ProfiloCliente Component', () => {
   });
 
   test('TC_FRONT_PROF_001 - Successo: Modifica dati con password corretta', async () => {
+    // Forziamo la validazione della password a true per questo test
+    passwordIsCorrect.mockReturnValue(true);
+
     server.use(
       http.post('/OTTIENI_PASSWORD', () => {
         return HttpResponse.json({ 
           result: [{ 
-            password: 'PasswordValida123!', 
-            salt_hex: '' 
+            password: 'hash_valido_mock', 
+            salt_hex: 'salt_valido_mock' 
           }] 
         }, { status: 200 });
       }),
@@ -56,7 +68,7 @@ describe('ProfiloCliente Component', () => {
     const user = userEvent.setup();
     renderWithProviders(<ProfiloCliente />, { preloadedState });
 
-    // Inserimento password attuale e modifica indirizzo
+    // Inserimento password attuale (senza spazi per superare eventuali regex frontend) e modifica indirizzo
     await user.type(screen.getByPlaceholderText("Password attuale"), 'PasswordValida123!');
     await user.clear(screen.getByPlaceholderText("indirizzo"));
     await user.type(screen.getByPlaceholderText("indirizzo"), 'Via Nuova 10');
@@ -71,10 +83,17 @@ describe('ProfiloCliente Component', () => {
   });
 
   test('TC_FRONT_PROF_002 - Errore: Password attuale errata', async () => {
+    // Forziamo la validazione della password a false per questo test
+    passwordIsCorrect.mockReturnValue(false);
+
     server.use(
       http.post('/OTTIENI_PASSWORD', () => {
-        // Simuliamo che l'utente non esista o la password non corrisponda
-        return HttpResponse.json({ result: [] }, { status: 404 });
+        return HttpResponse.json({ 
+          result: [{ 
+            password: 'hash_valido_mock', 
+            salt_hex: 'salt_valido_mock' 
+          }] 
+        }, { status: 200 });
       })
     );
 
