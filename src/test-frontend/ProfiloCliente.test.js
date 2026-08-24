@@ -43,8 +43,8 @@ describe('ProfiloCliente Component', () => {
       http.post('/OTTIENI_PASSWORD', () => {
         return HttpResponse.json({ 
           result: [{ 
-            password: 'f4aa8e68d6abb30f9acfb313b5e0953ad6502eab0109151c1c3135196fd4e256c38407429d25ed9531eba27e34f2963695fa3e7a4776229d3d7256d0513ce6f8', 
-            salt_hex: 'n6Rn5rdJinVVrNqRANc4' 
+            password: 'PasswordValida123!', 
+            salt_hex: '' 
           }] 
         }, { status: 200 });
       }),
@@ -57,7 +57,7 @@ describe('ProfiloCliente Component', () => {
     renderWithProviders(<ProfiloCliente />, { preloadedState });
 
     // Inserimento password attuale e modifica indirizzo
-    await user.type(screen.getByPlaceholderText("Password attuale"), 'Ciao mondo!!10');
+    await user.type(screen.getByPlaceholderText("Password attuale"), 'PasswordValida123!');
     await user.clear(screen.getByPlaceholderText("indirizzo"));
     await user.type(screen.getByPlaceholderText("indirizzo"), 'Via Nuova 10');
 
