@@ -42,7 +42,7 @@ describe('ProfiloCliente Component', () => {
     server.use(
       http.post('/OTTIENI_PASSWORD', () => {
         return HttpResponse.json({ 
-          result: [{ password: 'Password123!', salt_hex: '' }] 
+          result: [{ password: 'PasswordValida123!', salt_hex: '' }] 
         }, { status: 200 });
       }),
       http.post('/MODIFICA_PROFILO_CLIENTE', () => {
@@ -54,7 +54,7 @@ describe('ProfiloCliente Component', () => {
     renderWithProviders(<ProfiloCliente />, { preloadedState });
 
     // Inserimento password attuale e modifica indirizzo
-    await user.type(screen.getByPlaceholderText("Password attuale"), 'Password123!');
+    await user.type(screen.getByPlaceholderText("Password attuale"), 'PasswordValida123!');
     await user.clear(screen.getByPlaceholderText("indirizzo"));
     await user.type(screen.getByPlaceholderText("indirizzo"), 'Via Nuova 10');
 
@@ -78,7 +78,7 @@ describe('ProfiloCliente Component', () => {
     const user = userEvent.setup();
     renderWithProviders(<ProfiloCliente />, { preloadedState });
 
-    await user.type(screen.getByPlaceholderText("Password attuale"), 'WrongPassword');
+    await user.type(screen.getByPlaceholderText("Password attuale"), 'PasswordErrata123!');
     await user.click(screen.getByText("Modifica Profilo"));
     await user.click(screen.getByText("Sì, modifica"));
 
