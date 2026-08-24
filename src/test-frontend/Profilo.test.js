@@ -16,11 +16,12 @@ describe('Profilo View Functional Tests', () => {
     const preloadedState = {
       autenticazione: {
         value: {
+          isLogged: true,
           username: 'mario',
           ruolo: 'cliente',
-          primo_intervallo: null,
-          secondo_intervallo: null,
-          numero_clienti: null
+          primo_intervallo: "",
+          secondo_intervallo: "",
+          numero_clienti: 0
         }
       },
       stile: {
@@ -43,7 +44,7 @@ describe('Profilo View Functional Tests', () => {
 
     const inputPasswordAttuale = screen.getByPlaceholderText(/Password attuale/i);
     const inputNuovoUsername = screen.getByPlaceholderText(/Nuovo username/i);
-    const btnModifica = screen.getByRole('button', { name: /Modifica Profilo/i });
+    const btnModifica = screen.getByRole('button', { name: 'Modifica Profilo' });
 
     await user.type(inputPasswordAttuale, 'Password123!');
     await user.clear(inputNuovoUsername);
