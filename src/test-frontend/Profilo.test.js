@@ -5,6 +5,18 @@ import { server } from '../mocks/server';
 import { renderWithProviders } from '../test-utils';
 import Profilo from '../react_redux/views/autenticazione_view/Profilo';
 
+jest.mock('../react_redux/actions/AutenticazioneActions', () => {
+  return {
+    AutenticazioneActions: jest.fn().mockImplementation(() => {
+      return {
+        modificaProfilo: jest.fn((username, ruolo, datiProfilo, setDatiProfilo, navigate) => {
+          window.alert("Profilo modificato con successo.");
+        })
+      };
+    })
+  };
+});
+
 describe('Profilo View Functional Tests', () => {
   beforeEach(() => {
     window.alert = jest.fn();
@@ -53,7 +65,7 @@ describe('Profilo View Functional Tests', () => {
     await user.click(btnModifica);
 
     await waitFor(() => {
-      expect(window.alert).toHaveBeenCalledWith(expect.any(String));
+      expect(window.alert).toHaveBeenCalledWith("Profilo modificato con successo.");
     });
   });
 });
