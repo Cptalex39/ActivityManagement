@@ -21,6 +21,9 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_CLI_002** | Controllo Pagamenti e Eliminazione - Caso di Successo | Cliente presente nella lista "richiesta eliminazione profilo". | 1. Cliccare su "Controllo pagamenti".<br>2. Verificare l'assenza di pagamenti in sospeso. | N/A | Attivazione del pulsante "Elimina cliente" per procedere alla rimozione definitiva. |
 | **TC_FRONT_CLI_001** | Ricerca Clienti - Caso di Successo | Utente autorizzato in pagina ricerca. | 1. Inserire il nome nel campo di ricerca.<br>2. Cliccare sul pulsante "Ricerca". | Nome: Mario | Visualizzazione della scheda del cliente corrispondente. |
 | **TC_FRONT_CLI_002** | Controllo pagamenti in sospeso | Cliente con richiesta eliminazione presente. | 1. Cliccare su "Controllo pagamenti".<br>2. Verificare l'assenza di pagamenti in sospeso. | N/A | Verifica finanziaria ed attivazione del tasto di rimozione se i debiti sono a zero. |
+| **TC_FRONT_AUT_001** | Login Cliente - Successo | Utente non loggato, pagina /login | 1. Inserire Username e Password validi.<br>2. Cliccare "Accedi". | Username: mario, Password: Password123! | Accesso effettuato e reindirizzamento alla dashboard cliente. |
+| **TC_FRONT_AUT_002** | Login Admin - Successo | Utente non loggato, pagina /login-admin | 1. Inserire Username e Password validi.<br>2. Cliccare "Accedi". | Username: admin, Password: AdminPass123! | Accesso effettuato e reindirizzamento alla dashboard amministratore. |
+| **TC_FRONT_AUT_003** | Modifica Profilo - Successo | Utente loggato, pagina /profilo | 1. Inserire password attuale corretta.<br>2. Modificare username.<br>3. Cliccare "Modifica Profilo". | Password: Password123!, Nuovo Username: mario_nuovo | Visualizzazione alert "Profilo modificato con successo.". |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -34,3 +37,6 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_CLI_002** | Attivazione del pulsante "Elimina cliente" per procedere alla rimozione definitiva. | Dopo il controllo, il sistema ha confermato 0 pagamenti e ha abilitato il pulsante di eliminazione. | **PASS** |
 | **TC_FRONT_CLI_001** | Visualizzazione della scheda del cliente corrispondente. | Il sistema ha filtrato correttamente i dati e ha mostrato l'intestazione del cliente Mario Rossi. | **PASS** |
 | **TC_FRONT_CLI_002** | Verifica finanziaria ed attivazione del tasto di rimozione se i debiti sono a zero. | Il sistema ha confermato 0 pagamenti in sospeso e ha abilitato correttamente il pulsante "Elimina cliente". | **PASS** |
+| **TC_FRONT_AUT_001** | Accesso effettuato e reindirizzamento alla dashboard cliente. | Il sistema ha validato le credenziali e ha aggiornato lo store con i dati del cliente. | **PASS** |
+| **TC_FRONT_AUT_002** | Accesso effettuato e reindirizzamento alla dashboard amministratore. | Il sistema ha validato le credenziali e ha caricato i parametri di attività dell'admin. | **PASS** |
+| **TC_FRONT_AUT_003** | Visualizzazione alert "Profilo modificato con successo.". | La password è stata verificata e l'alert di successo è apparso correttamente. | **PASS** |
