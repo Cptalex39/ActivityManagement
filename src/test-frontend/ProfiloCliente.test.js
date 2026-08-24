@@ -42,7 +42,7 @@ describe('ProfiloCliente Component', () => {
     server.use(
       http.post('/OTTIENI_PASSWORD', () => {
         return HttpResponse.json({ 
-          result: [{ password: 'hashed_password', salt_hex: 'salt123' }] 
+          result: [{ password: 'Password123!', salt_hex: '' }] 
         }, { status: 200 });
       }),
       http.post('/MODIFICA_PROFILO_CLIENTE', () => {
