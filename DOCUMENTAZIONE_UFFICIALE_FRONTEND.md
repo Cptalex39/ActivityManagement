@@ -14,6 +14,8 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | ID | Titolo/Obiettivo | Precondizioni | Passi di Esecuzione | Dati di Input | Risultato Atteso |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **TC_FRONT_REG_001** | Registrazione Cliente - Caso di Successo | Utente non loggato, accesso alla pagina di registrazione. | 1. Inserire Nome, Cognome, Username, Email, Password, Conferma Password e Contatto.<br>2. Cliccare sul pulsante "Registrati". | Nome: Mario, Cognome: Rossi, Username: mario.rossi, Email: mario@example.com, Password: Password123!, Contatto: 3331234567 | Visualizzazione alert di successo e reindirizzamento automatico alla pagina di login. |
+| **TC_FRONT_PROF_001** | Modifica Profilo - Caso di Successo | Utente cliente loggato, accesso alla pagina profilo. | 1. Inserire la password attuale corretta.<br>2. Modificare il campo Indirizzo.<br>3. Cliccare su "Modifica Profilo" e confermare con "Sì, modifica". | Password: Password123!, Indirizzo: Via Nuova 10 | Visualizzazione alert di conferma "Modifica profilo eseguita correttamente". |
+| **TC_FRONT_PROF_002** | Modifica Profilo - Password Errata | Utente cliente loggato, accesso alla pagina profilo. | 1. Inserire una password attuale errata.<br>2. Cliccare su "Modifica Profilo" e confermare con "Sì, modifica". | Password: WrongPassword | Visualizzazione messaggio di errore "La password attuale inserita non è corretta." e blocco del salvataggio. |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -21,3 +23,5 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | :--- | :--- | :--- | :--- |
 | **TC_FRONT_REG_001** | Visualizzazione alert di successo e reindirizzamento automatico alla pagina di login. | L'interfaccia ha mostrato l'alert di conferma e ha reindirizzato l'utente alla pagina di login correttamente. | **PASS** |
 | **TC_FRONT_REG_002** | Visualizzazione dei messaggi di errore per i campi obbligatori non inseriti. | L'interfaccia ha bloccato l'invio del form e ha mostrato correttamente i messaggi di errore per i campi vuoti. | **PASS** |
+| **TC_FRONT_PROF_001** | Visualizzazione alert di conferma "Modifica profilo eseguita correttamente". | L'interfaccia ha validato la password e ha aggiornato i dati anagrafici mostrando l'alert di successo. | **PASS** |
+| **TC_FRONT_PROF_002** | Visualizzazione messaggio di errore "La password attuale inserita non è corretta.". | Il sistema ha rilevato la password errata e ha mostrato correttamente il messaggio di errore bloccando l'operazione. | **PASS** |
