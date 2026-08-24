@@ -25,7 +25,15 @@ describe('Clienti View Functional Tests', () => {
         const body = await request.json();
         if (body.tipo_item === 'cliente') {
           return HttpResponse.json({
-            items: [{ id: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario@example.com', contatto: '123456789' }]
+            items: [
+              { 
+                id: 1, 
+                nome: 'Mario', 
+                cognome: 'Rossi', 
+                email: 'mario@example.com', 
+                contatto: '123456789' 
+              }
+            ]
           });
         }
         return HttpResponse.json({ items: [] });
@@ -43,8 +51,9 @@ describe('Clienti View Functional Tests', () => {
     await user.click(btnRicerca);
 
     await waitFor(() => {
-      expect(screen.getByText('Mario')).toBeInTheDocument();
-      expect(screen.getByText('Rossi')).toBeInTheDocument();
+      // Utilizziamo una regex per trovare il testo indipendentemente da come è concatenato
+      expect(screen.getByText(/Mario/i)).toBeInTheDocument();
+      expect(screen.getByText(/Rossi/i)).toBeInTheDocument();
     });
   });
 
