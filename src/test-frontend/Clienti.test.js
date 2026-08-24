@@ -52,8 +52,8 @@ describe('Clienti View Functional Tests', () => {
 
     // Verifica che i dati precaricati siano visibili immediatamente
     await waitFor(() => {
-      expect(screen.getByText(/Mario/i)).toBeInTheDocument();
-      expect(screen.getByText(/Rossi/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/Mario/i)[0]).toBeInTheDocument();
+      expect(screen.getAllByText(/Rossi/i)[0]).toBeInTheDocument();
     });
 
     // Simula l'interazione di ricerca per verificare che non rompa la UI
