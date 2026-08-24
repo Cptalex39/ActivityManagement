@@ -20,14 +20,9 @@ describe('Clienti View Functional Tests', () => {
       cliente: {
         value: { 
           clienti: [
-            { 
-              id: 1, 
-              nome: 'Mario', 
-              cognome: 'Rossi', 
-              email: 'mario@example.com', 
-              contatto: '123456789' 
-            }
-          ] 
+            { id: 1, nome: 'Mario', cognome: 'Rossi', contatto: '3331234567', email: 'mario@example.com', username: 'mario', tipo_selezione: '' }
+          ],
+          clientiDaEliminare: []
         }
       },
       stile: {
@@ -44,7 +39,7 @@ describe('Clienti View Functional Tests', () => {
       }),
       http.post('/VISUALIZZA_ITEMS', async ({ request }) => {
         return HttpResponse.json({
-          items: [{ id: 1, nome: 'Mario', cognome: 'Rossi', email: 'mario@example.com', contatto: '123456789' }]
+          items: [{ id: 1, nome: 'Mario', cognome: 'Rossi', contatto: '3331234567', email: 'mario@example.com', username: 'mario', tipo_selezione: '' }]
         });
       })
     );
@@ -77,7 +72,12 @@ describe('Clienti View Functional Tests', () => {
     // Stato iniziale con un cliente che ha richiesto l'eliminazione
     const preloadedState = {
       cliente: {
-        value: { clienti: [] }
+        value: { 
+          clienti: [],
+          clientiDaEliminare: [
+            { id: 2, nome: 'Luigi', cognome: 'Verdi', contatto: '3339999999', email: 'luigi@example.com', username: 'luigi', is_eliminabile: 0 }
+          ]
+        }
       },
       stile: {
         value: { vistaItem: 'tabella', vistaForm: 'standard' }
@@ -90,7 +90,7 @@ describe('Clienti View Functional Tests', () => {
     server.use(
       http.post('/OTTIENI_CLIENTI_DA_ELIMINARE', () => {
         return HttpResponse.json({
-          items: [{ id: 10, username: 'mario_r', nome: 'Mario', cognome: 'Rossi', email: 'mario@example.com', contatto: '123456789', is_eliminabile: 0 }]
+          items: [{ id: 2, username: 'luigi', nome: 'Luigi', cognome: 'Verdi', email: 'luigi@example.com', contatto: '3339999999', is_eliminabile: 0 }]
         });
       }),
       http.post('/OTTIENI_NUMERO_PAGAMENTI_NON_CONFERMATI_CLIENTE', () => {
