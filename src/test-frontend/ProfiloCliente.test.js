@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
 describe('ProfiloCliente Component', () => {
   const mockUser = {
     id_utente: 1,
-    username: 'mario_rossi',
+    username: 'mario',
     nome: 'Mario',
     cognome: 'Rossi',
     email: 'mario@example.com',
