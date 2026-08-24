@@ -35,7 +35,11 @@ describe('Clienti View Functional Tests', () => {
 
     server.use(
       http.post('/OTTIENI_CLIENTI_DA_ELIMINARE', () => {
-        return HttpResponse.json({ items: [] });
+        return HttpResponse.json({ 
+          items: [
+            { id: 1, nome: 'Mario', cognome: 'Rossi', contatto: '3331234567', email: 'mario@example.com', username: 'mario', tipo_selezione: '' }
+          ] 
+        });
       }),
       http.post('/VISUALIZZA_ITEMS', async ({ request }) => {
         return HttpResponse.json({
