@@ -26,7 +26,13 @@ describe('LoginAdmin View Functional Tests', () => {
       })
     );
 
-    renderWithProviders(<LoginAdmin />);
+    renderWithProviders(<LoginAdmin />, {
+      preloadedState: {
+        autenticazione: {
+          value: { isLogged: false, ruolo: "guest", username: "" }
+        }
+      }
+    });
 
     const inputUsername = screen.getByPlaceholderText('Username');
     const inputPassword = screen.getByPlaceholderText('Password');

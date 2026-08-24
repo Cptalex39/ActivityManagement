@@ -42,8 +42,8 @@ describe('Profilo View Functional Tests', () => {
 
     renderWithProviders(<Profilo />, { preloadedState });
 
-    const inputPasswordAttuale = screen.getByPlaceholderText(/Password attuale/i);
-    const inputNuovoUsername = screen.getByPlaceholderText(/Nuovo username/i);
+    const inputPasswordAttuale = screen.getByPlaceholderText("Password attuale");
+    const inputNuovoUsername = screen.getByPlaceholderText("Nuovo username*");
     const btnModifica = screen.getByRole('button', { name: 'Modifica Profilo' });
 
     await user.type(inputPasswordAttuale, 'Password123!');
