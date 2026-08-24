@@ -42,7 +42,7 @@ describe('Profilo View Functional Tests', () => {
 
     renderWithProviders(<Profilo />, { preloadedState });
 
-    const inputPasswordAttuale = screen.getByPlaceholderText("Password attuale");
+    const inputPasswordAttuale = screen.getByPlaceholderText("Password attuale*");
     const inputNuovoUsername = screen.getByPlaceholderText("Nuovo username*");
     const btnModifica = screen.getByRole('button', { name: 'Modifica Profilo' });
 

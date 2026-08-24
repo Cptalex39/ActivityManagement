@@ -31,12 +31,13 @@ describe('Login View Functional Tests', () => {
 
     renderWithProviders(<Login />);
 
-    const inputUsername = screen.getByPlaceholderText('Username');
-    const inputPassword = screen.getByPlaceholderText('Password');
-    const btnLogin = screen.getByRole('button', { name: /Accedi/i });
-
+    const inputUsername = screen.getByPlaceholderText('Username*');
+    const inputPassword = screen.getByPlaceholderText('Password*');
+    
     await user.type(inputUsername, 'mario');
     await user.type(inputPassword, 'Password123!');
+    
+    const btnLogin = document.querySelector('.loginButton');
     await user.click(btnLogin);
 
     await waitFor(() => {
