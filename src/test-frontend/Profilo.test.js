@@ -44,11 +44,12 @@ describe('Profilo View Functional Tests', () => {
 
     const inputPasswordAttuale = screen.getByPlaceholderText("Password attuale*");
     const inputNuovoUsername = screen.getByPlaceholderText("Nuovo username*");
-    const btnModifica = screen.getByRole('button', { name: 'Modifica Profilo' });
 
     await user.type(inputPasswordAttuale, 'Password123!');
     await user.clear(inputNuovoUsername);
     await user.type(inputNuovoUsername, 'mario_nuovo');
+    
+    const btnModifica = document.querySelector('.profiloButton');
     await user.click(btnModifica);
 
     await waitFor(() => {
