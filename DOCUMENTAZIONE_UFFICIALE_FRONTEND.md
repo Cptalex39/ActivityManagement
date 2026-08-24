@@ -19,6 +19,8 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_PROF_002** | Modifica Dati Profilo - Errore Password Errata | Cliente loggato, accesso alla pagina profilo. | 1. Inserire una password attuale errata.<br>2. Cliccare su "Modifica Profilo" e confermare. | Password attuale errata | Blocco delle modifiche e visualizzazione del messaggio di errore rosso a schermo. |
 | **TC_FRONT_CLI_001** | Ricerca Clienti - Caso di Successo | Accesso alla pagina Clienti. | 1. Inserire il nome nel campo di ricerca.<br>2. Cliccare sul pulsante "Ricerca". | Nome: Mario | Visualizzazione del cliente corrispondente nella tabella dei risultati. |
 | **TC_FRONT_CLI_002** | Controllo Pagamenti e Eliminazione - Caso di Successo | Cliente presente nella lista "richiesta eliminazione profilo". | 1. Cliccare su "Controllo pagamenti".<br>2. Verificare l'assenza di pagamenti in sospeso. | N/A | Attivazione del pulsante "Elimina cliente" per procedere alla rimozione definitiva. |
+| **TC_FRONT_CLI_001** | Ricerca Clienti - Caso di Successo | Utente autorizzato in pagina ricerca. | 1. Inserire il nome nel campo di ricerca.<br>2. Cliccare sul pulsante "Ricerca". | Nome: Mario | Visualizzazione della scheda del cliente corrispondente. |
+| **TC_FRONT_CLI_002** | Controllo pagamenti in sospeso | Cliente con richiesta eliminazione presente. | 1. Cliccare su "Controllo pagamenti".<br>2. Verificare l'assenza di pagamenti in sospeso. | N/A | Verifica finanziaria ed attivazione del tasto di rimozione se i debiti sono a zero. |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -30,3 +32,5 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_PROF_002** | Blocco delle modifiche e visualizzazione del messaggio di errore rosso a schermo. | Il sistema ha rilevato la password errata, ha bloccato l'invio del form e ha mostrato il messaggio di errore rosso come previsto. | **PASS** |
 | **TC_FRONT_CLI_001** | Visualizzazione del cliente corrispondente nella tabella dei risultati. | Il sistema ha filtrato correttamente i dati e ha mostrato il cliente Mario Rossi. | **PASS** |
 | **TC_FRONT_CLI_002** | Attivazione del pulsante "Elimina cliente" per procedere alla rimozione definitiva. | Dopo il controllo, il sistema ha confermato 0 pagamenti e ha abilitato il pulsante di eliminazione. | **PASS** |
+| **TC_FRONT_CLI_001** | Visualizzazione della scheda del cliente corrispondente. | Il sistema ha filtrato correttamente i dati e ha mostrato l'intestazione del cliente Mario Rossi. | **PASS** |
+| **TC_FRONT_CLI_002** | Verifica finanziaria ed attivazione del tasto di rimozione se i debiti sono a zero. | Il sistema ha confermato 0 pagamenti in sospeso e ha abilitato correttamente il pulsante "Elimina cliente". | **PASS** |
