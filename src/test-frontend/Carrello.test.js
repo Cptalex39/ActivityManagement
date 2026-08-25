@@ -41,9 +41,9 @@ describe('TC_FRONT_ORD_001: Visualizzazione Carrello - Caso di Successo', () => 
     // 2. Verifica che il nome dell'articolo 'Taglio Capelli' sia a schermo
     expect(screen.getByText('Taglio Capelli')).toBeInTheDocument();
 
-    // 3. Verifica che il totale calcolato (25.00 * 2 = 50.00) appaia correttamente
-    // Il componente usa .toFixed(2), quindi cerchiamo la stringa esatta
-    expect(screen.getByText('€50.00')).toBeInTheDocument();
+    // 3. Verifica che i totali (parziale e globale) appaiano correttamente
+    const elementiTotale = screen.getAllByText('€50.00');
+    expect(elementiTotale.length).toBe(2);
 
     // 4. Verifica la presenza del pulsante 'VAI AL CHECKOUT'
     // Usiamo una regex case-insensitive per sicurezza dato che il CSS applica textTransform: "uppercase"
