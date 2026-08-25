@@ -26,7 +26,7 @@ describe('Test Funzionali: OrdiniView', () => {
         codice: "2023-10-27_10:00:00:123",
         nome_cliente: "Mario",
         cognome_cliente: "Rossi",
-        data_creazione: "2023-10-27T10:00:00Z",
+        data_creazione: new Date().toISOString(),
         totale: 50.00,
         metodo_pagamento: "Struttura",
         is_pagato: 0,
