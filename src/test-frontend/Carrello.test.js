@@ -30,6 +30,7 @@ describe('Debug Preliminare CarrelloView', () => {
     renderWithProviders(<CarrelloView />, { preloadedState });
 
     // Stampa l'URL per l'analisi della struttura DOM tramite Testing Playground
-    screen.logTestingPlaygroundURL();
+    //screen.logTestingPlaygroundURL();
+    screen.debug(); 
   });
 });
