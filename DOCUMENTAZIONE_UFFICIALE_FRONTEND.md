@@ -24,6 +24,9 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_001** | Login Cliente - Successo | Utente non loggato, pagina /login | 1. Inserire Username e Password validi.<br>2. Cliccare "Accedi". | Username: mario, Password: Password123! | Accesso effettuato e reindirizzamento alla dashboard cliente. |
 | **TC_FRONT_AUT_002** | Login Admin - Successo | Utente non loggato, pagina /login-admin | 1. Inserire Username e Password validi.<br>2. Cliccare "Accedi". | Username: admin, Password: AdminPass123! | Accesso effettuato e reindirizzamento alla dashboard amministratore. |
 | **TC_FRONT_AUT_003** | Modifica Profilo - Successo | Utente loggato, pagina /profilo | 1. Inserire password attuale corretta.<br>2. Modificare username.<br>3. Cliccare "Modifica Profilo". | Password: Password123!, Nuovo Username: mario_nuovo | Visualizzazione alert "Profilo modificato con successo.". |
+| **TC_FRONT_AUT_001** | Login Cliente - Caso di Successo | Utente guest in pagina di login. | 1. Inserire credenziali valide.<br>2. Cliccare "Accedi". | Credenziali valide | Intercettazione POST su /LOGIN, inizializzazione store come cliente e reindirizzamento. |
+| **TC_FRONT_AUT_002** | Login Amministratore - Caso di Successo | Utente guest in pagina login-admin. | 1. Inserire credenziali admin valide.<br>2. Cliccare "Accedi". | Credenziali admin valide | Intercettazione POST su /LOGIN, scrittura dei parametri attività e reindirizzamento al pannello admin. |
+| **TC_FRONT_AUT_003** | Modifica Profilo Utente | Utente loggato in pagina profilo. | 1. Inserire password attuale e nuovo username.<br>2. Confermare la modifica. | Password attuale*, nuovo username | Chiamata alla classe AutenticazioneActions e visualizzazione alert di modifica eseguita con successo. |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -40,3 +43,6 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_001** | Accesso effettuato e reindirizzamento alla dashboard cliente. | Il sistema ha validato le credenziali e ha aggiornato lo store con i dati del cliente. | **PASS** |
 | **TC_FRONT_AUT_002** | Accesso effettuato e reindirizzamento alla dashboard amministratore. | Il sistema ha validato le credenziali e ha caricato i parametri di attività dell'admin. | **PASS** |
 | **TC_FRONT_AUT_003** | Visualizzazione alert "Profilo modificato con successo.". | La password è stata verificata e l'alert di successo è apparso correttamente. | **PASS** |
+| **TC_FRONT_AUT_001** | Intercettazione POST su /LOGIN, inizializzazione store come cliente e reindirizzamento. | L'interfaccia ha risposto in totale conformità con i flussi di business e i parametri grafici. | **PASS** |
+| **TC_FRONT_AUT_002** | Intercettazione POST su /LOGIN, scrittura dei parametri attività e reindirizzamento al pannello admin. | L'interfaccia ha risposto in totale conformità con i flussi di business e i parametri grafici. | **PASS** |
+| **TC_FRONT_AUT_003** | Chiamata alla classe AutenticazioneActions e visualizzazione alert di modifica eseguita con successo. | L'interfaccia ha risposto in totale conformità con i flussi di business e i parametri grafici. | **PASS** |
