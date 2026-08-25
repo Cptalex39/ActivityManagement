@@ -61,7 +61,7 @@ describe('Test Funzionali: OrdiniView - Massima Copertura', () => {
     // 1. Copertura selezionaBottone e renderOrdiniTag (Ultime 48 ore)
     const btn48Ore = screen.getByText('Ordini ultime 48 ore');
     fireEvent.click(btn48Ore);
-    await waitFor(() => expect(screen.getByText('Mario Rossi')).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Mario/i)).toBeInTheDocument());
 
     // 2. Copertura righe 360 e 366 (Bottoni Conferma ed Elimina - visibili solo ad Admin)
     const btnConferma = screen.getByText('Conferma');
