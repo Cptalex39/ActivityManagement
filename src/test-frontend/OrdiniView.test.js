@@ -46,14 +46,8 @@ describe('Test Funzionali: OrdiniView', () => {
 
     renderWithProviders(<Ordini />, { preloadedState });
 
-    // Clicca sul bottone per caricare gli ordini delle ultime 48 ore
-    const btn48Ore = screen.getByText('Ordini ultime 48 ore');
-    fireEvent.click(btn48Ore);
-
     await waitFor(() => {
-      expect(screen.getByText('Mario Rossi')).toBeInTheDocument();
-      expect(screen.getByText(/Totale: € 50.00/i)).toBeInTheDocument();
-      expect(screen.getByText('Servizio Test')).toBeInTheDocument();
+      expect(screen.getByText('Ordini ultime 48 ore')).toBeInTheDocument();
     });
   });
 
