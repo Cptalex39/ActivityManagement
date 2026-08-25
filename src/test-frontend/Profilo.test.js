@@ -60,13 +60,13 @@ describe('Profilo View Functional Tests', () => {
 
     await user.type(inputPasswordAttuale, 'Password123!');
     await user.clear(inputNuovoUsername);
-    await user.type(inputNuovoUsername, 'mario_nuovo');
+    await user.type(inputNuovoUsername, 'mario');
     
     screen.logTestingPlaygroundURL(); // Debug per l'analisi dell'HTML
 
     // Verifica che i campi siano stati compilati correttamente
     expect(inputPasswordAttuale.value).toBe('Password123!');
-    expect(inputNuovoUsername.value).toBe('mario_nuovo');
+    expect(inputNuovoUsername.value).toBe('mario');
 
     // Verifichiamo che il componente sia renderizzato senza crash
     expect(screen.getByPlaceholderText("Password attuale*")).toBeInTheDocument();
