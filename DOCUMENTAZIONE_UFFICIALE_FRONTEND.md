@@ -23,6 +23,7 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_002** | Login Amministratore - Caso di Successo | Utente guest in pagina login-admin. | 1. Inserire credenziali admin valide.<br>2. Cliccare "Accedi". | Credenziali admin valide | Intercettazione POST su /LOGIN, scrittura dei parametri attività e reindirizzamento al pannello admin. |
 | **TC_FRONT_AUT_003** | Modifica Profilo Utente | Utente loggato in pagina profilo. | 1. Inserire password attuale e nuovo username.<br>2. Confermare la modifica. | Password attuale*, nuovo username | Chiamata alla classe AutenticazioneActions e visualizzazione alert di modifica eseguita con successo. |
 | **TC_FRONT_ORD_001** | Gestione Quantità e Calcolo Totale Carrello | Cliente loggato con articoli nel carrello. | 1. Visualizzare il carrello con articoli presenti. | Rendering del carrello con articolo finto (prezzo 25.00, qtà 2) | Calcolo corretto del totale parziale e del totale complessivo pari a €50.00 e presenza del tasto di checkout. |
+| **TC_FRONT_ORD_002** | Visualizzazione Carrello - Caso Carrello Vuoto (Sad Path) | Cliente loggato senza articoli. | 1. Visualizzare il carrello senza articoli presenti. | Array items vuoto | Visualizzazione del testo di avviso 'Il carrello è vuoto' e occultamento del pulsante di checkout. |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -38,3 +39,4 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_002** | Intercettazione POST su /LOGIN, scrittura dei parametri attività e reindirizzamento al pannello admin. | L'interfaccia ha risposto in totale conformità con i flussi di business e i parametri grafici. | **PASS** |
 | **TC_FRONT_AUT_003** | Chiamata alla classe AutenticazioneActions e visualizzazione alert di modifica eseguita con successo. | L'interfaccia ha risposto in totale conformità con i flussi di business e i parametri grafici. | **PASS** |
 | **TC_FRONT_ORD_001** | Calcolo corretto del totale parziale e del totale complessivo pari a €50.00 e presenza del tasto di checkout. | Il sistema ha calcolato e mostrato a schermo i totali in modo matematicamente perfetto. | **PASS** |
+| **TC_FRONT_ORD_002** | Visualizzazione del testo di avviso 'Il carrello è vuoto' e occultamento del pulsante di checkout. | L'interfaccia ha nascosto il tasto di checkout e mostrato l'avviso correttamente. | **PASS** |
