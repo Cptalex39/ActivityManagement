@@ -5,10 +5,13 @@ import CatalogoServiziView from '../react_redux/views/ordine_view/CatalogoServiz
 import { ServizioActions } from '../react_redux/actions/ServizioActions';
 import { CarrelloActions } from '../react_redux/actions/CarrelloActions';
 
+// Definizione della funzione di mock riutilizzabile
+const mockRicercaServizi = jest.fn();
+
 // Mock delle classi Actions per isolare la vista
 jest.mock('../react_redux/actions/ServizioActions', () => ({
   ServizioActions: jest.fn().mockImplementation(() => ({
-    ricercaServizi: jest.fn()
+    ricercaServizi: mockRicercaServizi
   }))
 }));
 
@@ -46,7 +49,7 @@ describe('Test Funzionali: CatalogoServiziView', () => {
     }];
     
     // Configurazione del mock per il successo
-    ServizioActions.prototype.ricercaServizi.mockResolvedValue({
+    mockRicercaServizi.mockResolvedValue({
       isOK: true,
       servizi: mockServizi,
     });
@@ -65,7 +68,7 @@ describe('Test Funzionali: CatalogoServiziView', () => {
 
   test('TC_CatalogoServiziView_002: Ricerca Catalogo - Elenco Vuoto (Sad Path)', async () => {
     // Configurazione del mock per nessun risultato
-    ServizioActions.prototype.ricercaServizi.mockResolvedValue({
+    mockRicercaServizi.mockResolvedValue({
       isOK: false,
       servizi: [],
     });
