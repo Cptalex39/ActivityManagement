@@ -27,6 +27,8 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_004** | Login Cliente - Errore Credenziali Errate (Sad Path) | Utente guest in pagina di login. | 1. Inserire uno username o una password errati.<br>2. Cliccare "Accedi". | Username: utente_sbagliato, Password: WrongPassword! | Blocco del login, intercettazione errore HTTP 401 e permanenza sulla pagina con mantenimento dati. |
 | **TC_FRONT_ORD_001** | Gestione Quantità e Calcolo Totale Carrello | Cliente loggato con articoli nel carrello. | 1. Visualizzare il carrello con articoli presenti. | Rendering del carrello con articolo finto (prezzo 25.00, qtà 2) | Calcolo corretto del totale parziale e del totale complessivo pari a €50.00 e presenza del tasto di checkout. |
 | **TC_FRONT_ORD_002** | Visualizzazione Carrello - Caso Carrello Vuoto (Sad Path) | Cliente loggato senza articoli. | 1. Visualizzare il carrello senza articoli presenti. | Array items vuoto | Visualizzazione del testo di avviso 'Il carrello è vuoto' e occultamento del pulsante di checkout. |
+| **TC_CatalogoServiziView_001** | Ricerca Catalogo - Caso di Successo (Happy Path) | Cliente loggato, in pagina catalogo. | 1. Cliccare sull'icona di ricerca prodotti. | Dati ricerca di default | Visualizzazione della scheda del servizio 'Servizio Test' con prezzo €10.00. |
+| **TC_CatalogoServiziView_002** | Ricerca Catalogo - Elenco Vuoto (Sad Path) | Cliente loggato, in pagina catalogo. | 1. Cliccare sull'icona di ricerca prodotti. | Dati ricerca senza corrispondenze | La griglia rimane vuota e la scheda del servizio non viene renderizzata. |
 
 ## DOCUMENTO 2.a (Parte 2): Report di Esecuzione dei Test (Pre-Modifica)
 
@@ -46,3 +48,5 @@ Ogni test case deve essere redatto seguendo rigorosamente questi 6 punti:
 | **TC_FRONT_AUT_004** | Blocco del login, intercettazione errore HTTP 401 e permanenza sulla pagina con mantenimento dati. | Il sistema ha intercettato correttamente lo stato di errore del server finto, ha bloccato l'accesso e ha mantenuto l'utente sulla stessa schermata. | **PASS** |
 | **TC_FRONT_ORD_001** | Calcolo corretto del totale parziale e del totale complessivo pari a €50.00 e presenza del tasto di checkout. | Il sistema ha calcolato e mostrato a schermo i totali in modo matematicamente perfetto. | **PASS** |
 | **TC_FRONT_ORD_002** | Visualizzazione del testo di avviso 'Il carrello è vuoto' e occultamento del pulsante di checkout. | L'interfaccia ha nascosto il tasto di checkout e mostrato l'avviso correttamente. | **PASS** |
+| **TC_CatalogoServiziView_001** | Visualizzazione della scheda del servizio 'Servizio Test' con prezzo €10.00. | L'interfaccia ha reagito mostrando correttamente i prodotti in base al mock di successo. | **PASS** |
+| **TC_CatalogoServiziView_002** | La griglia rimane vuota e la scheda del servizio non viene renderizzata. | L'interfaccia ha reagito lasciando la lista vuota in totale conformità con il mock di errore/vuoto. | **PASS** |
