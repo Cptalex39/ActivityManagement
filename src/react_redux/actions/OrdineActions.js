@@ -50,10 +50,14 @@ export class OrdineActions extends Actions {
   }
 
   async ricercaOrdini(datiRicerca) {
-    datiRicerca.data_creazione_min = "1111-11-11";
-    datiRicerca.data_creazione_max = "9999-01-01";
-    datiRicerca.data_prenotazione_min = "1111-11-11";
-    datiRicerca.data_prenotazione_max = "9999-01-01";
+    // FIX (bug #2 - filtri sovrascritti): le date inserite dall'utente venivano
+    // SOVRASCRITTE incondizionatamente con le sentinelle, quindi i filtri
+    // "Data di creazione minima/massima" del caso d'uso non funzionavano mai.
+    // Ora le sentinelle sono applicate SOLO ai campi non compilati.
+    datiRicerca.data_creazione_min = datiRicerca.data_creazione_min || "1111-11-11";
+    datiRicerca.data_creazione_max = datiRicerca.data_creazione_max || "9999-01-01";
+    datiRicerca.data_prenotazione_min = datiRicerca.data_prenotazione_min || "1111-11-11";
+    datiRicerca.data_prenotazione_max = datiRicerca.data_prenotazione_max || "9999-01-01";
     datiRicerca.azione = "Ricerca";
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
     return {
@@ -102,10 +106,11 @@ export class OrdineActions extends Actions {
   }
 
   async ottieniFileOrdini(tipoFile, datiRicerca) {
-    datiRicerca.data_creazione_min = "1111-11-11";
-    datiRicerca.data_creazione_max = "9999-01-01";
-    datiRicerca.data_prenotazione_min = "1111-11-11";
-    datiRicerca.data_prenotazione_max = "9999-01-01";
+    // FIX (bug #2 - filtri sovrascritti): come in ricercaOrdini
+    datiRicerca.data_creazione_min = datiRicerca.data_creazione_min || "1111-11-11";
+    datiRicerca.data_creazione_max = datiRicerca.data_creazione_max || "9999-01-01";
+    datiRicerca.data_prenotazione_min = datiRicerca.data_prenotazione_min || "1111-11-11";
+    datiRicerca.data_prenotazione_max = datiRicerca.data_prenotazione_max || "9999-01-01";
     datiRicerca.azione = "File"
     const response = await super.getResponse("/VISUALIZZA_ITEMS", datiRicerca);
 
@@ -139,12 +144,3 @@ export class OrdineActions extends Actions {
     };
   }
 }
-
-
-
-
-
-
-
-
-

@@ -49,6 +49,8 @@ const Carte = () => {
   const [isButtonVisaSelected, setIsButtonVisaSelected] = useState(false);
   const [isButtonMastercardSelected, setIsButtonMastercardSelected] = useState(false);
 
+  // FIX (bug #3 - falsa conferma): l'alert di successo scattava incondizionatamente
+  // dopo l'await, anche quando il salvataggio falliva (errore 500).
   const salvaCarta = async () => {
     const risultatoControllo = controlloCarta(datiNuovaCarta);
     setDatiNuovaCarta(risultatoControllo);
@@ -57,7 +59,12 @@ const Carte = () => {
       return;
     }
        
-    await cartaActions.inserimentoCarta(datiNuovaCarta, setDatiNuovaCarta);
+    const result = await cartaActions.inserimentoCarta(datiNuovaCarta, setDatiNuovaCarta);
+    
+    if(!result || !result.isOK) {
+      alert("Errore durante il salvataggio della carta.");
+      return;
+    }
     
     alert("Salvataggio carta avvenuto con successo.");
   };
@@ -79,7 +86,8 @@ const Carte = () => {
       is_mastercard: !isButtonMastercardSelected, 
     }));  
   }
-  const rimuoviCarta = async (indexToRemove, idCarta) => {
+  // FIX: rimosso il parametro "indexToRemove" mai utilizzato
+  const rimuoviCarta = async (idCarta) => {
     if (!window.confirm("Sei sicuro di voler rimuovere questa carta?")) {
       alert("Operazione annullata.");
       return;
@@ -189,17 +197,20 @@ const Carte = () => {
             {cartaState.carte.length === 0 && <p style={{ opacity: 0.7, fontSize: "22px" }}>Nessuna carta salvata</p>}
             {cartaState.carte.map((carta, i) => {
               const dataScadenza = new Date(parseInt(carta.anno_scadenza), parseInt(carta.mese_scadenza), 1);
+              // FIX (bug dicembre->13): l'etichetta era costruita con parseInt(mese)+1,
+              // quindi una carta con scadenza dicembre mostrava "1/13/...." (mese inesistente).
+              // Ora l'etichetta è generata dall'oggetto Date, che gestisce correttamente il roll-over.
+              const labelScadenza = `1/${dataScadenza.getMonth() + 1}/${dataScadenza.getFullYear()}`;
               return (
-                <>
-                  <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                    {dataScadenza < dataAttuale ? (
-                      <span style={{ fontSize: "24px", color:"#FF0000", fontWeight:"bold"}}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>CARTA SCADUTA IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
-                    ) : (
-                      <span style={{ fontSize: "24px", color:"#FFFFFF", fontWeight:"bold" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>LA CARTA SCADE IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
-                    )}
-                    <button onClick={() => rimuoviCarta(i, carta.id)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
-                  </div>
-                </>
+                // FIX: rimossa la Fragment senza key che avvolgeva il div
+                <div key={carta.id} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                  {dataScadenza < dataAttuale ? (
+                    <span style={{ fontSize: "24px", color:"#FF0000", fontWeight:"bold"}}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>CARTA SCADUTA IL GIORNO: {labelScadenza}</small></span>
+                  ) : (
+                    <span style={{ fontSize: "24px", color:"#FFFFFF", fontWeight:"bold" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>LA CARTA SCADE IL GIORNO: {labelScadenza}</small></span>
+                  )}
+                  <button onClick={() => rimuoviCarta(carta.id)} style={{ ...buttonActionStyle, backgroundColor: "white", color: "black", padding: "10px 20px", fontSize: "16px" }}>Rimuovi</button>
+                </div>
               );
             })}
           </div>
@@ -210,12 +221,3 @@ const Carte = () => {
 }
 
 export default Carte;
-
-
-
-
-
-
-
-
-

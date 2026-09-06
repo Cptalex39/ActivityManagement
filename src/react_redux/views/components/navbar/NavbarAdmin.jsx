@@ -1,3 +1,4 @@
+import React from 'react';
 import Stile from "./Stile";
 // Bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css';

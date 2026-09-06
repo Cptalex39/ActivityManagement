@@ -41,6 +41,8 @@ eslint.config.js
 
 /package-lock.json
 
+coverage-frontend/
+coverage/
 
 
 
@@ -51,3 +53,4 @@ eslint.config.js
 
 
 
+.aider*

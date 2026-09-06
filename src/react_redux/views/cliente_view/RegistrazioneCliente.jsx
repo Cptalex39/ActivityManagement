@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
@@ -162,7 +163,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
             <br /><br />
 
             <button className="btn-primary" onClick={registra}>
-              <h2>Registati</h2>
+              <h2>Registrati</h2>
             </button>
                <br /><br />
             <br /><br />
