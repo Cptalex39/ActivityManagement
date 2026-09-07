@@ -129,15 +129,21 @@ const CheckoutView = () => {
       return;
     }
      
-    if(response.isOK && ordineCompleto.indirizzo !== ordineCompleto.indirizzo_attuale) {
+    // FIX (bug #1 - falsa conferma): se il salvataggio fallisce (isOK false)
+    // l'ordine NON è stato registrato: avviso l'utente, NON svuoto il carrello
+    // e NON navigo alla pagina di conferma (flusso 9.b1 del caso d'uso).
+    if(!response.isOK) {
+      alert("Errore durante la conferma dell'ordine.");
+      return;
+    }
+       
+    if(ordineCompleto.indirizzo !== ordineCompleto.indirizzo_attuale) {
       autenticazioneActions.aggiornaIndirizzo(nuovoOrdine.indirizzo);
     }
        
     await carrelloActions.svuotaCarrello();
        
     navigate("/conferma-ordine");
-    /*
-    */
   };
 
   const tornaPaginaNuovoOrdine = () => {
@@ -302,7 +308,6 @@ useEffect(() => {
                   <label style={labelStyle}>Orari</label>
                   {(parseInt(minInt1) > -1 && parseInt(maxInt1) > -1) && Array.from({ length: parseInt(maxInt1) - parseInt(minInt1) + 1 }, (_, index) => parseInt(minInt1) + index).map((i) => {
                     const orario = ("0" + i).slice(-2) + ":00";
-                    console.log(orario+": "+numeroOrdini[orario]);
                     const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
                     return ordiniAttuali < parseInt(numeroClienti) ? (
                       <button 
@@ -330,7 +335,6 @@ useEffect(() => {
                   {(parseInt(minInt2) > -1 && parseInt(maxInt2) > -1) && Array.from({ length: parseInt(maxInt2) - parseInt(minInt2) + 1 }, (_, index) => parseInt(minInt2) + index).map((i) => {
                     const orario = ("0" + i).slice(-2) + ":00";
                     const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
-                    console.log(orario+": "+numeroOrdini[orario]);
                     return ordiniAttuali < parseInt(numeroClienti) ? (
                       <button 
                         key={orario} 
@@ -372,29 +376,29 @@ useEffect(() => {
               <label style={labelStyle}>Seleziona una carta</label>
               {cartaState.carte.map((carta, i) => {
                 const dataScadenza = new Date(parseInt(carta.anno_scadenza), parseInt(carta.mese_scadenza), 1);
+                // FIX (bug dicembre->13): etichetta generata via oggetto Date
+                const labelScadenza = `1/${dataScadenza.getMonth() + 1}/${dataScadenza.getFullYear()}`;
                 return (
-                  <>
-                    <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
-                      {dataScadenza < dataAttuale ? (
-                        <span style={{ fontSize: "24px", color:"#FF0000", fontWeight:"bold"}}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>CARTA SCADUTA IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
-                      ) : (
-                        <>
-                          <span style={{ fontSize: "24px", color:"#FFFFFF", fontWeight:"bold" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>LA CARTA SCADE IL GIORNO: {"1/"+(parseInt(carta.mese_scadenza)+1)+"/"+carta.anno_scadenza}</small></span>
-                          <button onClick={() => selezionaCarta(carta.id, carta.numero)} 
-                            style={{ 
-                              ...buttonActionStyle, 
-                              backgroundColor: carta.id === idCartaSelezionata ? "#007BFF" : "#FFFFFF", 
-                              color: "black", 
-                              padding: "10px 20px", 
-                              fontSize: "16px" 
-                            }}
-                          >
-                            {carta.id === idCartaSelezionata ? "Deseleziona" : "Seleziona"}
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </>
+                  <div key={i} style={{ marginBottom: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,0.05)", padding: "25px", borderRadius: "12px", maxWidth: "700px", border: "1px solid rgba(255,255,255,0.1)" }}>
+                    {dataScadenza < dataAttuale ? (
+                      <span style={{ fontSize: "24px", color:"#FF0000", fontWeight:"bold"}}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>CARTA SCADUTA IL GIORNO: {labelScadenza}</small></span>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: "24px", color:"#FFFFFF", fontWeight:"bold" }}>💳 **** **** **** {carta.numero.slice(-4)} <small style={{ marginLeft: "20px", opacity: 0.8 }}><br/>LA CARTA SCADE IL GIORNO: {labelScadenza}</small></span>
+                        <button onClick={() => selezionaCarta(carta.id, carta.numero)} 
+                          style={{ 
+                            ...buttonActionStyle, 
+                            backgroundColor: carta.id === idCartaSelezionata ? "#007BFF" : "#FFFFFF", 
+                            color: "black", 
+                            padding: "10px 20px", 
+                            fontSize: "16px" 
+                          }}
+                        >
+                          {carta.id === idCartaSelezionata ? "Deseleziona" : "Seleziona"}
+                        </button>
+                      </>
+                    )}
+                  </div>
                 );
               })}
               {cartaState.carte.length < 1 && (

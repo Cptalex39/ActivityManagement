@@ -23,7 +23,11 @@ export class CartaActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async inserimentoCarta(nuovaCarta, setNuovaCarta) {
-    if (controlloCarta(nuovaCarta) > 0) { 
+    // FIX (bug #5): il controllo precedente era `controlloCarta(nuovaCarta) > 0`,
+    // ma controlloCarta ritorna un OGGETTO: il confronto oggetto > 0 è sempre false,
+    // quindi il check non ha mai bloccato nulla (codice morto).
+    const risultatoControllo = controlloCarta(nuovaCarta);
+    if (risultatoControllo.num_errori > 0) { 
       return null;
     }
 
@@ -93,12 +97,3 @@ export class CartaActions extends Actions {
     };
   }
 }
-
-
-
-
-
-
-
-
-

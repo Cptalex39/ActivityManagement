@@ -1,3 +1,4 @@
+import React from 'react';
 import Stile from './Stile';
 import { ShoppingCart } from "lucide-react";
 // Bootstrap

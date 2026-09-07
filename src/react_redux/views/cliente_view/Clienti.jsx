@@ -26,28 +26,11 @@ const Clienti = () => {
   const [selectedIdsModifica, setSelectedIdsModifica] = useState([]);
   const [clientiDaEliminare, setClientiDaEliminare] = useState([]);
 
-  const clientiEliminazione = [
-    {
-      nome: "Mario", 
-      cognome: "Rossi",
-    },
-    {
-      nome: "Laura",
-      cognome: "Bianchi",
-    }
-  ];
+  // FIX: rimossa la costante "clientiEliminazione" (codice morto, mai referenziata)
+  // FIX: rimossa la funzione "handleDownloadOrdini" (codice morto, mai referenziata)
 
-
-  const handleDownloadOrdini = (cliente) => {
-    const contenuto = `Ordini di ${cliente.nome} ${cliente.cognome}\nEmail: ${cliente.email}\n\nLista ordini in sospeso e completati...`;
-    const blob = new Blob([contenuto], { type: "text/plain" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `ordini_${cliente.nome}_${cliente.cognome}.txt`;
-    link.click();
-  };
-
+  // FIX (fallimenti silenziosi): aggiunto il ramo else con alert di errore.
+  // Prima un fallimento del server (isOK false) non dava ALCUN feedback all'utente.
   const riattivaCliente = async (username) => {
     if(!confirm(`Sei sicuro di voler riattivare il cliente ${username}?`)) {
       alert("Riattivazione annullata.");
@@ -59,6 +42,8 @@ const Clienti = () => {
     if(response.isOK) {
       alert("La riattivazione del cliente è avvenuta con successo.");
       setClientiDaEliminare(prevState => prevState.filter(cliente => cliente.username !== username));
+    } else {
+      alert("Operazione fallita.");
     }
   };
 
@@ -73,6 +58,8 @@ const Clienti = () => {
     if(response.isOK) {
       alert("L\'eliminazione del cliente è avvenuta con successo.");
       setClientiDaEliminare(prevState => prevState.filter(cliente => cliente.username !== username));
+    } else {
+      alert("Operazione fallita.");
     }
   };
   
