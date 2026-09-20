@@ -23,6 +23,7 @@ export class ServizioActions extends Actions {
     }));
   }
 
+  /*
   async getCatalogo(filtroTipo) {
     const dati = {
       filtro_tipo: filtroTipo
@@ -41,6 +42,7 @@ export class ServizioActions extends Actions {
       responseStatus: response.status, 
     };
   };
+  */
 
   /**
    * Azione per inserire un nuovo servizio nel sistema.
@@ -137,7 +139,6 @@ export class ServizioActions extends Actions {
   ) {
     if(icon === "trash") {
       if(selectedIdsEliminazione.includes(item.id)) {
-        
         this.dispatch(servizioSliceActions.aggiornaTipoSelezione({
           id_servizio: item.id, 
           nuova_selezione: 0
@@ -147,7 +148,6 @@ export class ServizioActions extends Actions {
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(servizioSliceActions.getServizioPrimaDellaModifica({
           id_servizio: item.id
         }));

@@ -6,7 +6,7 @@ import { spesaSliceActions } from '../store/reducers/SpesaReducer';
 import { Actions } from "./Actions";
 // Utils
 import { controlloRicercaSpese, controlloSpesa } from "../../utils/Controlli";
-import { generaFileSpesePDF, generaFileSpeseExcel } from "../../utils/File"
+import { generaFilePDF, generaFileSpeseExcel } from "../../utils/File"
 
 export class SpesaActions extends Actions {
   dispatch = useDispatch();
@@ -116,7 +116,7 @@ export class SpesaActions extends Actions {
       setSpese(result.items);
 
       if (tipoFile === "pdf") {
-        generaFileSpesePDF(result.items);
+        generaFilePDF(result.items, "Spese");
       }
       else {
         generaFileSpeseExcel(result.items);
@@ -147,7 +147,6 @@ export class SpesaActions extends Actions {
   ) {
     if(icon === "trash") {
       if(selectedIdsEliminazione.includes(item.id)) {
-        
         this.dispatch(spesaSliceActions.aggiornaTipoSelezione({
           id_spesa: item.id, 
           nuova_selezione: 0
@@ -157,7 +156,6 @@ export class SpesaActions extends Actions {
         setSelectedTrashCount(prevCount => Math.max(prevCount - 1, 0));
       }
       else {
-        
         this.dispatch(spesaSliceActions.getSpesaPrimaDellaModifica({
           id_spesa: item.id,
         }))

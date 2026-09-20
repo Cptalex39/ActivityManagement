@@ -1,37 +1,18 @@
 // React e Redux
 import { createSlice } from "@reduxjs/toolkit";
-
-const loadFromLocalStorage = () => {
-  try {
-    const serializedState = localStorage.getItem("autenticazioneSession");
-    return serializedState ? JSON.parse(serializedState) : undefined;
-  } 
-  catch (e) {
-    console.warn("Errore nel caricamento dello stato dal local storage:", e);
-    return undefined;
-  }
-};
-
-const saveToLocalStorage = (state) => {
-  try {
-    const serializedState = JSON.stringify(state);
-    localStorage.setItem("autenticazioneSession", serializedState);
-  } 
-  catch (e) {
-    console.warn("Errore nel salvataggio dello stato nel local storage:", e);
-  }
-};
+import { saveToLocalStorage } from "./LocalStorage";
+import { getInitialStateWithStorage } from "./State";
 
 const name = "Autenticazione";
-
-const initialState = loadFromLocalStorage() || {
-  value: {
-    username: null,
-    ruolo: "guest",
-    note: "",
-    isLogged: false 
-  },
+const nameItem = "autenticazioneSession";
+const value = {
+  username: null,
+  ruolo: "guest",
+  note: "",
+  isLogged: false 
 };
+
+const initialState = getInitialStateWithStorage(value, nameItem);
 
 const reducers = {
   login: (state, action) => {
@@ -49,7 +30,7 @@ const reducers = {
     state.value.primo_intervallo = action.payload.primo_intervallo;
     state.value.secondo_intervallo = action.payload.secondo_intervallo;
     state.value.numero_clienti = action.payload.numero_clienti;
-    saveToLocalStorage(state);
+    saveToLocalStorage(state, nameItem);
   },
   logout: (state) => {
     if(state.value.ruolo === "cliente") {
@@ -66,18 +47,18 @@ const reducers = {
     state.value.username = null;
     state.value.ruolo = "guest";
     state.value.isLogged = false;
-    saveToLocalStorage(state);
+    saveToLocalStorage(state, nameItem);
   },
   aggiornaIndirizzo: (state, action) => {
     state.value.indirizzo = action.payload.indirizzo;
-    saveToLocalStorage(state);
+    saveToLocalStorage(state, nameItem);
   }, 
   aggiornaProfiloCliente: (state, action) => {
     state.value.email = action.payload.email;
     state.value.contatto = action.payload.contatto;
     state.value.indirizzo = action.payload.indirizzo;
     state.value.username = action.payload.username;
-    saveToLocalStorage(state);
+    saveToLocalStorage(state, nameItem);
   },
 }
 

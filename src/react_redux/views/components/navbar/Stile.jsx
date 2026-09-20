@@ -9,17 +9,12 @@ import legno from "../../img/sfondi/legno.jpg";
 import mongolfiera from "../../img/sfondi/mongolfiera.jpg";
 import montagne from "../../img/sfondi/montagne.jpg";
 import salone from "../../img/sfondi/salone_barbiere.jpg";
-import logo from "../../img/Logo.png";
-import { 
-  StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavDropdown, StyledNavDropdownItem, 
-  StyledDropdownContainer, StyledSubMenuContainer, StyledNavLink, StyledNavLinkHome
-} from './StyledNavbarApp';
+import { StyledNavDropdown, StyledNavDropdownItem, StyledDropdownContainer, StyledSubMenuContainer } from './StyledNavbarApp';
 // Actions
 import { StileActions } from '../../../actions/StileActions';
 
 const Stile = () => {
   const stileActions = new StileActions()
-  const attivitaState = useSelector((state) => state.attivita.value);
   const [dropdownStile, setDropdownStile] = useState(false);
   const [dropdownSfondo, setDropdownSfondo] = useState(false);
   const [dropdownItem, setDropdownItem] = useState(false);

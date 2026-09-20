@@ -18,7 +18,6 @@ const Spese = () => {
   const operazioniForms = new OperazioniForms();
   const spesaState = useSelector((state) => state.spesa.value);
   const stileState = useSelector((state) => state.stile.value);
-  const attivitaState = useSelector((state) => state.attivita.value);
   
   const [spese, setSpese] = useState(-1);
   const [tipoFile, setTipoFile] = useState("");

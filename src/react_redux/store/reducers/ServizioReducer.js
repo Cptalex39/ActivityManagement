@@ -1,13 +1,13 @@
 // React e Redux
 import { createSlice } from "@reduxjs/toolkit";
+import { getInitialStateWithoutStorage } from "./State";
 
 const name = "Servizio";
-
-const initialState = {
-  value: {
-    servizi: [], 
-  } 
+const value = {
+  servizi: [],
 }
+
+const initialState = getInitialStateWithoutStorage(value);
 
 const reducers = {
   aggiornaServizi: (state, action) => {

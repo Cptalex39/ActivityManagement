@@ -14,7 +14,6 @@ import { PaginaWeb } from '@gianlucascisciolo/riutilizzoreact';
 const Clienti = () => {
   const clienteState = useSelector((state) => state.cliente.value);
   const stileState = useSelector((state) => state.stile.value);
-  const attivitaState = useSelector((state) => state.attivita.value);
   const clienteActions = new ClienteActions();
   const ordineActions = new OrdineActions();
   const clienteForms = new ClienteForms();
@@ -126,7 +125,7 @@ const Clienti = () => {
     }
   };
 
-  const campiRicercaClienti = clienteForms.getCampiRicercaClienti(datiRicerca, (e) => operazioniForms.handleInputChange(e, setDatiRicerca), null, null, attivitaState);
+  const campiRicercaClienti = clienteForms.getCampiRicercaClienti(datiRicerca, (e) => operazioniForms.handleInputChange(e, setDatiRicerca), null, null);
 
   useEffect(() => {
     clienteActions.azzeraLista();

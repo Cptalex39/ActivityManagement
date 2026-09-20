@@ -1,53 +1,28 @@
-// React e Redux
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import ReactDOMServer from 'react-dom/server';
 // Utils
 import { formatoDate } from './Tempo';
 
-const getData = (data_creazione, isOrarioIncluso) => {
-  const date = new Date(data_creazione);
-  return "giorno: "+("00"+date.getDate()).slice(-2)+"/"+("00"+(date.getMonth()+1)).slice(-2)+"/"+(date.getFullYear()) + (
-    isOrarioIncluso ? " alle ore "+("00"+date.getHours()).slice(-2)+":"+("00"+date.getMinutes()).slice(-2)+":"+("00"+date.getSeconds()).slice(-2) : ""
-  );
-}
-
-const jsxToPlainText = (jsx) => {
-  const html = ReactDOMServer.renderToStaticMarkup(jsx);
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  
-  const text = doc.body.innerHTML
-    .replace(/<li>/gi, '• ')
-    .replace(/<\/li>/gi, '\n')
-    .replace(/<p><strong>/gi, '\n')
-    .replace(/<\/strong><\/p>/gi, '\n')
-    .replace(/<br\s*\/?>/gi, '\n\n') 
-    .replace(/<[^>]+>/g, '')
-    .replace(/\n+/g, '\n'); 
-
-  return text;
-};
-
-const getDettagliPrenotazione = (data_prenotazione, ora_prenotazione) => {
+export const getDettagliPrenotazione = (data_prenotazione, ora_prenotazione) => {
   const data = new Date(data_prenotazione);
-  return ("00"+data.getDate()).slice(-2)+"/"+("00"+(data.getMonth()+1)).slice(-2)+"/"+data.getFullYear()+" "+ora_prenotazione; 
+  return ("00"+data.getDate()).slice(-2)+"/"+("00"+(data.getMonth()+1)).slice(-2)+"/"+data.getFullYear()+(ora_prenotazione ? " " + ora_prenotazione : ""); 
 };
 
-const getDettagliPrenotazionePDF = (data_prenotazione, ora_prenotazione) => {
-  const data = new Date(data_prenotazione);
-  return `- Data prenotazione: ${("00"+data.getDate()).slice(-2)+"/"+("00"+(data.getMonth()+1)).slice(-2)+"/"+data.getFullYear()+" "+ora_prenotazione}`; 
+export const getDettagliPrenotazionePDF = (data_prenotazione, ora_prenotazione) => {
+  const dettagliPrenotazione = getDettagliPrenotazione(data_prenotazione, ora_prenotazione);
+  return `- Data prenotazione: ${dettagliPrenotazione}`; 
 };
 
-const getDettagliSpedizione = (indirizzo, numero_carta) => {
+export const getDettagliSpedizione = (indirizzo, numero_carta) => {
   return "- Indirizzo: " + indirizzo + ".\n- Numero carta: **** **** **** " + numero_carta;
 };
 
-const getDettagliCorriere = (indirizzo) => {
+export const getDettagliCorriere = (indirizzo) => {
   return "- Indirizzo: " + indirizzo + ".";
 };
 
-const getDettagliOrdine = (items) => {
+export const getDettagliOrdine = (items) => {
   let dettagliOrdine = ``;
 
   for (let i = 0; i < items.length; i++) {
@@ -59,7 +34,7 @@ const getDettagliOrdine = (items) => {
   return dettagliOrdine;
 };
 
-export const generaFileSpesePDF = async (ordini) => {
+export const generaFilePDF = async (items, type) => {
   const pdfDoc = await PDFDocument.create();
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   let page = pdfDoc.addPage();
@@ -78,102 +53,72 @@ export const generaFileSpesePDF = async (ordini) => {
     page.drawText(line, { x: margin, y: yPosition, size: 12, font, color: rgb(0, 0, 0) });
     yPosition -= lineHeight;
   };
+
+  // Funzione per suddividere testo lungo
+  const addText = (text) => {
+    const words = text.split(' ');
+    let line = '';
+    for (const word of words) {
+      const testLine = line + word + ' ';
+      const testWidth = font.widthOfTextAtSize(testLine, 12);
+      if (testWidth > maxWidth && line.length > 0) {
+        addLine(line);
+        line = word + ' ';
+      } 
+      else {
+        line = testLine;
+      }
+    }
+    addLine(line);
+  };
+
+  if(type === "Spese") {
+    // Aggiunta delle spese
+    items.forEach((spesa) => {
+      const blocco = `Spesa numero ${items.indexOf(spesa) + 1}:\n` +
+                    `Nome: ${spesa.nome}\n` +
+                    `Giorno: ${formatoDate(spesa.giorno, "GG-MM-AAAA")}\n` +
+                    `Descrizione: ${spesa.descrizione}\n` +
+                    `Totale: € ${spesa.totale.toFixed(2)}\n` +
+                    `Note: ${spesa.note}\n\n`;
+      blocco.split('\n').forEach((linea) => {
+        addText(linea);
+      });
+    });
+  }
   
-  // Funzione per suddividere testo lungo
-  const addText = (text) => {
-    const words = text.split(' ');
-    let line = '';
-    for (const word of words) {
-      const testLine = line + word + ' ';
-      const testWidth = font.widthOfTextAtSize(testLine, 12);
-      if (testWidth > maxWidth && line.length > 0) {
-        addLine(line);
-        line = word + ' ';
-      } else {
-        line = testLine;
-      }
-    }
-    addLine(line);
-  };
+  if(type === "Ordini") {
+    // Aggiunta degli ordini
+    items.forEach((ordine) => {
+      const data = new Date(ordine.data_creazione);
+      const blocco = `Ordine numero ${items.indexOf(ordine) + 1}:\n` +
+        `Cliente: ${ordine.cognome_cliente} ${ordine.nome_cliente}\n` +
+        `Data creazione: ${("00" + data.getDate()).slice(-2)}/${("00" + (data.getMonth() + 1)).slice(-2)}/${data.getFullYear()} ${("00" + data.getHours()).slice(-2)}:${("00" + data.getMinutes()).slice(-2)}:${("00" + data.getSeconds()).slice(-2)}\n` +
+        `Totale: € ${ordine.totale.toFixed(2)}\n` +
+        `Metodo di pagamento: ${ordine.metodo_pagamento}\n` +
+        `Pagamento confermato: ${ordine.is_pagato ? "Si" : "No"}\n` +
+        (ordine.metodo_pagamento === "Struttura" ? `Dettagli prenotazione:\n${getDettagliPrenotazionePDF(ordine.data_prenotazione, ordine.ora_prenotazione)}\n` : "") +
+        (ordine.metodo_pagamento === "Spedizione" ? `Dettagli spedizione:\n${getDettagliSpedizione(ordine.indirizzo, ordine.numero_carta)}\n` : "") +
+        (ordine.metodo_pagamento === "Corriere" ? `Dettagli corriere:\n${getDettagliCorriere(ordine.indirizzo)}\n` : "") +
+        `Dettagli ordine:\n${getDettagliOrdine(JSON.parse(ordine.items))}\n\n`;
 
-  // Aggiunta delle spese
-  ordini.forEach((spesa) => {
-    const blocco = `Spesa numero ${ordini.indexOf(spesa) + 1}:\n` +
-                   `Nome: ${spesa.nome}\n` +
-                   `Giorno: ${formatoDate(spesa.giorno, "GG-MM-AAAA")}\n` +
-                   `Descrizione: ${spesa.descrizione}\n` +
-                   `Totale: € ${spesa.totale.toFixed(2)}\n` +
-                   `Note: ${spesa.note}\n\n`;
-    blocco.split('\n').forEach((linea) => {
-      addText(linea);
+      blocco.split('\n').forEach((linea) => {
+        addText(linea);
+      });
     });
-  });
+  }
 
   const pdfBytes = await pdfDoc.save();
   const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  saveAs(blob, 'Spese.pdf');
-};
+  
+  if(type === "Spese") {
+    saveAs(blob, "Spese.pdf");
+  }
 
-export const generaFileOrdiniPDF = async (ordini) => {
-  const pdfDoc = await PDFDocument.create();
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  let page = pdfDoc.addPage();
-  const { height } = page.getSize();
-  const margin = 50;
-  const maxWidth = 450;
-  const lineHeight = 15;
-  let yPosition = height - 60;
-
-  // Funzione per aggiungere righe con gestione paginazione
-  const addLine = (line) => {
-    if (yPosition < margin) {
-      page = pdfDoc.addPage();
-      yPosition = height - 60;
-    }
-    page.drawText(line, { x: margin, y: yPosition, size: 12, font, color: rgb(0, 0, 0) });
-    yPosition -= lineHeight;
-  };
-
-  // Funzione per suddividere testo lungo
-  const addText = (text) => {
-    const words = text.split(' ');
-    let line = '';
-    for (const word of words) {
-      const testLine = line + word + ' ';
-      const testWidth = font.widthOfTextAtSize(testLine, 12);
-      if (testWidth > maxWidth && line.length > 0) {
-        addLine(line);
-        line = word + ' ';
-      } else {
-        line = testLine;
-      }
-    }
-    addLine(line);
-  };
-
-  // Aggiunta degli ordini
-  ordini.forEach((ordine) => {
-    const data = new Date(ordine.data_creazione);
-    const blocco = `Ordine numero ${ordini.indexOf(ordine) + 1}:\n` +
-      `Cliente: ${ordine.cognome_cliente} ${ordine.nome_cliente}\n` +
-      `Data creazione: ${("00" + data.getDate()).slice(-2)}/${("00" + (data.getMonth() + 1)).slice(-2)}/${data.getFullYear()} ${("00" + data.getHours()).slice(-2)}:${("00" + data.getMinutes()).slice(-2)}:${("00" + data.getSeconds()).slice(-2)}\n` +
-      `Totale: € ${ordine.totale.toFixed(2)}\n` +
-      `Metodo di pagamento: ${ordine.metodo_pagamento}\n` +
-      `Pagamento confermato: ${ordine.is_pagato ? "Si" : "No"}\n` +
-      (ordine.metodo_pagamento === "Struttura" ? `Dettagli prenotazione:\n${getDettagliPrenotazionePDF(ordine.data_prenotazione, ordine.ora_prenotazione)}\n` : "") +
-      (ordine.metodo_pagamento === "Spedizione" ? `Dettagli spedizione:\n${getDettagliSpedizione(ordine.indirizzo, ordine.numero_carta)}\n` : "") +
-      (ordine.metodo_pagamento === "Corriere" ? `Dettagli corriere:\n${getDettagliCorriere(ordine.indirizzo)}\n` : "") +
-      `Dettagli ordine:\n${getDettagliOrdine(JSON.parse(ordine.items))}\n\n`;
-
-    blocco.split('\n').forEach((linea) => {
-      addText(linea);
-    });
-  });
-
-  const pdfBytes = await pdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-  saveAs(blob, 'Ordini.pdf');
-};   
+  if(type === "Ordini") {
+    saveAs(blob, "Ordini.pdf");
+  }
+}
 
 export const generaFileSpeseExcel = async (spese) => {
   // Creiamo un nuovo foglio di lavoro (Workbook)

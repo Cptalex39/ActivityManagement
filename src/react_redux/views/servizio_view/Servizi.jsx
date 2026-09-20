@@ -12,7 +12,6 @@ const Servizi = () => {
   const operazioniForms = new OperazioniForms();
   const servizioState = useSelector((state) => state.servizio.value);
   const stileState = useSelector((state) => state.stile.value);
-  const attivitaState = useSelector((state) => state.attivita.value);
 
   const [selectedTrashCount, setSelectedTrashCount] = useState(0);
   const [selectedPencilCount, setSelectedPencilCount] = useState(0);

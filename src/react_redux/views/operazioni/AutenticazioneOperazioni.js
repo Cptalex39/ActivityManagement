@@ -11,7 +11,7 @@ export const handleLogin = async (e, actions, datiLogin, setDatiLogin, navigate)
     return;
   }
   
-  const result = await actions.login(datiLogin, setDatiLogin);
+  const result = await actions.login(datiLogin);
 
   if(result === null) {
     setDatiLogin(prevState => ({

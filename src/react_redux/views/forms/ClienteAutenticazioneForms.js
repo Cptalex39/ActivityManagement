@@ -1,8 +1,6 @@
 import { useSelector } from 'react-redux';
 
-export class ClienteAutenticazioneForms {
-  attivitaState = useSelector((state) => state.attivita.value);
-  
+export class ClienteAutenticazioneForms {  
   constructor() {}
 
   // Login cliente

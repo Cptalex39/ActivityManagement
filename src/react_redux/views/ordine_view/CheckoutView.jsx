@@ -302,7 +302,6 @@ useEffect(() => {
                   <label style={labelStyle}>Orari</label>
                   {(parseInt(minInt1) > -1 && parseInt(maxInt1) > -1) && Array.from({ length: parseInt(maxInt1) - parseInt(minInt1) + 1 }, (_, index) => parseInt(minInt1) + index).map((i) => {
                     const orario = ("0" + i).slice(-2) + ":00";
-                    console.log(orario+": "+numeroOrdini[orario]);
                     const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
                     return ordiniAttuali < parseInt(numeroClienti) ? (
                       <button 
@@ -330,7 +329,7 @@ useEffect(() => {
                   {(parseInt(minInt2) > -1 && parseInt(maxInt2) > -1) && Array.from({ length: parseInt(maxInt2) - parseInt(minInt2) + 1 }, (_, index) => parseInt(minInt2) + index).map((i) => {
                     const orario = ("0" + i).slice(-2) + ":00";
                     const ordiniAttuali = numeroOrdini && numeroOrdini[orario] ? numeroOrdini[orario] : 0;
-                    console.log(orario+": "+numeroOrdini[orario]);
+                    
                     return ordiniAttuali < parseInt(numeroClienti) ? (
                       <button 
                         key={orario} 

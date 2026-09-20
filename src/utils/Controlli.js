@@ -1,6 +1,3 @@
-// Utils
-import { passwordIsCorrect } from "./Sicurezza";
-
 // Varie espressioni regolari
 const REGEX_NOME_COGNOME = /^[\p{L}\s'\-.]+$/u;
 const REGEX_PASSWORD = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,50}$/;
@@ -172,7 +169,6 @@ export const controlloRegistrazione = (dati) => {
 
   return nuoviDati;
 }
-
 
 export const controlloLogin = (dati) => {
   // Rimuoviamo gli errori
@@ -566,13 +562,13 @@ export const controlloCarta = (dati) => {
   }
   // data inserita
   else {
-    // non è una data
-    if((typeof nuoviDati.anno_scadenza !== "number" && nuoviDati.anno_scadenza < dataAttuale.getFullYear()) || (typeof nuoviDati.mese_scadenza !== "number" && !(nuoviDati.mese_scadenza >= 1 && nuoviDati.mese_scadenza <= 12))) {
+    // anno_scadenza e/o mese_scadenza non sono validi
+    if(nuoviDati.anno_scadenza < dataAttuale.getFullYear() || !(nuoviDati.mese_scadenza >= 1 && nuoviDati.mese_scadenza <= 12)) {
       nuoviDati.errore_data_scadenza = "Inserire una data di scadenza valida.";
       nuoviDati.num_errori += 1;
     }
     // è una data
-    else {
+    if(!nuoviDati.errore_data_scadenza) {
       // consideriamo il mese dopo la scadenza
       const dataScadenza = new Date(parseInt(nuoviDati.anno_scadenza), parseInt(nuoviDati.mese_scadenza), 1);
       // Carta scaduta
@@ -591,7 +587,7 @@ export const controlloCarta = (dati) => {
   }
   // circuito selezionato
   else {
-    // circuito Visa selezioanto
+    // circuito Visa selezionato
     if(nuoviDati.is_visa) {
       if(!matchRegex(nuoviDati.numero, REGEX_VISA)) {
         nuoviDati.errore_numero = "Errore, il numero della carta inserita non è valido. Controllare meglio.";
@@ -741,7 +737,6 @@ export const controlloRicercaOrdini = (dati) => {
       nuoviDati.num_errori += 1;
     }
   }
-
 
   return nuoviDati;
 }
@@ -1126,6 +1121,11 @@ export const controlloOrdine = (dati) => {
     return false;
   }
 
+  if (dati.metodo_pagamento !== "Struttura" && dati.metodo_pagamento !== "Spedizione" && dati.metodo_pagamento !== "Corriere") {
+    alert("Seleziona un metodo di pagamento valido!");
+    return false;
+  }
+
   /** controllo metodo di pagamento Struttura **/
   if (dati.metodo_pagamento === "Struttura") {
     // data e/o orario non inseriti
@@ -1137,7 +1137,7 @@ export const controlloOrdine = (dati) => {
     const dataPrenotazione = new Date(dati.data_prenotazione)
     const dataAttuale = new Date();
     if(dataPrenotazione <= dataAttuale) {
-      alert("Inserire un giorno successore a quello attuale.");
+      alert("Inserire un giorno successivo a quello attuale.");
       return false;
     }
   }

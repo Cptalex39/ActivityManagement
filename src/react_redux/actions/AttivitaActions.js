@@ -1,7 +1,5 @@
 // React e Redux
 import { useDispatch } from "react-redux";
-// Reducers
-import { attivitaSliceActions } from "../store/reducers/AttivitaReducer";
 // Actions
 import { Actions } from "./Actions";
 

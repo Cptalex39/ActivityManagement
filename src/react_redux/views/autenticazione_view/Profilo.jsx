@@ -17,7 +17,6 @@ const Profilo = () => {
   const navigate = useNavigate();
   const stileState = useSelector((state) => state.stile.value);
   const autenticazioneState = useSelector((state) => state.autenticazione.value);
-  const attivitaState = useSelector((state) => state.attivita.value);
   const autenticazioneActions = new AutenticazioneActions();
   const autenticazioneForms = new AutenticazioneForms();
   const operazioniForms = new OperazioniForms();
@@ -52,7 +51,7 @@ const Profilo = () => {
       <ProfiloTag  
         campi={campiProfilo} 
         indici={[...Array(campiProfilo.label.length).keys()]} 
-        eseguiModificaProfilo={() => autenticazioneActions.modificaProfilo(autenticazioneState.username, autenticazioneState.ruolo, datiProfilo, setDatiProfilo, navigate)} 
+        eseguiModificaProfilo={() => autenticazioneActions.modificaProfilo(autenticazioneState.ruolo, datiProfilo, setDatiProfilo, navigate)} 
       />
     </>
   )

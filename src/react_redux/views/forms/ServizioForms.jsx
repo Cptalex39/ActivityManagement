@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from 'react-redux';
 import { controlloServizio } from "../../../utils/Controlli";
 
-export class ServizioForms {
-  attivitaState = useSelector((state) => state.attivita.value);
-  
+export class ServizioForms {  
   getCampiNuovoServizio(item, handleOnChange, handleOnClick, handleOnBlur) {
     return {
       header: "Nuovo prodotto/servizio",
@@ -44,7 +42,6 @@ export class ServizioForms {
   }
 
   getCampiServizioEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {
-    const attivitaState = useSelector((state) => state.attivita.value);
     const [errori, setErrori] = useState({
       errore_nome: "", 
       errore_tipo: "", 

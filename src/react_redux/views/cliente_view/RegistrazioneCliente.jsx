@@ -39,7 +39,7 @@ const RegistrazioneCliente = ({ chiudi }) => {
       return;
     }
 
-    const response = await clienteActions.registrazioneCliente(dati, setDati);
+    const response = await clienteActions.registrazioneCliente(dati);
 
     if(response.isOK) {
       alert(`Registrazione completata con successo per ${dati.username}: \nEsegui il login per accedere`);

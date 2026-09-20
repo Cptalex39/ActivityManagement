@@ -1,14 +1,14 @@
 // React e Redux 
 import { createSlice } from "@reduxjs/toolkit";
+import { getInitialStateWithoutStorage } from "./State";
 
 const name = "Spesa";
-
-const initialState = {
-  value: {
-    spese: [], 
-    usciteSpese: [], 
-  } 
+const value = {
+  spese: [], 
+  usciteSpese: [], 
 }
+
+const initialState = getInitialStateWithoutStorage(value);
 
 const reducers = {
   aggiornaSpese: (state, action) => {

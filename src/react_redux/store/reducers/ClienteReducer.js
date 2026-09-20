@@ -1,14 +1,14 @@
 // React e Redux 
 import { createSlice } from "@reduxjs/toolkit";
+import { getInitialStateWithoutStorage } from "./State";
 
 const name = "Cliente";
-
-const initialState = {
-  value: {
-    clienti: [], 
-    clientiDaEliminare: [], 
-  } 
+const value = {
+  clienti: [], 
+  clientiDaEliminare: [], 
 }
+
+const initialState = getInitialStateWithoutStorage(value);
 
 const reducers = {
   aggiornaClienti: (state, action) => {
@@ -46,7 +46,7 @@ const reducers = {
       );
     }
     if(action.payload.listaDaAggiornare === "clientiDaEliminare") {
-      state.value.clientiDaEliminare = state.value.clienti.filter(
+      state.value.clientiDaEliminare = state.value.clientiDaEliminare.filter(
         (cliente) => cliente.username !== action.payload.username
       );
     }

@@ -5,7 +5,7 @@ import { ordineReducer, ordineSliceActions } from "../store/reducers/OrdineReduc
 // Actions
 import { Actions } from "./Actions";
 // Utils
-import { generaFileOrdiniPDF, generaFileOrdiniExcel } from "../../utils/File";
+import { generaFilePDF, generaFileOrdiniExcel } from "../../utils/File";
 
 export class OrdineActions extends Actions {
   dispatch = useDispatch();
@@ -112,7 +112,7 @@ export class OrdineActions extends Actions {
     if(response.ok) {
       const result = await response.json();
       
-      tipoFile === "pdf" ? generaFileOrdiniPDF(result.items) : generaFileOrdiniExcel(result.items);
+      tipoFile === "pdf" ? generaFilePDF(result.items, "Ordini") : generaFileOrdiniExcel(result.items);
     }
 
     return {

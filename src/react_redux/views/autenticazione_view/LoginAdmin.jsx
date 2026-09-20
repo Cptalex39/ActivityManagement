@@ -27,7 +27,6 @@ const LoginAdmin = () => {
   });
   const navigate = useNavigate();
   const stileState = useSelector((state) => state.stile.value);
-  const attivitaState = useSelector((state) => state.attivita.value)
 
   const LoginTag = (stileState.vistaForm === "form") ? FormLogin : (
     (stileState.vistaForm === "card") ? CardLogin : RowLogin

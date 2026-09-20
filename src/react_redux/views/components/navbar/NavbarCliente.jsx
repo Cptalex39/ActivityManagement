@@ -8,57 +8,18 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
-import styled from 'styled-components';
 // Views
-import negozio from "../../img/sfondi/negozio.jpg";
-import scrivania from "../../img/sfondi/scrivania.jpg";
-import legno from "../../img/sfondi/legno.jpg";
-import mongolfiera from "../../img/sfondi/mongolfiera.jpg";
-import montagne from "../../img/sfondi/montagne.jpg";
-import salone from "../../img/sfondi/salone_barbiere.jpg";
 import logo from "../../img/Logo.png";
-import { 
-  StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavDropdown, StyledNavDropdownItem, 
-  StyledDropdownContainer, StyledSubMenuContainer, StyledNavLink, StyledNavLinkHome
-} from './StyledNavbarApp';
+import { StyledNavLeft, StyledNavCenter, StyledNavRight, StyledNavLink, StyledNavLinkHome } from './StyledNavbarApp';
 // Actions
-import { StileActions } from '../../../actions/StileActions';
-import { AttivitaActions } from '../../../actions/AttivitaActions';
 import { AutenticazioneActions } from '../../../actions/AutenticazioneActions';
 
 /** Styled Components aggiuntivi per il carrello badge **/
 
-const CarrelloBadgeContainer = styled.div`
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-`;
-
-const BadgeNumero = styled.span`
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  background-color: #FF4444;
-  color: #FFFFFF;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 12px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
 export const NavbarCliente = () => {
-  const attivitaActions = new AttivitaActions();
-  const stileActions = new StileActions();
   const autenticazioneActions = new AutenticazioneActions();
-  const attivitaState = useSelector((state) => state.attivita.value);
   const stileState = useSelector((state) => state.stile.value);
   const carrelloState = useSelector((state) => state.carrello.value);
-  const [dropdownStile, setDropdownStile] = useState(false);
-  const [dropdownSfondo, setDropdownSfondo] = useState(false);
   const navigate = useNavigate();
 
   // CR: Conta items nel carrello
@@ -98,10 +59,6 @@ export const NavbarCliente = () => {
   useEffect(() => {
     applicaStileBody();
   }, [stileState]);
-
-  const numItems = getNumeroItemsCarrello();
-
-  const totaleCarrello = 5;
 
   return (
     <>
@@ -160,3 +117,12 @@ export const NavbarCliente = () => {
     </>
   );
 }
+
+
+
+
+
+
+
+
+

@@ -23,7 +23,7 @@ export class CartaActions extends Actions {
    * @returns {Object} risultato response operazione.
    */
   async inserimentoCarta(nuovaCarta, setNuovaCarta) {
-    if (controlloCarta(nuovaCarta) > 0) { 
+    if (controlloCarta(nuovaCarta).num_errori > 0) { 
       return null;
     }
 

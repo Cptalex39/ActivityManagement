@@ -19,11 +19,10 @@ export class AutenticazioneActions extends Actions {
    * Azione per eseguire il login
    * 
    * @param {Object} datiLogin - dati del login.
-   * @param {Function} setDatiLogin - setter dei dati del login.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async login(datiLogin, setDatiLogin) {
+  async login(datiLogin) {
     const response = await super.getResponse("/LOGIN", datiLogin);
 
     let isActive = 0;
@@ -115,7 +114,7 @@ export class AutenticazioneActions extends Actions {
     }
   }
 
-  async modificaProfilo(username, ruolo, datiProfilo, setDatiProfilo, navigate) {
+  async modificaProfilo(ruolo, datiProfilo, setDatiProfilo, navigate) {
     const risultatoControllo = controlloModificaProfiloUtente(datiProfilo);
     setDatiProfilo(risultatoControllo);
 

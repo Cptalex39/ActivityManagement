@@ -1,13 +1,13 @@
 // React e Redux
 import { createSlice } from "@reduxjs/toolkit";
+import { getInitialStateWithoutStorage } from "./State";
 
 const name = "Carta";
-
-const initialState = {
-  value: {
-    carte: [], 
-  } 
+const value = {
+  carte: [],
 }
+
+const initialState = getInitialStateWithoutStorage(value);
 
 const reducers = {
   aggiornaCarte: (state, action) => {

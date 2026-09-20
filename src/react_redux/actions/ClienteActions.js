@@ -30,11 +30,10 @@ export class ClienteActions extends Actions {
    * Azione che registra un nuovo cliente nel sistema.
    * 
    * @param {Object} nuovoCliente - dati del nuovo cliente.
-   * @param {Function} setNuovoCliente - setter dei dati del nuovo cliente.
    * 
    * @returns {Object} risultato response operazione.
    */
-  async registrazioneCliente(nuovoCliente, setNuovoCliente) {    
+  async registrazioneCliente(nuovoCliente) {    
     nuovoCliente.salt_hex = generateRandomString(32);
     nuovoCliente.password = encryptPassword(nuovoCliente.password, nuovoCliente.salt_hex, PEPPER_HEX);
 
@@ -76,17 +75,14 @@ export class ClienteActions extends Actions {
    * 
    * @param {String} icon - icona dell'operazione selezionata.
    * @param {Object} item - item selezionato.
-   * @param {Array<number>} selectedIdsModifica - id dei clienti selezionati per la modifica.
    * @param {Function} setSelectedIdsModifica - setter degli id selezionati per la modifica.
    * @param {Array<number>} selectedIdsEliminazione - id dei clienti selezionati per l'eliminazione.
    * @param {Function} setSelectedIdsEliminazione - setter degli id selezionati per l'eliminazione.
    * @param {Function} setSelectedPencilCount - setter per il conteggio del numero di clienti selezionati per la modifica.
    * @param {Function} setSelectedTrashCount - setter per il conteggio del numero di clienti selezionati per l'eliminazione.
    */
-  selezioneOperazioneCliente(
-    icon, item, selectedIdsModifica, setSelectedIdsModifica, selectedIdsEliminazione, 
-    setSelectedIdsEliminazione, setSelectedPencilCount, setSelectedTrashCount
-  ) {
+  selezioneOperazioneCliente(icon, item, setSelectedIdsModifica, selectedIdsEliminazione, 
+                             setSelectedIdsEliminazione, setSelectedPencilCount, setSelectedTrashCount) {
     if(icon === "trash") {
       if(selectedIdsEliminazione.includes(item.id)) {
         this.dispatch(clienteSliceActions.aggiornaTipoSelezione({
@@ -143,7 +139,7 @@ export class ClienteActions extends Actions {
       username: username
     }
 
-    const response = await super.getResponse("RICHIESTA_ELIMINAZIONE", dati);
+    const response = await super.getResponse("/RICHIESTA_ELIMINAZIONE", dati);
 
     return {
       isOK: response.ok, 
@@ -156,7 +152,7 @@ export class ClienteActions extends Actions {
       username: username
     }
 
-    const response = await super.getResponse("RIATTIVA_CLIENTE", dati);
+    const response = await super.getResponse("/RIATTIVA_CLIENTE", dati);
 
     return {
       isOK: response.ok, 

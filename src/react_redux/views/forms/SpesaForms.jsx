@@ -4,9 +4,7 @@ import { useSelector } from 'react-redux';
 // Utils
 import { controlloSpesa } from "../../../utils/Controlli";
 
-export class SpesaForms {
-  attivitaState = useSelector((state) => state.attivita.value);
-  
+export class SpesaForms {  
   constructor() {
 
   }
@@ -48,9 +46,7 @@ export class SpesaForms {
     };
   };
 
-  getCampiSpesaEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {
-    const attivitaState = useSelector((state) => state.attivita.value);
-    
+  getCampiSpesaEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {    
     const [errori, setErrori] = useState({
       errore_nome: "", 
       errore_descrizione: "", 

@@ -1,34 +1,13 @@
 // React e Redux
-import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Row from 'react-bootstrap/esm/Row';
-import Col from 'react-bootstrap/esm/Col';
+import { useState } from 'react';
 // Views
 import Header from "../components/Header";
-import { OperazioniForms } from '../forms/OperazioniForms';
 import { inputStyle, buttonActionStyle, hStyle, ulStyle, entrateStyle, usciteStyle, ricaviStyle } from '../stile/Stile';
 // Actions
-import { SpesaActions } from "../../actions/SpesaActions";
-import { ServizioActions } from "../../actions/ServizioActions";
 import { AttivitaActions } from '../../actions/AttivitaActions';
-// Riutilizzabile
-import { CardEntrateItems, CardEntrateItemsByName, CardUsciteItems, CardRicavi, CardEntrateUscite } from '@gianlucascisciolo/riutilizzoreact';
-import { FormEntrateUscite } from '@gianlucascisciolo/riutilizzoreact'
-import { RowEntrateUscite } from "@gianlucascisciolo/riutilizzoreact";
-import { useAccordionButton } from 'react-bootstrap';
 
 const Attivita = () => {
-  const stileState = useSelector((state) => state.stile.value);
-  const attivitaState = useSelector((state) => state.attivita.value);
-  const spesaActions = new SpesaActions();
-  const servizioActions = new ServizioActions();
   const attivitaActions = new AttivitaActions();
-  const [usciteSpese, setUsciteSpese] = useState(-1);
-  const [entrateServizi, setEntrateServizi] = useState(-1);
-  const [aggiornamento, setAggiornamento] = useState(0);
-  const [initialPositions, setInitialPositions] = useState([]);
-  const operazioniForms = new OperazioniForms();
-  const [aggiornamento2, setAggiornamento2] = useState(false);
   
   const [entrateAnno, setEntrateAnno] = useState([]);
   const [usciteAnno, setUsciteAnno] = useState([]);

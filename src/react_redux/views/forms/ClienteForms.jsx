@@ -3,8 +3,6 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from "react";
 
 export class ClienteForms {
-  attivitaState = useSelector((state) => state.attivita.value);
-
   constructor() {
     
   }
@@ -28,7 +26,6 @@ export class ClienteForms {
   };
 
   getCampiClienteEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {
-    const attivitaState = useSelector((state) => state.attivita.value);
     const [errori, setErrori] = useState({
       errore_contatto: "", 
       errore_email: "", 

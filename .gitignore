@@ -51,3 +51,6 @@ eslint.config.js
 
 
 
+
+# stryker temp files
+.stryker-tmp

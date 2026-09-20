@@ -1,13 +1,13 @@
 // React e Redux
 import { createSlice } from "@reduxjs/toolkit";
+import { getInitialStateWithoutStorage } from "./State";
 
 const name = "Carrello";
-
-const initialState = {
-  value: {
-    items: [],
-  }
+const value = {
+  items: [],
 }
+
+const initialState = getInitialStateWithoutStorage(value);
 
 const reducers = {
   // Aggiunge un item al carrello o incrementa la quantità se già presente
@@ -16,7 +16,8 @@ const reducers = {
     const index = state.value.items.findIndex(i => i.id === item.id);
     if (index >= 0) {
       state.value.items[index].quantita += quantita;
-    } else {
+    } 
+    else {
       state.value.items.push({
         id: item.id,
         nome: item.nome,
