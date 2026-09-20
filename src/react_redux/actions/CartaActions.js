@@ -93,12 +93,3 @@ export class CartaActions extends Actions {
     };
   }
 }
-
-
-
-
-
-
-
-
-

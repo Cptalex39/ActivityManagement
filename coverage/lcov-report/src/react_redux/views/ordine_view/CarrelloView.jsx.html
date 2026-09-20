@@ -25,28 +25,28 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/28</span>
+                <span class='fraction'>0/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>0/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/25</span>
+                <span class='fraction'>0/22</span>
             </div>
         
             
@@ -243,20 +243,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -265,6 +257,13 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -275,17 +274,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -304,11 +292,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -416,7 +416,8 @@ import Header from "../components/Header";
 import { CarrelloActions } from "../../actions/CarrelloActions";
 import { FaPlusCircle, FaMinusCircle, FaTrashAlt } from "react-icons/fa";
 &nbsp;
-const CarrelloView = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >({</span> carrello, setCarrello, setPagina }) =&gt; {</span>
+// FIX: rimossa la firma con props ({ carrello, setCarrello, setPagina }) mai utilizzate
+const CarrelloView = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
   const carrelloState = <span class="cstat-no" title="statement not covered" >useSelector(<span class="fstat-no" title="function not covered" >(s</span>tate) =&gt; <span class="cstat-no" title="statement not covered" >state.carrello.value)</span>;</span>
   const carrelloActions = <span class="cstat-no" title="statement not covered" >new CarrelloActions();</span>
   const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
@@ -429,11 +430,9 @@ const CarrelloView = <span class="cstat-no" title="statement not covered" ><span
 <span class="cstat-no" title="statement not covered" >    carrelloActions.decrementaQuantita(servizio.id);</span>
   };
   
-  const ottieniQuantitaItem = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>ervizio) =&gt; {</span>
-    const index = <span class="cstat-no" title="statement not covered" >carrelloState.items.findIndex(<span class="fstat-no" title="function not covered" >i </span>=&gt; <span class="cstat-no" title="statement not covered" >i.id === servizio.id)</span>;</span>
-<span class="cstat-no" title="statement not covered" >    return index &gt;= 0 ? carrelloState.items[index].quantita : 0;</span>
-  }
-&nbsp;
+  // FIX: rimossa "ottieniQuantitaItem": faceva un findIndex sull'array
+  // già in iterazione per restituire item.quantita, già disponibile nel map
+  
   const rimuoviDalCarrello = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(s</span>ervizio) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    carrelloActions.rimuoviDalCarrello(servizio.id);</span>
   }
@@ -496,7 +495,8 @@ const CarrelloView = <span class="cstat-no" title="statement not covered" ><span
         )}
         
         {carrelloState.items.map(<span class="fstat-no" title="function not covered" >(i</span>tem, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >          &lt;div key={index} style={itemBoxStyle}&gt;</span>
+          // FIX: key su item.id invece dell'indice di lista mutabile
+<span class="cstat-no" title="statement not covered" >          &lt;div key={item.id} style={itemBoxStyle}&gt;</span>
             
             {/* Nome e Prezzo */}
             &lt;div style={{ marginBottom: "15px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}&gt;
@@ -528,7 +528,7 @@ const CarrelloView = <span class="cstat-no" title="statement not covered" ><span
             &lt;div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}&gt;
               &lt;div style={{ display: "flex", gap: "20px", }}&gt;
                 &lt;FaMinusCircle onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >decrementaQuantita(item)}</span> size={40} style={{ cursor:"pointer", }} /&gt;
-                {ottieniQuantitaItem(item)}
+                {item.quantita}
                 &lt;FaPlusCircle onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >incrementaQuantita(item)}</span> size={40} style={{ cursor:"pointer", }} /&gt;
                 &lt;FaTrashAlt onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >rimuoviDalCarrello(item)}</span> size={40} style={{ cursor:"pointer", }} /&gt;
               &lt;/div&gt;
@@ -589,7 +589,7 @@ export default CarrelloView;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-19T22:58:56.110Z
+                at 2026-09-20T19:34:51.757Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

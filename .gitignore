@@ -41,16 +41,9 @@ eslint.config.js
 
 /package-lock.json
 
-
-
-
-
-
-
-
-
-
-
+coverage-frontend/
+coverage/
 
 # stryker temp files
 .stryker-tmp
+.aider*

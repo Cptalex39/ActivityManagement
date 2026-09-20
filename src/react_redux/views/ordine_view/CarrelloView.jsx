@@ -5,7 +5,8 @@ import Header from "../components/Header";
 import { CarrelloActions } from "../../actions/CarrelloActions";
 import { FaPlusCircle, FaMinusCircle, FaTrashAlt } from "react-icons/fa";
 
-const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
+// FIX: rimossa la firma con props ({ carrello, setCarrello, setPagina }) mai utilizzate
+const CarrelloView = () => {
   const carrelloState = useSelector((state) => state.carrello.value);
   const carrelloActions = new CarrelloActions();
   const navigate = useNavigate();
@@ -18,11 +19,9 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
     carrelloActions.decrementaQuantita(servizio.id);
   };
   
-  const ottieniQuantitaItem = (servizio) => {
-    const index = carrelloState.items.findIndex(i => i.id === servizio.id);
-    return index >= 0 ? carrelloState.items[index].quantita : 0;
-  }
-
+  // FIX: rimossa "ottieniQuantitaItem": faceva un findIndex sull'array
+  // già in iterazione per restituire item.quantita, già disponibile nel map
+  
   const rimuoviDalCarrello = (servizio) => {
     carrelloActions.rimuoviDalCarrello(servizio.id);
   }
@@ -85,7 +84,8 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
         )}
         
         {carrelloState.items.map((item, index) => (
-          <div key={index} style={itemBoxStyle}>
+          // FIX: key su item.id invece dell'indice di lista mutabile
+          <div key={item.id} style={itemBoxStyle}>
             
             {/* Nome e Prezzo */}
             <div style={{ marginBottom: "15px", display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -117,7 +117,7 @@ const CarrelloView = ({ carrello, setCarrello, setPagina }) => {
             <div style={{ maxWidth: "500px", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "40px"}}>
               <div style={{ display: "flex", gap: "20px", }}>
                 <FaMinusCircle onClick={() => decrementaQuantita(item)} size={40} style={{ cursor:"pointer", }} />
-                {ottieniQuantitaItem(item)}
+                {item.quantita}
                 <FaPlusCircle onClick={() => incrementaQuantita(item)} size={40} style={{ cursor:"pointer", }} />
                 <FaTrashAlt onClick={() => rimuoviDalCarrello(item)} size={40} style={{ cursor:"pointer", }} />
               </div>
