@@ -1,4 +1,6 @@
 // View
+import React from 'react';
+import { useState } from "react";
 import { NavbarAdmin } from "./navbar/NavbarAdmin";
 import { useSelector } from "react-redux";
 import { NavbarCliente } from "./navbar/NavbarCliente";

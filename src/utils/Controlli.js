@@ -614,8 +614,10 @@ export const controlloCarta = (dati) => {
     nuoviDati.num_errori += 1;
   }
   else {
-    // cvv/cvs non valido
-    if(nuoviDati.cvv_cvs.length !== 3) {
+    // FIX (bug #4): prima si controllava SOLO la lunghezza, quindi un CVV alfabetico
+    // come 'abc' (lunghezza 3) superava la validazione e la carta veniva salvata.
+    // Ora si richiedono esattamente 3 CIFRE.
+    if(!/^\d{3}$/.test(nuoviDati.cvv_cvs)) {
       nuoviDati.errore_cvv_cvs = "Errore, il numero inserito non è valido, deve essere di 3 cifre.";
       nuoviDati.num_errori += 1;
     }
