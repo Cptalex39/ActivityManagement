@@ -456,12 +456,12 @@ export const controlloModificaProfiloUtente = (dati) => {
       const indiceSep = nuoviDati.primo_intervallo.indexOf('-');
       const min = parseInt(nuoviDati.primo_intervallo.slice(0, indiceSep));
       const max = parseInt(nuoviDati.primo_intervallo.slice(indiceSep+1));
-      if(min < 0 || min > 23) {
-        nuoviDati.errore_primo_intervallo = "Errore, il valore minimo deve essere compreso tra 0 e 23 estremi inclusi.";
+      if(min < 0 || min > 24) {
+        nuoviDati.errore_primo_intervallo = "Errore, il valore minimo deve essere compreso tra 0 e 24 estremi inclusi.";
         nuoviDati.num_errori += 1;
       }
-      else if(max < 0 || max > 23) {
-        nuoviDati.errore_primo_intervallo = "Errore, il valore massimo deve essere compreso tra 0 e 23 estremi inclusi.";
+      else if(max < 0 || max > 24) {
+        nuoviDati.errore_primo_intervallo = "Errore, il valore massimo deve essere compreso tra 0 e 24 estremi inclusi.";
         nuoviDati.num_errori += 1;
       }
       else if(max <= min) {
@@ -484,12 +484,12 @@ export const controlloModificaProfiloUtente = (dati) => {
       const indiceSep = nuoviDati.secondo_intervallo.indexOf('-');
       const min = parseInt(nuoviDati.secondo_intervallo.slice(0, indiceSep));
       const max = parseInt(nuoviDati.secondo_intervallo.slice(indiceSep+1));
-      if(min < 0 || min > 23) {
-        nuoviDati.errore_secondo_intervallo = "Errore, il valore minimo deve essere compreso tra 0 e 23 estremi inclusi.";
+      if(min < 0 || min > 24) {
+        nuoviDati.errore_secondo_intervallo = "Errore, il valore minimo deve essere compreso tra 0 e 24 estremi inclusi.";
         nuoviDati.num_errori += 1;
       }
-      else if(max < 0 || max > 23) {
-        nuoviDati.errore_secondo_intervallo = "Errore, il valore massimo deve essere compreso tra 0 e 23 estremi inclusi.";
+      else if(max < 0 || max > 24) {
+        nuoviDati.errore_secondo_intervallo = "Errore, il valore massimo deve essere compreso tra 0 e 24 estremi inclusi.";
         nuoviDati.num_errori += 1;
       }
       else if(max <= min) {
