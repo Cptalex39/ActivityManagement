@@ -2,6 +2,7 @@ import { StileActions } from "../../../../react_redux/actions/StileActions";
 import { Actions } from "../../../../react_redux/actions/Actions";
 import { stileSliceActions } from "../../../../react_redux/store/reducers/StileReducer";
 
+
 const mockDispatch = jest.fn();
 
 jest.mock('react-redux', () => ({
@@ -40,7 +41,7 @@ describe('Vari test su "cambioSfondo"', () => {
   /** UT_StiA_CmbSfo_02 **/
   test('tipoSfondo = "color"', () => {
     const tipoSfondo = "color";
-    const sfondo = "/sfondo";
+    const sfondo = "#123456";
 
     const result = stileActions.cambioSfondo(tipoSfondo, sfondo);
 
@@ -50,6 +51,17 @@ describe('Vari test su "cambioSfondo"', () => {
       })
     );
     expect(mockDispatch).toHaveBeenCalledTimes(1);
+    expect(result).toBeUndefined();
+  });
+
+  /** UT_StiA_CmbSfo_03 **/
+  test('tipoElemento != "item" AND tipoElemento != "form"', async () => {
+    const tipoSfondo = "TIPO_SFONDO";
+    const sfondo = "/sfondo";
+
+    const result = stileActions.cambioSfondo(tipoSfondo, sfondo);
+
+    expect(mockDispatch).not.toHaveBeenCalled();
     expect(result).toBeUndefined();
   });
 });
@@ -97,8 +109,18 @@ describe('Vari test su "cambioVista"', () => {
     expect(mockDispatch).toHaveBeenCalledTimes(1);
     expect(result).toBeUndefined();
   });
-});
 
+  /** UT_StiA_CmbVis_03 **/
+  test('tipoElemento != "item" AND tipoElemento != "form"', async () => {
+    const tipoElemento = "TIPO_ELEMENTO";
+    const tipoView = "card";
+
+    const result = stileActions.cambioVista(tipoElemento, tipoView);
+
+    expect(mockDispatch).not.toHaveBeenCalled();
+    expect(result).toBeUndefined();
+  });
+});
 
 
 

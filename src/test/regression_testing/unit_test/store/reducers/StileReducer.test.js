@@ -20,7 +20,7 @@ describe('Vari test su "cambioImmagineSfondo"', () => {
     jest.clearAllMocks();
   });
 
-  /** UT_StiR_CmbImgSfo_01 **/
+  /** RT_UT_StiR_CmbImgSfo_01 **/
   test('Immagine sfondo cambiata', () => {
     const action = stileSliceActions.cambioImmagineSfondo({
       pathImg: "./new_path_img",
@@ -46,7 +46,7 @@ describe('Vari test su "cambioColoreSfondo"', () => {
     jest.clearAllMocks();
   });
 
-  /** UT_StiR_CmbColSfo_01 **/
+  /** RT_UT_StiR_CmbColSfo_01 **/
   test('Colore sfondo cambiato', () => {
     const action = stileSliceActions.cambioColoreSfondo({
       coloreRGB: "#654321",
@@ -72,7 +72,7 @@ describe('Vari test su "cambioVistaItem"', () => {
     jest.clearAllMocks();
   });
 
-  /** UT_StiR_CmbVisItm_01 **/
+  /** RT_UT_StiR_CmbVisItm_01 **/
   test('Vista item cambiata', () => {
     const action = stileSliceActions.cambioVistaItem({
       vistaItem: "form",
@@ -98,7 +98,7 @@ describe('Vari test su "cambioVistaForm"', () => {
     jest.clearAllMocks();
   });
 
-  /** UT_StiR_CmbVisForm_01 **/
+  /** RT_UT_StiR_CmbVisForm_01 **/
   test('Vista item cambiata', () => {
     const action = stileSliceActions.cambioVistaForm({
       vistaForm: "card",
@@ -118,10 +118,3 @@ describe('Vari test su "cambioVistaForm"', () => {
     expect(result).toEqual(valueExpected);
   });
 });
-
-
-
-
-
-
-

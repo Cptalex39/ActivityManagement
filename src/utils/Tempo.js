@@ -14,6 +14,9 @@ export const formatoDate = (dateStr, formato) => {
   else if(formato === "AAAA-MM-GG") {
     return `${year}-${month}-${day}`;
   }
+  else {
+    console.error("Formato data non valida.");
+  }
 }
 
 export const formatoTime = (timeStr) => {

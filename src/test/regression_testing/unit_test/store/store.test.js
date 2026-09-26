@@ -26,14 +26,14 @@ jest.mock('../../../../react_redux/store/reducers/OrdineReducer', () => ({
 }));
 
 describe('Vari test su "store"', () => {
-  /** UT_Sto_01 **/
+  /** RT_UT_Sto_01 **/
   test('Espone le API standard di un Redux store (getState, dispatch, subscribe)', () => {
     expect(typeof store.getState).toBe('function');
     expect(typeof store.dispatch).toBe('function');
     expect(typeof store.subscribe).toBe('function');
   });
 
-  /** UT_Sto_02 **/
+  /** RT_UT_Sto_02 **/
   test('Lo stato iniziale ha esattamente le 9 chiavi attese', () => {
     const state = store.getState();
 
@@ -51,7 +51,7 @@ describe('Vari test su "store"', () => {
     );
   });
 
-  /** UT_Sto_03 **/
+  /** RT_UT_Sto_03 **/
   test('Ogni chiave dello stato è collegata al reducer corretto (nessuna chiave scambiata)', () => {
     const state = store.getState();
 
@@ -65,7 +65,7 @@ describe('Vari test su "store"', () => {
     expect(state.ordine).toBe('ORDINE_INITIAL');
   });
 
-  /** UT_Sto_04 **/
+  /** RT_UT_Sto_04 **/
   test('Dispatchare un\'azione sconosciuta non altera lo stato (i reducer mock ignorano azioni non gestite)', () => {
     const statoIniziale = store.getState();
 
@@ -74,14 +74,11 @@ describe('Vari test su "store"', () => {
     expect(store.getState()).toEqual(statoIniziale);
   });
 
-  /** UT_Sto_05 **/
+  /** RT_UT_Sto_05 **/
   test('Dispatch propaga la stessa azione a tutti i reducer (verifica indiretta tramite un reducer spia)', () => {
     expect(() => store.dispatch({ type: 'QUALSIASI_AZIONE', payload: { x: 1 } })).not.toThrow();
   });
 });
-
-
-
 
 
 

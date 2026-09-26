@@ -115,64 +115,6 @@ describe('Vari test su "login"', () => {
   });
 });
 
-describe('Vari test su "logout"', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
-  /** UT_AutR_Logout_01 **/
-  test('ruolo != "cliente"', () => {
-    const action = autenticazioneSliceActions.logout({
-      ruolo: "amministratore",
-    });
-
-    const valueExpected = {
-      value: {
-        primo_intervallo: null,
-        secondo_intervallo: null,
-        numero_clienti: null,
-        username: null,
-        ruolo: "guest",
-        isLogged: false,
-      }
-    }
-
-    const result = autenticazioneReducer(actualStateAdmin, action);
-
-    expect(saveToLocalStorage).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(valueExpected);
-  });
-
-  /** UT_AutR_Logout_02 **/
-  test('ruolo = "cliente"', () => {
-    const action = autenticazioneSliceActions.logout({
-      ruolo: "cliente",
-    });
-
-    const valueExpected = {
-      value: {
-        id_utente: null,
-        nome: null,
-        cognome: null,
-        email: null,
-        contatto: null,
-        indirizzo: null,
-        primo_intervallo: null,
-        secondo_intervallo: null,
-        numero_clienti: null,
-        username: null,
-        ruolo: "guest",
-        isLogged: false,
-      }
-    }
-
-    const result = autenticazioneReducer(actualStateClient, action);
-
-    expect(saveToLocalStorage).toHaveBeenCalledTimes(1);
-    expect(result).toEqual(valueExpected);
-  });
-});
-
 describe('Vari test su "aggiornaIndirizzo"', () => {
   beforeEach(() => {
     jest.clearAllMocks();

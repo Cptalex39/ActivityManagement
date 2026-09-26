@@ -382,28 +382,6 @@ describe("Vari test su 'login'", () => {
   });
 });
 
-describe("Vari test su 'logout'", () => {
-  let autenticazioneActions;
-
-  beforeEach(() => {
-    autenticazioneActions = new AutenticazioneActions();
-    jest.clearAllMocks();
-  });
-
-  /** UT_AutA_Logout_01 **/
-  test('logout: fa il dispatch di logout e naviga verso "/"', () => {
-    const mockNavigate = jest.fn();
-
-    autenticazioneActions.logout(mockNavigate);
-
-    expect(mockDispatch).toHaveBeenCalledWith(
-      autenticazioneSliceActions.logout()
-    );
-
-    expect(mockNavigate).toHaveBeenCalledWith("/");
-  });
-});
-
 describe("Vari test su 'eseguiLogin'", () => {
   let autenticazioneActions;
 

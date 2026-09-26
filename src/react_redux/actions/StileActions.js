@@ -24,10 +24,13 @@ export class StileActions extends Actions {
         pathImg: sfondo
       }));
     }
-    else {
+    else if (tipoSfondo === "color") {
       this.dispatch(stileSliceActions.cambioColoreSfondo({
         coloreRGB: sfondo
       }));
+    }
+    else {
+      console.error("Errore, tipo sfondo non valido.");
     }
   }
 
@@ -43,10 +46,13 @@ export class StileActions extends Actions {
         vistaItem: tipoView
       }));
     }
-    else {
+    else if(tipoElemento === "form") {
       this.dispatch(stileSliceActions.cambioVistaForm({
         vistaForm: tipoView
       }))
+    }
+    else {
+      console.error("Errore, tipo elemento non valido.");
     }
   }
 }

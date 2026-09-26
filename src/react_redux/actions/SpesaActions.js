@@ -208,7 +208,6 @@ export class SpesaActions extends Actions {
    * 
    * @returns {Array<[Boolean, number]>} esiti delle modifiche (modifiche riuscite e fallite).
    */
-  
   async modificaSpese(spese, selectedIdsModifica, setSelectedIdsModifica) {
     let speseDaModificare = spese.filter(spesa => selectedIdsModifica.includes(spesa.id)); 
     let idSpeseNonModificate = [];
