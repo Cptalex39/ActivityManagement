@@ -159,6 +159,29 @@ const Spese = () => {
     alert("Eliminazione completata con successo.");
   }
 
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    if (!confirm("Sei sicuro di voler modificare le spese?")) {
+      alert("Modifica annullata.");
+      return;
+    }
+
+    //const result = await spesaActions.eliminaSpese(selectedIdsEliminazione, setSelectedIdsEliminazione, spesaState.spese);
+    const result = await spesaActions.modificaSpese(spesaState.spese, selectedIdsModifica, setSelectedIdsModifica)
+
+    if(!result.isOK) {
+      alert("Errore durante la modifica delle spese, riprova più tardi.");
+      return;
+    }
+    
+    let esitoModifiche = "Esito modifiche:\n"
+    for(let i = 0; i < result.esitiModifiche.length; i++) {
+      esitoModifiche += "Spesa numero " + (i+1) + ": " + (result.esitiModifiche[i][0] ? "modifica effettuata con successo.\n" : "modifica fallita.\n");
+    }
+    alert(esitoModifiche);
+  }
+
   /**
    * Funzione che esegue l'eliminazione delle spese presenti nel range di 2 date definite nel form (estreme incluse).
    * 
@@ -213,7 +236,7 @@ const Spese = () => {
             operazioneElimina: operazioneElimina, 
             handleInsert: () => spesaActions.inserimentoSpesa(nuovaSpesa, setNuovaSpesa), 
             handleSearch: () => spesaActions.ricercaSpese(datiRicerca, setDatiRicerca), 
-            handleEdit:   () => spesaActions.modificaSpese(spesaState.spese, selectedIdsModifica, setSelectedIdsModifica),  
+            handleEdit:   handleEdit, 
             handleDelete: handleDelete, 
             handleSearchRangeFilePDF: () => spesaActions.handleSearchSpeseRangeFile("pdf", setTipoFile, datiRicerca, setDatiRicerca, setSpese),
             handleSearchRangeFileExcel: () => spesaActions.handleSearchSpeseRangeFile("excel", setTipoFile, datiRicerca, setDatiRicerca, setSpese),

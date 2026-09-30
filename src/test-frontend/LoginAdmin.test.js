@@ -45,7 +45,6 @@ const utenteAdmin = (overrides = {}) => ({
 
 const preloadedState = {
   stile: { value: { vistaForm: 'form' } },
-  attivita: { value: {} },
 };
 
 describe('LoginAdmin - Test Funzionali (MSW, azioni reali)', () => {

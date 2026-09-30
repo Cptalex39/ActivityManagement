@@ -1,13 +1,19 @@
 // jest.config.mjs
 export default {
   rootDir: '.',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  testEnvironment: 'jest-fixed-jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+  setupFilesAfterEnv: [
+    '<rootDir>/jest.setup.js',
+    '<rootDir>/src/setupTests-frontend.js',
+  ],
 
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/src/test/old_version/',
-    '<rootDir>/.stryker-tmp/', 
+    '<rootDir>/.stryker-tmp/',
   ],
 
   moduleNameMapper: {
@@ -16,25 +22,23 @@ export default {
   },
 
   transform: {
-    '^.+\\.(js|jsx|ts|tsx|mjs)$': 'babel-jest',
+    '^.+\\.(js|jsx|mjs|ts|tsx)$': [
+      'babel-jest',
+      { presets: [['@babel/preset-react', { runtime: 'automatic' }]] },
+    ],
   },
 
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/',
+    '/node_modules/(?!(@gianlucascisciolo/riutilizzoreact|react-bootstrap|@open-draft|msw|@mswjs|until-async|rettime|@bundled-es-modules|strict-event-emitter|outvariant|headers-polyfill|is-node-process)/)',
   ],
 
   collectCoverage: false,
+  coverageDirectory: '<rootDir>/coverage-totale',
   collectCoverageFrom: [
-    'src/**/*.{js,jsx,ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/test/old_version/**',
+    '<rootDir>/src/react_redux/**/*.{js,jsx}',
+    //'<rootDir>/src/react_redux/actions/**/*.{js}',
+    //'<rootDir>/src/react_redux//**/*.{js}',
+    '!<rootDir>/src/Main.jsx',
+    '!<rootDir>/src/index.js',
   ],
-  coverageDirectory: '<rootDir>/coverage',
 };
-
-
-
-
-
-
-

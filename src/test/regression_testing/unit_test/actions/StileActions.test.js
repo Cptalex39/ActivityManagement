@@ -39,8 +39,8 @@ describe('Vari test su "cambioSfondo"', () => {
   });
 
   /** UT_StiA_CmbSfo_02 **/
-  test('tipoSfondo = "color"', () => {
-    const tipoSfondo = "color";
+  test('tipoSfondo = "rgb"', () => {
+    const tipoSfondo = "rgb";
     const sfondo = "#123456";
 
     const result = stileActions.cambioSfondo(tipoSfondo, sfondo);
@@ -55,7 +55,7 @@ describe('Vari test su "cambioSfondo"', () => {
   });
 
   /** UT_StiA_CmbSfo_03 **/
-  test('tipoElemento != "item" AND tipoElemento != "form"', async () => {
+  test('tipoSfondo != "img" AND tipoSfondo != "rgb"', async () => {
     const tipoSfondo = "TIPO_SFONDO";
     const sfondo = "/sfondo";
 

@@ -1,3 +1,4 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import Header from "../components/Header.jsx";
@@ -123,6 +124,28 @@ const Servizi = () => {
     alert("Eliminazione completata con successo.");
   }
 
+  const handleEdit = async (e) => {
+    e.preventDefault();
+
+    if (!confirm("Sei sicuro di voler modificare i servizi?")) {
+      alert("Modifica annullata.");
+      return;
+    }
+
+    const result = await servizioActions.modificaServizi(servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica);
+
+    if(!result.isOK) {
+      alert("Errore durante la modifica dei servizi, riprova più tardi.");
+      return;
+    }
+
+    let esitoModifiche = "Esito modifiche:\n"
+    for(let i = 0; i < result.esitiModifiche.length; i++) {
+      esitoModifiche += "Servizio numero " + (i+1) + ": " + (result.esitiModifiche[i][0] ? "modifica effettuata con successo.\n" : "modifica fallita.\n");
+    }
+    alert(esitoModifiche);
+  }
+
   useEffect(() => {
     servizioActions.azzeraLista();
   }, []);
@@ -142,7 +165,7 @@ const Servizi = () => {
           operazioneElimina: operazioneElimina, 
           handleInsert: () => servizioActions.inserisciServizio(nuovoServizio, setNuovoServizio), 
           handleSearch: () => servizioActions.ricercaServizi(datiRicerca, setDatiRicerca), 
-          handleEdit:   () => servizioActions.modificaServizi(servizioState.servizi, selectedIdsModifica, setSelectedIdsModifica), 
+          handleEdit:   handleEdit, 
           handleDelete: handleDelete, 
           campiNuovoItem: campiNuovoServizio, 
           campiRicercaItems: campiRicercaServizi,

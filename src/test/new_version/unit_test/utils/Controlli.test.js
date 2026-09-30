@@ -687,8 +687,8 @@ describe('Vari test su "controlloModificaProfiloUtente"', () => {
       password_attuale: "PassWord10!!", 
       nuova_password: "Password20!!",
       conferma_nuova_password: "Password20!!",    
-      primo_intervallo: "24-25", 
-      secondo_intervallo: "26-27", 
+      primo_intervallo: "25-26", 
+      secondo_intervallo: "27-28", 
       numero_clienti: "10",
     };
 
@@ -698,8 +698,8 @@ describe('Vari test su "controlloModificaProfiloUtente"', () => {
       errore_nuovo_username: null, 
       errore_password_attuale: null, 
       errore_nuova_password: null,   
-      errore_primo_intervallo: "Errore, il valore minimo deve essere compreso tra 0 e 23 estremi inclusi.", 
-      errore_secondo_intervallo: "Errore, il valore minimo deve essere compreso tra 0 e 23 estremi inclusi.", 
+      errore_primo_intervallo: "Errore, il valore minimo deve essere compreso tra 0 e 24 estremi inclusi.", 
+      errore_secondo_intervallo: "Errore, il valore minimo deve essere compreso tra 0 e 24 estremi inclusi.", 
       errore_numero_clienti: null,
     };
 
@@ -715,8 +715,8 @@ describe('Vari test su "controlloModificaProfiloUtente"', () => {
       password_attuale: "PassWord10!!", 
       nuova_password: "Password20!!",
       conferma_nuova_password: "Password20!!",    
-      primo_intervallo: "18-24", 
-      secondo_intervallo: "14-24", 
+      primo_intervallo: "22-26", 
+      secondo_intervallo: "24-28", 
       numero_clienti: "10",
     };
 
@@ -726,8 +726,8 @@ describe('Vari test su "controlloModificaProfiloUtente"', () => {
       errore_nuovo_username: null, 
       errore_password_attuale: null, 
       errore_nuova_password: null,   
-      errore_primo_intervallo: "Errore, il valore massimo deve essere compreso tra 0 e 23 estremi inclusi.", 
-      errore_secondo_intervallo: "Errore, il valore massimo deve essere compreso tra 0 e 23 estremi inclusi.", 
+      errore_primo_intervallo: "Errore, il valore massimo deve essere compreso tra 0 e 24 estremi inclusi.", 
+      errore_secondo_intervallo: "Errore, il valore massimo deve essere compreso tra 0 e 24 estremi inclusi.", 
       errore_numero_clienti: null,
     };
 
@@ -1282,7 +1282,7 @@ describe('Vari test su "controlloRicercaServizi"', () => {
   /** UT_Con_RicSer_04 **/
   test('prezzo_max < prezzo_min AND nome, tipo, in_uso non rispettano la regex', () => {
     let dati = {
-      nome: "Ricarica telefonica 10",
+      nome: "(Ricarica telefonica 10)",
       tipo: "Sèrvìziò",
       prezzo_min: 10.34,
       prezzo_max: 5.12,
@@ -1292,7 +1292,7 @@ describe('Vari test su "controlloRicercaServizi"', () => {
     const datiExpected = {
       ...dati,
       num_errori: 4,
-      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.",
+      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_tipo: "Errore, il tipo deve contenere solamente lettere senza accenti.",
       errore_prezzi: "Errore, il prezzo massimo è più piccolo del prezzo minimo.",
       errore_in_uso: "Errore, \"In uso\" deve contenere solamente lettere senza accenti.", 
@@ -1359,7 +1359,7 @@ describe('Vari test su "controlloServizio"', () => {
   /** UT_Con_Ser_02 **/
   test('nome, descrizione, note non rispettano la regex AND prezzo <= 0 AND tipo, in_uso non validi', () => {
     let dati = {
-      nome: "Ricarica telefonica 10",
+      nome: "(Ricarica telefonica 10)",
       tipo: "TIPO",
       prezzo: "0",
       descrizione: "(Descrizione servizio)",
@@ -1370,7 +1370,7 @@ describe('Vari test su "controlloServizio"', () => {
     const datiExpected = {
       ...dati,
       num_errori: 6,
-      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.",
+      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_tipo: "Errore, il tipo deve essere uguale a \"Prodotto\" o \"Servizio\".",
       errore_prezzo: "Errore, il prezzo inserito non è maggiore di 0.",
       errore_descrizione: "Errore, la descrizione deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">26.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>8/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">50% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>3/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">4.34% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/23</span>
+                <span class='fraction'>1/23</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">26.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>8/30</span>
             </div>
         
             
@@ -205,7 +205,8 @@
 <a name='L140'></a><a href='#L140'>140</a>
 <a name='L141'></a><a href='#L141'>141</a>
 <a name='L142'></a><a href='#L142'>142</a>
-<a name='L143'></a><a href='#L143'>143</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L143'></a><a href='#L143'>143</a>
+<a name='L144'></a><a href='#L144'>144</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -220,18 +221,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-yes">72x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -348,6 +350,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// React e Redux
+import React from 'react';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
@@ -362,18 +365,18 @@ import { StyledNavDropdown, StyledNavDropdownItem, StyledDropdownContainer, Styl
 // Actions
 import { StileActions } from '../../../actions/StileActions';
 &nbsp;
-const Stile = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-  const stileActions = <span class="cstat-no" title="statement not covered" >new StileActions()</span>
-  const [dropdownStile, setDropdownStile] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-  const [dropdownSfondo, setDropdownSfondo] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-  const [dropdownItem, setDropdownItem] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
-  const [dropdownForm, setDropdownForm] = <span class="cstat-no" title="statement not covered" >useState(false);</span>
+const Stile = () =&gt; {
+  const stileActions = new StileActions()
+  const [dropdownStile, setDropdownStile] = useState(false);
+  const [dropdownSfondo, setDropdownSfondo] = useState(false);
+  const [dropdownItem, setDropdownItem] = useState(false);
+  const [dropdownForm, setDropdownForm] = useState(false);
 &nbsp;
-  const handleContextMenu = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(e</span>vent) =&gt; {</span>
+  const handleContextMenu = <span class="fstat-no" title="function not covered" >(e</span>vent) =&gt; {
 <span class="cstat-no" title="statement not covered" >    event.preventDefault(); </span>// Impedisce il menu contestuale
   };
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return (</span>
+  return (
     &lt;StyledNavDropdown title={"Stile"} show={dropdownStile}
       onMouseEnter={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setDropdownStile(true)}</span>
       onMouseLeave={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setDropdownStile(false)}</span>
@@ -386,7 +389,7 @@ const Stile = <span class="cstat-no" title="statement not covered" ><span class=
             onMouseLeave={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setDropdownSfondo(false)}</span>
           &gt;
             {(dropdownSfondo === true) &amp;&amp; (
-              &lt;&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >              &lt;&gt;</span>
                 &lt;StyledNavDropdownItem as={NavLink} to="#" 
                   onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >stileActions.cambioSfondo("img", montagne)}</span>
                 &gt;
@@ -436,7 +439,7 @@ const Stile = <span class="cstat-no" title="statement not covered" ><span class=
             onMouseLeave={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setDropdownItem(false)}</span>
           &gt;
             {(dropdownItem === true) &amp;&amp; (
-              &lt;&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >              &lt;&gt;</span>
                 &lt;StyledNavDropdownItem as={NavLink} to="#" 
                   onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >stileActions.cambioVista("item", "list")}</span>
                 &gt;
@@ -455,7 +458,7 @@ const Stile = <span class="cstat-no" title="statement not covered" ><span class=
             onMouseLeave={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >setDropdownForm(false)}</span>
           &gt;
             {(dropdownForm === true) &amp;&amp; (
-              &lt;&gt;
+<span class="branch-1 cbranch-no" title="branch not covered" >              &lt;&gt;</span>
                 &lt;StyledNavDropdownItem as={NavLink} to="#" 
                   onClick={<span class="fstat-no" title="function not covered" >()</span> =&gt; <span class="cstat-no" title="statement not covered" >stileActions.cambioVista("form", "form")}</span>
                 &gt;
@@ -496,7 +499,7 @@ export default Stile;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-20T19:34:51.757Z
+                at 2026-09-29T10:40:50.313Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

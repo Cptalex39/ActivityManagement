@@ -498,6 +498,7 @@ describe('Vari test su "modificaSpese"', () => {
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledWith([]);
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
+      isOK: true, 
       esitiModifiche: [],
     });
   });
@@ -530,6 +531,7 @@ describe('Vari test su "modificaSpese"', () => {
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledWith([]);
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
+      isOK: true, 
       esitiModifiche: [],
     });
   });
@@ -649,6 +651,7 @@ describe('Vari test su "modificaSpese"', () => {
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledWith([]);
     expect(mockSetSelectedIdsModifica).toHaveBeenCalledTimes(1);
     expect(result).toEqual({
+      isOK: true, 
       esitiModifiche: [[true, 200], [false, 401]],
     });
   });

@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom';
 // Importazione di tutti i reducer rilevati nello store.js
 import { autenticazioneReducer } from './react_redux/store/reducers/AutenticazioneReducer';
 import { stileReducer } from './react_redux/store/reducers/StileReducer';
-import { attivitaReducer } from './react_redux/store/reducers/AttivitaReducer';
 import { clienteReducer } from './react_redux/store/reducers/ClienteReducer';
 import { servizioReducer } from './react_redux/store/reducers/ServizioReducer';
 import { spesaReducer } from './react_redux/store/reducers/SpesaReducer';
@@ -32,7 +31,6 @@ export function renderWithProviders(
       reducer: {
         autenticazione: autenticazioneReducer,
         stile: stileReducer,
-        attivita: attivitaReducer,
         cliente: clienteReducer,
         servizio: servizioReducer,
         spesa: spesaReducer,

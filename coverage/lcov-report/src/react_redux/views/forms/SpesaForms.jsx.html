@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">77.77% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/9</span>
+                <span class='fraction'>7/9</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/7</span>
+                <span class='fraction'>5/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/8</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -191,7 +191,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -210,7 +210,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,7 +228,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -236,9 +236,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -248,7 +248,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -302,12 +302,12 @@ import { useSelector } from 'react-redux';
 import { controlloSpesa } from "../../../utils/Controlli";
 &nbsp;
 export class SpesaForms {  
-<span class="fstat-no" title="function not covered" >  co</span>nstructor() {
+  constructor() {
 &nbsp;
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  ge</span>tCampiNuovaSpesa(item, handleOnChange, handleOnClick, handleOnBlur) {
-<span class="cstat-no" title="statement not covered" >    return {</span>
+  getCampiNuovaSpesa(item, handleOnChange, handleOnClick, handleOnBlur) {
+    return {
       header: "Nuova spesa",  
       label: ["Nome*", "Descrizione", "Totale*", "Giorno*", "Note"],  
       type: [null, null, "number", "date", null], 
@@ -325,8 +325,8 @@ export class SpesaForms {
     };
   };
 &nbsp;
-<span class="fstat-no" title="function not covered" >  ge</span>tCampiRicercaSpese(item, handleOnChange, handleOnClick, handleOnBlur) {
-<span class="cstat-no" title="statement not covered" >    return {</span>
+  getCampiRicercaSpese(item, handleOnChange, handleOnClick, handleOnBlur) {
+    return {
       header: "Ricerca spese", 
       label: ["Nome", "Descrizione", "Totale minimo", "Totale massimo", "Primo giorno", "Ultimo giorno", "Note"], 
       type: [null, null, "number", "number", "date", "date", null], 
@@ -343,8 +343,8 @@ export class SpesaForms {
     };
   };
 &nbsp;
-<span class="fstat-no" title="function not covered" >  ge</span>tCampiSpesaEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {    
-    const [errori, setErrori] = <span class="cstat-no" title="statement not covered" >useState({</span>
+  getCampiSpesaEsistente(item, handleOnChange, handleOnClick, handleOnBlur) {    
+    const [errori, setErrori] = useState({
       errore_nome: "", 
       errore_descrizione: "", 
       errore_totale: "", 
@@ -352,9 +352,9 @@ export class SpesaForms {
       errore_note: ""
     }); 
     
-<span class="cstat-no" title="statement not covered" >    useEffect(<span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-      const risultatoControllo = <span class="cstat-no" title="statement not covered" >controlloSpesa(item);</span>
-<span class="cstat-no" title="statement not covered" >      setErrori(<span class="fstat-no" title="function not covered" >pr</span>evState =&gt; (<span class="cstat-no" title="statement not covered" >{</span></span>
+    useEffect(() =&gt; {
+      const risultatoControllo = controlloSpesa(item);
+      setErrori(<span class="fstat-no" title="function not covered" >pr</span>evState =&gt; (<span class="cstat-no" title="statement not covered" >{</span>
         ...prevState, 
         errore_nome: risultatoControllo.errore_nome, 
         errore_descrizione: risultatoControllo.errore_descrizione, 
@@ -364,7 +364,7 @@ export class SpesaForms {
       }))
     }, [item]);
   
-<span class="cstat-no" title="statement not covered" >    return {</span>
+    return {
       header: "Spesa", 
       label: [null, null, null, null, null], 
       tipoSelezione: item.tipo_selezione,  
@@ -418,7 +418,7 @@ export class SpesaForms {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-09-20T19:34:51.757Z
+                at 2026-09-29T10:40:50.313Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

@@ -277,6 +277,7 @@ export class SpesaActions extends Actions {
     setSelectedIdsModifica([]);
 
     return {
+      isOK: true, 
       esitiModifiche: esitiModifiche, 
     };
   };

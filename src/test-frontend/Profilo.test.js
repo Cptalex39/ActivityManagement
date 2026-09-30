@@ -70,7 +70,6 @@ const preloadedState = {
     primo_intervallo: '1-5', secondo_intervallo: '7-10', numero_clienti: 5,
   } },
   stile: { value: { vistaForm: 'form' } },
-  attivita: { value: {} },
 };
 
 describe('Profilo - Test Funzionali (MSW, azioni reali)', () => {

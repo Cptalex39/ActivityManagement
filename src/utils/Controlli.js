@@ -759,8 +759,8 @@ export const controlloRicercaSpese = (dati) => {
   // Il nome è stato inserito
   if(nuoviDati.nome) {
     // Non rispetta la REGEX
-    if(!matchRegex(nuoviDati.nome, REGEX_NOME_COGNOME)) {
-      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.";
+    if(!matchRegex(nuoviDati.nome, REGEX_DESCRIZIONE_E_NOTE)) {
+      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.";
       nuoviDati.num_errori += 1;
     }
   }
@@ -879,8 +879,8 @@ export const controlloRicercaServizi = (dati) => {
   // Il nome è stato inserito
   if(nuoviDati.nome) {
     // Non rispetta la REGEX
-    if(!matchRegex(nuoviDati.nome, REGEX_NOME_COGNOME)) {
-      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.";
+    if(!matchRegex(nuoviDati.nome, REGEX_DESCRIZIONE_E_NOTE)) {
+      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.";
       nuoviDati.num_errori += 1;
     }
   }
@@ -939,8 +939,8 @@ export const controlloServizio = (dati, isNuovo) => {
   }
   else {
     // nome non valido.
-    if(!matchRegex(nuoviDati.nome, REGEX_NOME_COGNOME)) {
-      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.";
+    if(!matchRegex(nuoviDati.nome, REGEX_DESCRIZIONE_E_NOTE)) {
+      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.";
       nuoviDati.num_errori += 1;
     }
     else {
@@ -1043,8 +1043,8 @@ export const controlloSpesa = (dati) => {
   }
   else {
     // nome non valido.
-    if(!matchRegex(nuoviDati.nome, REGEX_NOME_COGNOME)) {
-      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.";
+    if(!matchRegex(nuoviDati.nome, REGEX_DESCRIZIONE_E_NOTE)) {
+      nuoviDati.errore_nome = "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.";
       nuoviDati.num_errori += 1;
     }
     else {

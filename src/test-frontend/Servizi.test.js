@@ -53,7 +53,6 @@ const preloadedState = {
     { id: 2, nome: 'Penna nera', tipo: 'Prodotto', prezzo: '0.50' },
   ] } },
   stile: { value: { vistaItem: 'card', vistaForm: 'modal' } },
-  attivita: { value: { nome: 'Test Activity' } },
 };
 
 describe('Servizi - Test Funzionali', () => {

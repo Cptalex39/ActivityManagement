@@ -23,7 +23,7 @@ const basePreloadedState = {
   // clienteState vuoto: i clienti compaiono SOLO se la ricerca funziona
   cliente: { value: { clienti: [] } },
   stile: { value: { vistaItem: 'tabella', vistaForm: 'standard' } },
-  attivita: { value: { primo_intervallo: 1, secondo_intervallo: 10, numero_clienti: 5 } },
+  //attivita: { value: { primo_intervallo: 1, secondo_intervallo: 10, numero_clienti: 5 } },
 };
 
 describe('Clienti - Test Funzionali (MSW)', () => {

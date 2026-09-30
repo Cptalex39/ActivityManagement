@@ -97,7 +97,7 @@ describe('Controlli.js - Unit test', () => {
 
   test('TC_CTRL_ORD_003 - Struttura con data passata', () => {
     expect(controlloOrdine({ metodo_pagamento: 'Struttura', data_prenotazione: '2020-01-15', ora_prenotazione: '10:00' })).toBe(false);
-    expect(alertSpy).toHaveBeenCalledWith('Inserire un giorno successore a quello attuale.');
+    expect(alertSpy).toHaveBeenCalledWith('Inserire un giorno successivo a quello attuale.');
   });
 
   test('TC_CTRL_ORD_004 - Struttura valida', () => {

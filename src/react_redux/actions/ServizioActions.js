@@ -23,27 +23,6 @@ export class ServizioActions extends Actions {
     }));
   }
 
-  /*
-  async getCatalogo(filtroTipo) {
-    const dati = {
-      filtro_tipo: filtroTipo
-    }
-    const response = await super.getResponse("/VISUALIZZA_CATALOGO", dati);
-
-    if(response.ok) {
-      const result = await response.json();
-      this.dispatch(servizioSliceActions.aggiornaCatalogo({
-        catalogo: result.items, 
-      }));
-    }
-
-    return {
-      isOK: response.ok, 
-      responseStatus: response.status, 
-    };
-  };
-  */
-
   /**
    * Azione per inserire un nuovo servizio nel sistema.
    * 
@@ -270,6 +249,7 @@ export class ServizioActions extends Actions {
     setSelectedIdsModifica([]);
 
     return {
+      isOK: true,
       esitiModifiche: esitiModifiche, 
     };
   }

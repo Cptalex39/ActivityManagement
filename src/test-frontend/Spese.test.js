@@ -70,7 +70,6 @@ describe('Spese - Test Funzionali', () => {
   const preloadedState = {
     spesa: { value: { spese: mockSpeseList } },
     stile: { value: { vistaItem: 'card', vistaForm: 'modal' } },
-    attivita: { value: { nome: 'Test Activity' } },
   };
 
   beforeEach(() => {

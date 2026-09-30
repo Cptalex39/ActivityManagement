@@ -85,7 +85,7 @@ describe('Vari test su "controlloRicercaSpese"', () => {
   /** RT_UT_Con_RicSpe_04 **/
   test('totale_max < totale_min AND ultimo_giorno < primo_giorno AND nome, descrizione, note non rispettano la regex', () => {
     let dati = {
-      nome: "Luce 10",
+      nome: "(Luce 10)",
       descrizione: "(Descrizione della spesa)",
       totale_min: 10,
       totale_max: 5,
@@ -97,7 +97,7 @@ describe('Vari test su "controlloRicercaSpese"', () => {
     const datiExpected = {
       ...dati,
       num_errori: 5,
-      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.",
+      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_descrizione: "Errore, la descrizione deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_totali: "Errore, il totale massimo è più piccolo del totale minimo.",
       errore_giorni: "Errore, l'ultimo giorno è minore del primo giorno.",
@@ -237,7 +237,7 @@ describe('Vari test su "controlloSpesa"', () => {
   /** RT_UT_Con_Spe_02 **/
   test('nome, descrizione, note non rispettano la regex AND totale <= 0', () => {
     let dati = {
-      nome: "Luce 10",
+      nome: "(Luce 10)",
       descrizione: "(Descrizione spesa)",
       totale: "0",
       giorno: "2022-10-08",
@@ -247,7 +247,7 @@ describe('Vari test su "controlloSpesa"', () => {
     const datiExpected = {
       ...dati,
       num_errori: 4,
-      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), spazi, apostrofi, trattini e punti.",
+      errore_nome: "Errore, il nome deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_descrizione: "Errore, la descrizione deve contenere solamente i seguenti caratteri: lettere (comprese quelle accentate), numeri, spazi, -_.,;:@#!?.",
       errore_totale: "Errore, il totale inserito non è maggiore di 0.",
       errore_giorno: null,

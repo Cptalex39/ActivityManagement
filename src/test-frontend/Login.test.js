@@ -57,7 +57,6 @@ const utenteCliente = (overrides = {}) => ({
 
 const preloadedState = {
   stile: { value: { vistaForm: 'form' } },
-  attivita: { value: {} },
 };
 
 describe('Login - Test Funzionali (MSW, azioni reali)', () => {

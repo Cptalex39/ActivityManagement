@@ -24,7 +24,7 @@ export class StileActions extends Actions {
         pathImg: sfondo
       }));
     }
-    else if (tipoSfondo === "color") {
+    else if (tipoSfondo === "rgb") {
       this.dispatch(stileSliceActions.cambioColoreSfondo({
         coloreRGB: sfondo
       }));

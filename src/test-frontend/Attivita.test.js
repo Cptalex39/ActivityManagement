@@ -24,9 +24,6 @@ const mockEntrateUscite = () => {
 const preloadedState = {
   stile: {
     value: { tema: 'light' }
-  },
-  attivita: {
-    value: { nome: 'Test Activity' }
   }
 };
 
