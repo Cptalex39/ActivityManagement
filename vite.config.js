@@ -4,6 +4,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
+    // I file temporanei di Word (~$*.docx, mso*.tmp) nella documentazione bloccano il watcher (EBUSY)
+    watch: {
+      ignored: ['**/projectdocs_activity_management/**', '**/reports/**', '**/coverage/**', '**/coverage-totale/**'],
+    },
     proxy: {
       // Autenticazione
       '/LOGIN': 'http://localhost:3000',
