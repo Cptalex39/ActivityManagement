@@ -710,6 +710,29 @@ app.post("/OTTIENI_PASSWORD_UTENTE", async(req, res) => {
   }
 });
 
+// Raggruppa le righe per mese (1-12) nel formato atteso da Attivita.jsx:
+// [{ mese, totale, <chiaveDettaglio>: [{ nome, totale }] }, ...]
+const raggruppaPerMese = (righe, chiaveDettaglio, getDettaglio) => {
+  const mesi = Array.from({ length: 12 }, (_, i) => ({ mese: i + 1, totale: 0, [chiaveDettaglio]: [] }));
+  for (const riga of righe) {
+    const mese = mesi[riga.mese - 1];
+    mese.totale += riga.totale;
+    mese[chiaveDettaglio].push(...getDettaglio(riga));
+  }
+  return mesi;
+};
+
+// ordine.items è il carrello serializzato in JSON: ogni item vale prezzo * quantita
+const getItemsOrdine = (riga) => {
+  try {
+    return JSON.parse(riga.items).map(item => ({ nome: item.nome, totale: item.prezzo * item.quantita }));
+  }
+  catch (err) {
+    console.log("Items non leggibili nell'ordine: ", err);
+    return [];
+  }
+};
+
 app.post("/ESEGUI_ANALISI", async(req, res) => {
   const spesaSQL = new SpesaSQL();
   const ordineSQL = new OrdineSQL();
@@ -718,9 +741,9 @@ app.post("/ESEGUI_ANALISI", async(req, res) => {
     await beginTransaction();
 
     let result = await executeQuery(spesaSQL.SQL_OTTIENI_USCITE_SPESE, spesaSQL.params_ottieni_uscite_spese(req.body));
-    const usciteAnno = result;
+    const usciteAnno = raggruppaPerMese(result, "spese", (riga) => [{ nome: riga.nome, totale: riga.totale }]);
     result = await executeQuery(ordineSQL.SQL_OTTIENI_ENTRATE_ORDINI, ordineSQL.params_ottieni_entrate_ordini(req.body));
-    const entrateAnno = result;
+    const entrateAnno = raggruppaPerMese(result, "items", getItemsOrdine);
 
     await commitTransaction();
     return res.status(200).json({ uscite_anno: usciteAnno, entrate_anno: entrateAnno });

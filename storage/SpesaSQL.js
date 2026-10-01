@@ -20,24 +20,17 @@ export class SpesaSQL {
       giorno BETWEEN ? AND ?; 
   `;
 
+  // Il raggruppamento per mese avviene in server.js: niente JSON_ARRAYAGG, assente in MariaDB 10.4 (XAMPP)
   SQL_OTTIENI_USCITE_SPESE = `
-    WITH mesi AS (
-      SELECT 1 AS num_mese UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 
-      UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 
-      UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 
-    ) 
-    SELECT 
-      m.num_mese AS mese, 
-      COALESCE(SUM(s.totale), 0) AS totale, 
-      IF(
-        COUNT(s.giorno) = 0, 
-        JSON_ARRAY(), 
-        JSON_ARRAYAGG(JSON_OBJECT('nome', s.nome, 'totale', s.totale))
-      ) AS spese 
-    FROM mesi m 
-    LEFT JOIN spesa s ON MONTH(s.giorno) = m.num_mese AND YEAR(s.giorno) = ? 
-    GROUP BY m.num_mese 
-    ORDER BY m.num_mese;   
+    SELECT
+      MONTH(giorno) AS mese,
+      nome,
+      totale
+    FROM
+      spesa
+    WHERE
+      YEAR(giorno) = ?
+    ORDER BY giorno;
   `
 
   constructor() {

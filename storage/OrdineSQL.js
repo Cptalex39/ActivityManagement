@@ -25,43 +25,18 @@ export class OrdineSQL {
     WHERE is_pagato = 0 AND id_cliente = ?;
   `
 
+  // Il raggruppamento per mese e la lettura di items avvengono in server.js:
+  // niente JSON_ARRAYAGG/JSON_TABLE, assenti in MariaDB 10.4 (XAMPP)
   SQL_OTTIENI_ENTRATE_ORDINI = `
-    SELECT 
-      m.num_mese AS mese, 
-      COALESCE(SUM(o.totale), 0) AS totale, 
-      IF(
-        COUNT(i.id) = 0, 
-        JSON_ARRAY(), 
-        JSON_ARRAYAGG(
-          JSON_OBJECT('nome', i.nome, 'totale', i.prezzo * i.quantita) 
-        ) 
-      ) AS items 
-    FROM (
-      SELECT 1 AS num_mese UNION SELECT 2 UNION SELECT 3 UNION SELECT 4
-      UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8
-      UNION SELECT 9 UNION SELECT 10 UNION SELECT 11 UNION SELECT 12
-    ) m
-    LEFT JOIN ordine o 
-      ON MONTH(o.data_conferma_pagamento) = m.num_mese 
-      AND YEAR(o.data_conferma_pagamento) = ? 
-    LEFT JOIN (
-      SELECT 
-        MONTH(o.data_conferma_pagamento) AS mese,
-        jt.*
-      FROM ordine o
-      CROSS JOIN JSON_TABLE(o.items, '$[*]' COLUMNS (
-        id INT PATH '$.id',
-        nome VARCHAR(100) PATH '$.nome',
-        prezzo DOUBLE PATH '$.prezzo',
-        tipo VARCHAR(50) PATH '$.tipo',
-        note TEXT PATH '$.note',
-        quantita INT PATH '$.quantita'
-      )) AS jt
-      WHERE YEAR(o.data_conferma_pagamento) = ?
-      ORDER BY mese
-    ) i ON i.mese = m.num_mese
-    GROUP BY m.num_mese 
-    ORDER BY m.num_mese;   
+    SELECT
+      MONTH(data_conferma_pagamento) AS mese,
+      totale,
+      items
+    FROM
+      ordine
+    WHERE
+      YEAR(data_conferma_pagamento) = ?
+    ORDER BY data_conferma_pagamento;
   `;
 
   SQL_OTTIENI_NUMERO_ORDINI_DATA_PER_ORARIO = `
@@ -272,7 +247,6 @@ export class OrdineSQL {
 
   params_ottieni_entrate_ordini(params) {
     return [
-      params.anno, 
       params.anno
     ];
   }
